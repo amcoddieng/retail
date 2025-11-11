@@ -202,5 +202,8 @@ public class AdminUsersBean implements Serializable {
 		this.adresse = adresse;
 	}
     
-    
+    public String getUserRolesAsString(String login) {
+        List<String> roles = auth.rolesOf(login);
+        return roles != null ? String.join(", ", roles) : "Aucun rôle";
+    }
 }
