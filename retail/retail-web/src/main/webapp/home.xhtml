@@ -1,0 +1,120 @@
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:define name="title">
+        <h:outputText value="Tableau de bord"/>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:panelGroup id="homeContent" layout="block">
+
+            <div class="p-mb-3 p-text-right">
+            <p:commandButton value="Rafraîchir"
+                             action="#{dashboardBean.rafraichir}"
+                             update="homeContent"
+                             icon="pi pi-refresh"
+                             styleClass="p-button-outlined"/>
+        </div>
+
+        <div class="grid">
+            <!-- Vos KPIs existants -->
+            <div class="col-12 md:col-3">
+                <p:panel header="Ventes du jour">
+                    <h:outputText value="#{dashboardBean.ventesJour}"
+                                  styleClass="kpi"/>
+                    <p:tooltip value="Nombre de commandes créées aujourd'hui"/>
+                </p:panel>
+            </div>
+
+            <div class="col-12 md:col-3">
+                    <p:panel header="Ventes du jour">
+                        <h:outputText value="#{empty dashboardBean.ventesJour ? 0 : dashboardBean.ventesJour}"
+                                      styleClass="kpi"/>
+                    </p:panel>
+                </div>
+
+                <div class="col-12 md:col-3">
+                    <p:panel header="En attente">
+                        <h:outputText value="#{empty dashboardBean.nbEnAttente ? 0 : dashboardBean.nbEnAttente}"
+                                      styleClass="kpi"/>
+                    </p:panel>
+                </div>
+
+                <div class="col-12 md:col-3">
+                    <p:panel header="Ruptures">
+                        <h:outputText value="#{empty dashboardBean.nbRuptures ? 0 : dashboardBean.nbRuptures}"
+                                      styleClass="kpi"/>
+                    </p:panel>
+                </div>
+
+                <div class="col-12 md:col-3">
+                    <p:panel header="Délai moyen (h)">
+                        <h:outputText value="#{empty dashboardBean.delaiMoyen ? 0 : dashboardBean.delaiMoyen}"
+                                      styleClass="kpi"/>
+                    </p:panel>
+                </div>
+
+                <div class="col-12 md:col-8">
+                    <p:panel header="Ventes 7 derniers jours"
+                             rendered="#{not empty dashboardBean.ventesModel}">
+                        <!-- Change from p:chart to p:lineChart for Chart.js -->
+                        <p:lineChart model="#{dashboardBean.ventesModel}"
+                                     style="width:100%;height:320px"/>
+                    </p:panel>
+                    <p:panel header="Ventes 7 derniers jours"
+                             rendered="#{empty dashboardBean.ventesModel}">
+                        <h:outputText value="Aucune donnée à afficher."/>
+                    </p:panel>
+                </div>
+
+                <div class="col-12 md:col-4">
+                    <p:panel header="Livraisons récentes"
+                             rendered="#{not empty dashboardBean.livraisonsRecentes}">
+                        <ui:repeat value="#{dashboardBean.livraisonsRecentes}" var="l">
+                            <div class="p-mb-2">
+                                <span class="badge #{l.statut=='PREPAREE' ? 'badge-info' : (l.statut=='EXPEDIEE' ? 'badge-warn' : 'badge-ok')}">
+                                    <h:outputText value="#{empty l.statut ? '—' : l.statut}"/>
+                                </span>
+                                <span>
+                                    <h:outputText value=" Livraison #"/>
+                                    <h:outputText value="#{empty l.id ? '—' : l.id}"/>
+                                </span>
+                            </div>
+                        </ui:repeat>
+                    </p:panel>
+
+                    <p:panel header="Livraisons récentes"
+                             rendered="#{empty dashboardBean.livraisonsRecentes}">
+                        <h:outputText value="Aucune livraison récente."/>
+                    </p:panel>
+                </div>
+
+            </div>
+
+        </h:panelGroup>
+    </ui:define>
+
+    <ui:define name="page-scripts">
+        <h:outputScript target="body">
+            //<![CDATA[
+            window.CMDK_ITEMS = [
+              {label:'Catalogue', path:'#{request.contextPath}/index.xhtml', icon:'pi-shopping-cart'},
+              {label:'Panier / Commander', path:'#{request.contextPath}/index.xhtml#panier', icon:'pi-shopping-bag'},
+              {label:'Caisse', path:'#{request.contextPath}/caisse.xhtml', icon:'pi-credit-card'},
+              {label:'Livraisons', path:'#{request.contextPath}/livraisons.xhtml', icon:'pi-truck'},
+              {label:'Mes commandes', path:'#{request.contextPath}/mes-commandes.xhtml', icon:'pi-list'},
+              {label:'Admin — Produits', path:'#{request.contextPath}/admin/produits.xhtml', icon:'pi-database'},
+              {label:'Admin — Catalogues', path:'#{request.contextPath}/admin/catalogues.xhtml', icon:'pi-list-check'},
+              {label:'Admin — Utilisateurs', path:'#{request.contextPath}/admin/utilisateurs.xhtml', icon:'pi-user-edit'},
+              {label:'Fournisseur — Commandes liées', path:'#{request.contextPath}/fournisseur/commandes.xhtml', icon:'pi-briefcase'},
+              {label:'Fournisseur — Lots', path:'#{request.contextPath}/fournisseur/lots.xhtml', icon:'pi-box'},
+              {label:'Logistique — Contrôle lots', path:'#{request.contextPath}/logistique/lots-reception.xhtml', icon:'pi-inbox'},
+              {label:'RH — Supervision', path:'#{request.contextPath}/gerant/supervision.xhtml', icon:'pi-users'}
+            ];
+            //]]>
+        </h:outputScript>
+    </ui:define>
+</ui:composition>

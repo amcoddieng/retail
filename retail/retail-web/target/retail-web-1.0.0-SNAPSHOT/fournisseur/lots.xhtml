@@ -1,0 +1,567 @@
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:define name="title">Lots d'approvisionnement</ui:define>
+    <ui:define name="content">
+
+        <!-- Section création de lot -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <i class="pi pi-plus-circle"></i>
+                <h3>Création de lot</h3>
+            </div>
+            
+            <h:form id="createForm">
+                <p:messages id="createMessages" showDetail="true" autoUpdate="true" closable="true"/>
+                
+                <div class="creation-card">
+                    <div class="card-content">
+                        <p:commandButton value="Créer un nouveau lot" 
+                                       action="#{fournisseurBean.creerLot}"
+                                       update="createMessages :addItemForm :listForm:lotsTable createForm:lotInfo"
+                                       process="@form"
+                                       icon="pi pi-plus" 
+                                       styleClass="create-button"/>
+                        
+                       <p:outputPanel id="lotInfo" class="current-lot-info">
+						    <ui:fragment rendered="#{not empty fournisseurBean.lotId}">
+						        <div class="active-lot">
+						            <i class="pi pi-shopping-cart"></i>
+						            <div class="lot-details">
+						                <span class="lot-label">Lot en cours :</span>
+						                <span class="lot-id">##{fournisseurBean.lotId}</span>
+						                <span class="lot-status">En préparation</span>
+						            </div>
+						        </div>
+						    </ui:fragment>
+						</p:outputPanel>
+
+                    </div>
+                </div>
+            </h:form>
+        </div>
+
+        <!-- Section ajout d'articles -->
+        <h:form id="addItemForm">
+        <ui:fragment rendered="#{not empty fournisseurBean.lotId}">
+            <div class="dashboard-section" >
+                <div class="section-header">
+                    <i class="pi pi-cart-plus"></i>
+                    <h3>Ajouter des articles</h3>
+                </div>
+                
+                <div class="add-items-card">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="produitSelect">Produit</label>
+                            <p:selectOneMenu id="produitSelect" value="#{fournisseurBean.produitId}"
+                                           required="true" requiredMessage="Veuillez sélectionner un produit">
+                                <f:selectItem itemLabel="Sélectionnez un produit" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{fournisseurBean.mesProduits}"
+                                             var="prod"
+                                             itemLabel="#{prod.libelle} (ID: #{prod.id})"
+                                             itemValue="#{prod.id}"/>
+                            </p:selectOneMenu>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="qte">Quantité</label>
+                            <p:inputNumber id="qte" value="#{fournisseurBean.quantite}"
+                                         required="true" requiredMessage="La quantité est obligatoire"
+                                         min="1" max="10000" placeholder="Quantité"/>
+                        </div>
+
+                        <div class="form-actions">
+                            <p:commandButton value="Ajouter au lot" 
+                                           action="#{fournisseurBean.ajouterItem}"
+                                           update=":listForm:lotsTable"
+                                           process="@form"
+                                           icon="pi pi-cart-plus" 
+                                           styleClass="add-button"
+                                           oncomplete="if(!args.validationFailed) { document.getElementById('addItemForm').reset(); }"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+         </ui:fragment>
+        </h:form>
+
+        <!-- Section liste des lots avec détails intégrés -->
+     	<h:form id="listForm">
+		    <div class="dashboard-section">
+		        <div class="section-header">
+		            <i class="pi pi-list"></i>
+		            <h3>Historique des lots</h3>
+		        </div>
+		
+		        <p:dataTable id="lotsTable"
+		                     value="#{fournisseurBean.mesLots}" var="lot"
+		                     selection="#{fournisseurBean.lotSelectionne}"
+		                     selectionMode="single"
+		                     rowKey="#{lot.id}"
+		                     paginator="true" rows="8"
+		                     responsiveLayout="stack"
+		                     emptyMessage="Aucun lot trouvé"
+		                     styleClass="lots-table"
+		                     rowStyleClass="#{fournisseurBean.lotSelectionne ne null and lot.id eq fournisseurBean.lotSelectionne.id ? 'selected-row' : ''}">
+		
+		            <!-- Met à jour le panneau de détails quand on (dé)sélectionne -->
+		            <p:ajax event="rowSelect"   update=":listForm:lotDetailPanel"/>
+		            <p:ajax event="rowUnselect" update=":listForm:lotDetailPanel"/>
+		
+		            <!-- Colonne Fournisseur -->
+		            <p:column headerText="Fournisseur" style="width: 160px">
+		                <div class="supplier-info">
+		                    <i class="pi pi-user"></i>
+		                    <span>#{lot.fournisseur.login}</span>
+		                </div>
+		            </p:column>
+		
+		            <!-- Colonne Statut -->
+		            <p:column headerText="Statut" style="width: 130px">
+		                <div class="status-badge status-#{lot.statut}">
+		                    <i class="pi #{lot.statut == 'CONFORME' ? 'pi-check-circle' : lot.statut == 'RECU' ? 'pi-inbox' : 'pi-clock'}"></i>
+		                    <span>#{lot.statut}</span>
+		                </div>
+		            </p:column>
+		
+		            <!-- Colonne Date -->
+		            <p:column headerText="Date" style="width: 120px">
+		                <div class="date-info">
+		                    <h:outputText value="#{lot.createdAt}">
+		                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+		                    </h:outputText>
+		                </div>
+		            </p:column>
+		
+		            <!-- Colonne Articles -->
+		            <p:column headerText="Articles" style="width: 110px">
+		                <div class="articles-count">
+		                    <i class="pi pi-box"></i>
+		                    <span>#{lot.items != null ? lot.items.size() : 0}</span>
+		                </div>
+		            </p:column>
+		
+		            <!-- Colonne Quantité -->
+		            <p:column headerText="Quantité" style="width: 110px">
+		                <div class="quantity-total">
+		                    <span>#{fournisseurBean.getQuantiteTotaleLot(lot)}</span>
+		                </div>
+		            </p:column>
+		
+		            <!-- Actions (bouton "Voir") -->
+		            <p:column headerText="Détails" style="width: 100px" exportable="false">
+		                <p:commandButton icon="pi pi-eye" title="Voir"
+		                                 process="@this"
+		                                 action="#{fournisseurBean.toggleLotDetail(lot)}"
+		                                 update=":listForm:lotDetailPanel :listForm:lotsTable"
+		                                 styleClass="p-button-outlined p-button-sm"/>
+		            </p:column>
+		        </p:dataTable>
+		
+		        <!-- Panneau de détails sous la table -->
+		        <p:outputPanel id="lotDetailPanel" styleClass="lot-detail-container">
+		            <ui:fragment rendered="#{not empty fournisseurBean.lotSelectionne}">
+		                <div class="lot-detail-expansion">
+		                    <div class="detail-header">
+		                        <h4>Détails du lot ##{fournisseurBean.lotSelectionne.id}</h4>
+		                    </div>
+		                    <div class="detail-content">
+		                        <div class="detail-grid">
+		                            <div class="detail-item">
+		                                <label>Fournisseur:</label>
+		                                <span>#{fournisseurBean.lotSelectionne.fournisseur.login}</span>
+		                            </div>
+		                            <div class="detail-item">
+		                                <label>Statut:</label>
+		                                <span class="status-#{fournisseurBean.lotSelectionne.statut}">
+		                                    #{fournisseurBean.lotSelectionne.statut}
+		                                </span>
+		                            </div>
+		                            <div class="detail-item">
+		                                <label>Créé le:</label>
+		                                <span>
+		                                    <h:outputText value="#{fournisseurBean.lotSelectionne.createdAt}">
+		                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+		                                    </h:outputText>
+		                                </span>
+		                            </div>
+		                        </div>
+		
+		                        <ui:fragment rendered="#{not empty fournisseurBean.lotSelectionne.items}">
+		                            <div class="items-section">
+		                                <h5>Articles (#{fournisseurBean.lotSelectionne.items.size()})</h5>
+		                                <p:dataTable value="#{fournisseurBean.lotSelectionne.items}" var="item"
+		                                             styleClass="items-table" rows="5"
+		                                             paginator="true" paginatorPosition="bottom">
+		                                    <p:column headerText="Produit">
+		                                        <div class="product-info">
+		                                            <strong>#{item.produit.libelle}</strong>
+		                                            <small>ID: #{item.produit.id}</small>
+		                                        </div>
+		                                    </p:column>
+		                                    <p:column headerText="Quantité" style="text-align:center;width:100px">
+		                                        <span class="item-quantity">#{item.quantite}</span>
+		                                    </p:column>
+		                                </p:dataTable>
+		                            </div>
+		                        </ui:fragment>
+		
+		                        <ui:fragment rendered="#{empty fournisseurBean.lotSelectionne.items}">
+		                            <div class="items-section">
+		                                <div class="item-card">
+		                                    <span class="no-items">Aucun article dans ce lot</span>
+		                                </div>
+		                            </div>
+		                        </ui:fragment>
+		                    </div>
+		                </div>
+		            </ui:fragment>
+		
+		            <ui:fragment rendered="#{empty fournisseurBean.lotSelectionne}">
+		                <div class="items-section" style="margin:1rem">
+		                    <span class="no-items">Sélectionnez un lot pour afficher ses détails.</span>
+		                </div>
+		            </ui:fragment>
+		        </p:outputPanel>
+		    </div>
+		</h:form>
+     	
+
+        <style>
+            /* Variables CSS */
+            :root {
+                --primary-color: #4361ee;
+                --success-color: #28a745;
+                --warning-color: #ffc107;
+                --info-color: #17a2b8;
+                --danger-color: #dc3545;
+                --light-bg: #f8f9fa;
+                --border-color: #e9ecef;
+                --text-dark: #343a40;
+                --text-light: #6c757d;
+            }
+
+            /* Sections principales */
+            .dashboard-section {
+                margin-bottom: 2rem;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                overflow: hidden;
+            }
+
+            .section-header {
+                background: linear-gradient(135deg, var(--primary-color), #3a56d4);
+                color: white;
+                padding: 1.5rem;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .section-header i {
+                font-size: 1.5rem;
+            }
+            
+            h3 {
+            	color: white;
+            }
+
+            .section-header h3 {
+                margin: 0;
+                font-size: 1.3rem;
+                font-weight: 600;
+            }
+
+            /* Cartes */
+            .creation-card, .add-items-card {
+                padding: 2rem;
+            }
+
+            .create-button {
+                background: linear-gradient(135deg, var(--success-color), #218838);
+                border: none;
+                padding: 12px 24px;
+                font-size: 1.1rem;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+            }
+
+            .create-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            }
+
+            .add-button {
+                background: var(--primary-color);
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                transition: all 0.3s ease;
+            }
+
+            .add-button:hover {
+                background: #3a56d4;
+                transform: translateY(-1px);
+            }
+
+            /* Info lot courant */
+            .current-lot-info {
+                margin-top: 1.5rem;
+            }
+
+            .active-lot {
+                background: linear-gradient(135deg, #e8f5e8, #d4edda);
+                border: 2px solid var(--success-color);
+                border-radius: 10px;
+                padding: 1.5rem;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                animation: pulse 2s infinite;
+            }
+
+            .active-lot i {
+                font-size: 2rem;
+                color: var(--success-color);
+            }
+
+            .lot-details {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .lot-label {
+                font-size: 0.9rem;
+                color: var(--text-light);
+            }
+
+            .lot-id {
+                font-size: 1.4rem;
+                font-weight: bold;
+                color: var(--success-color);
+            }
+
+            .lot-status {
+                background: var(--success-color);
+                color: white;
+                padding: 4px 8px;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            /* Formulaire */
+            .form-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr auto;
+                gap: 1rem;
+                align-items: end;
+            }
+
+            .form-group {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .form-group label {
+                font-weight: 600;
+                color: var(--text-dark);
+                margin-bottom: 0;
+            }
+
+            .form-actions {
+                display: flex;
+                align-items: end;
+            }
+
+            /* Tableau */
+            .lots-table {
+                border: none;
+            }
+
+            .lots-table .ui-datatable-header {
+                background: var(--light-bg);
+                border: none;
+                padding: 1rem;
+            }
+
+            .selected-row {
+                background: #e3f2fd !important;
+            }
+
+            /* Badges de statut */
+            .status-badge {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 6px 12px;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                width: fit-content;
+            }
+
+            .status-conforme {
+                background: #d4edda;
+                color: #155724;
+            }
+
+            .status-recu {
+                background: #d1ecf1;
+                color: #0c5460;
+            }
+
+            .status-en_attente {
+                background: #fff3cd;
+                color: #856404;
+            }
+
+            /* Informations dans les colonnes */
+            .supplier-info, .articles-count, .quantity-total, .date-info {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-weight: 500;
+            }
+
+            /* Boutons d'action */
+            .action-buttons {
+                display: flex;
+                gap: 5px;
+            }
+
+            .toggle-detail-btn {
+                background: var(--primary-color);
+                border: none;
+                color: white;
+                border-radius: 6px;
+                padding: 8px;
+                transition: all 0.3s ease;
+            }
+
+            .toggle-detail-btn:hover {
+                background: #3a56d4;
+                transform: scale(1.05);
+            }
+
+            /* Détails du lot */
+            .lot-detail-expansion {
+                background: var(--light-bg);
+                border-radius: 8px;
+                margin: 10px;
+                padding: 0;
+                overflow: hidden;
+            }
+
+            .detail-header {
+                background: white;
+                padding: 1rem 1.5rem;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .detail-header h4 {
+                margin: 0;
+                color: var(--text-dark);
+            }
+
+            .detail-content {
+                padding: 1.5rem;
+            }
+
+            .detail-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .detail-item {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .detail-item label {
+                font-weight: 600;
+                color: var(--text-light);
+                font-size: 0.9rem;
+            }
+
+            .detail-item span {
+                font-size: 1rem;
+                color: var(--text-dark);
+            }
+
+            .items-section {
+                background: white;
+                border-radius: 8px;
+                padding: 1.5rem;
+                border: 1px solid var(--border-color);
+            }
+
+            .items-section h5 {
+                margin: 0 0 1rem 0;
+                color: var(--text-dark);
+                font-size: 1.1rem;
+            }
+
+            .items-table {
+                border: none;
+            }
+
+            .items-table .ui-datatable-header {
+                display: none;
+            }
+
+            .product-info {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .product-info small {
+                color: var(--text-light);
+                font-size: 0.8rem;
+            }
+
+            .item-quantity {
+                background: var(--primary-color);
+                color: white;
+                padding: 4px 8px;
+                border-radius: 12px;
+                font-weight: 600;
+                font-size: 0.9rem;
+            }
+
+            /* Animations */
+            @keyframes pulse {
+                0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); }
+                70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .form-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .detail-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .active-lot {
+                    flex-direction: column;
+                    text-align: center;
+                }
+            }
+        </style>
+    </ui:define>
+</ui:composition>

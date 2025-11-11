@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Retail Pro | Connexion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <h:outputStylesheet library="primefaces" name="primeicons/primeicons.css"/>
+    <h:outputStylesheet library="css" name="app.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    
+    <style>
+        :root {
+            /* Palette de couleurs néon */
+            --neon-pink: #ff2bff;
+            --neon-blue: #00f7ff;
+            --neon-purple: #b300ff;
+            --neon-cyan: #00ffd5;
+            --dark-bg: #0a0a1a;
+            --darker-bg: #050510;
+            --card-bg: rgba(15, 15, 40, 0.8);
+            --text-light: #e0e0ff;
+            --text-lighter: #ffffff;
+            --text-muted: #8a8ab5;
+            --border: rgba(138, 138, 181, 0.2);
+            --radius: 16px;
+            --shadow: 0 10px 30px -15px rgba(0, 247, 255, 0.2);
+            --shadow-neon: 0 0 20px rgba(255, 43, 255, 0.3), 0 0 40px rgba(0, 247, 255, 0.2);
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --font-primary: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body, html {
+            font-family: var(--font-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+        
+        .forgot-link {
+            color: #6366f1;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .forgot-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #6366f1;
+            transition: width 0.3s ease;
+        }
+        
+        .forgot-link:hover {
+            color: #4f46e5;
+            text-decoration: none;
+        }
+        
+        .forgot-link:hover:after {
+            width: 100%;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: none;
+            padding: 1.1rem 2rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 12px;
+            transition: var(--transition);
+            cursor: pointer;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+            background: linear-gradient(135deg, #f8f9fc 0%, #f1f5f9 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            margin: 0 auto;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .login-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+        }
+        
+        .login-card h1 {
+            color: #111827;
+            text-align: center;
+            margin: 0 0 2rem 0;
+            font-size: 1.875rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            line-height: 1.2;
+        }
+        
+        .form-group {
+            margin-bottom: 1.75rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .btn-google {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            border-radius: 12px !important;
+            box-shadow: none !important;
+        }
+        
+        .btn-google:hover {
+            background: rgba(255, 255, 255, 0.15) !important;
+            transform: translateY(-1px);
+        }
+        
+        .btn-google .pi {
+            font-size: 1.25rem;
+            color: #ea4335;
+        }
+        
+        /* Séparateur */
+        .separator {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .separator::before,
+        .separator::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--neon-cyan), 
+                var(--neon-pink), 
+                transparent);
+            opacity: 0.5;
+        }
+        
+        .separator span {
+            padding: 0 1.5rem;
+            background: var(--card-bg);
+            position: relative;
+            z-index: 2;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .p-inputtext {
+            width: 100%;
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #1e293b !important;
+            padding: 0.875rem 1rem 0.875rem 3rem !important;
+            border-radius: 10px !important;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            font-size: 0.9375rem;
+            transition: all 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+        }
+        
+        .p-inputtext:enabled:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+            border-color: #6366f1 !important;
+            background: #ffffff !important;
+            outline: none;
+        }
+        
+        .p-inputtext::placeholder {
+            color: var(--text-muted) !important;
+            opacity: 0.8;
+        }
+        
+        .p-inputgroup-addon {
+            background: #f1f5f9 !important;
+            border: 1px solid #e2e8f0 !important;
+            border-right: none !important;
+            border-top-left-radius: 10px !important;
+            border-bottom-left-radius: 10px !important;
+            padding: 0 1.25rem !important;
+            color: #64748b !important;
+        }
+        
+        
+        .p-password-input {
+            border-top-left-radius: 0 !important;
+            border-bottom-left-radius: 0 !important;
+            border-left: none !important;
+            padding-left: 0.75rem !important;
+        }
+        
+        
+        .form-check-input {
+            width: 1.125rem;
+            height: 1.125rem;
+            margin-right: 0.625rem;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 5px !important;
+            background-color: #ffffff !important;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        
+        .form-check-input:hover {
+            border-color: #94a3b8 !important;
+        }
+        
+        .form-check-input:checked {
+            background-color: #4f46e5 !important;
+            border-color: #4f46e5 !important;
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e") !important;
+            background-size: 85% 85%;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--neon-cyan);
+            box-shadow: 0 0 30px rgba(0, 247, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                circle at center,
+                rgba(0, 247, 255, 0.3) 0%,
+                rgba(0, 0, 0, 0) 70%
+            );
+            animation: rotate 10s linear infinite;
+        }
+        
+        .logo-icon {
+            font-size: 3rem;
+            color: white;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 20px rgba(0, 247, 255, 0.7);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        /* Séparateur */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0 1.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .p-button-outlined {
+            background: rgba(0, 247, 255, 0.1) !important;
+            border: 1px solid var(--neon-cyan) !important;
+            color: var(--neon-cyan) !important;
+            transition: all 0.3s ease !important;
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .p-button-outlined::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 247, 255, 0.1),
+                transparent
+            );
+            transition: 0.5s;
+        }
+        
+        .p-button-outlined:hover::before {
+            left: 100%;
+        }
+        
+        .p-button {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border: none;
+            font-weight: 600;
+            color: white !important;
+            padding: 0.9375rem 1.5rem;
+            font-size: 1rem;
+            letter-spacing: 0.01em;
+            border-radius: 10px !important;
+            transition: all 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2), 0 2px 4px -1px rgba(79, 70, 229, 0.06);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .p-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        
+        .p-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3), 0 4px 6px -2px rgba(79, 70, 229, 0.1);
+        }
+        
+        .p-button:hover:before {
+            opacity: 1;
+        }
+        
+        .p-button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px 0 rgba(79, 70, 229, 0.2), 0 1px 2px 0 rgba(79, 70, 229, 0.1);
+        }
+        
+        .error-message {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            padding-left: 0.25rem;
+            background-color: #fef2f2;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+    </style>
+</h:head>
+<h:body class="login-container">
+    <!-- Carte de connexion simplifiée -->
+    <div class="login-card">
+        <h1>Bienvenue</h1>
+        <p style="text-align: center; color: #64748b; margin-top: -1.25rem; margin-bottom: 2rem; font-size: 0.95rem;">Connectez-vous à votre compte</p>
+        
+        <!-- Formulaire -->
+        <h:form id="loginForm" style="width: 100%;">
+            <!-- Messages d'erreur -->
+            <p:growl id="messages" showDetail="true" autoUpdate="true" />
+            
+            <!-- Champ Email -->
+            <div class="form-group">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-envelope"></i>
+                    </span>
+                    <p:inputText id="username" 
+                               value="#{loginBean.username}" 
+                               placeholder="Adresse email"
+                               required="true" 
+                               requiredMessage="L'email est requis"
+                               styleClass="p-inputtext"
+                               style="width: 100%;"/>
+                </div>
+                <p:message for="username" styleClass="error-message"/>
+            </div>
+            
+            <!-- Champ Mot de passe -->
+            <div class="form-group">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-lock"></i>
+                    </span>
+                    <p:password id="password" 
+                              value="#{loginBean.password}" 
+                              placeholder="Mot de passe"
+                              required="true" 
+                              requiredMessage="Le mot de passe est requis"
+                              feedback="false"
+                              toggleMask="true"
+                              styleClass="p-password-input"
+                              style="width: 100%;"/>
+                </div>
+                <p:message for="password" styleClass="error-message"/>
+            </div>
+            
+            <!-- Options -->
+            <div class="form-options">
+                <div class="form-check">
+                    <p:selectBooleanCheckbox id="remember" 
+                                          value="#{loginBean.rememberMe}" 
+                                          styleClass="form-check-input"/>
+                    <label for="loginForm:remember" class="form-check-label">Rester connecté</label>
+                </div>
+                <a href="#" class="forgot-link">Mot de passe oublié ?</a>
+            </div>
+            
+            <!-- Bouton de connexion -->
+            <div class="form-group" style="margin-top: 2.25rem; margin-bottom: 1.5rem;">
+                <p:commandButton value="Se connecter" 
+                              action="#{loginBean.login}" 
+                              styleClass="p-button"
+                              update="messages @form"
+                              process="@form"
+                              style="width: 100%;"/>
+            </div>
+            
+        </h:form>
+        
+        <!-- Effet de lueur -->
+        <div class="glow-effect"></div>
+    </div>
+    
+    <!-- Scripts -->
+    <h:outputScript library="primefaces" name="jquery/jquery.js" />
+    <!-- Script pour améliorations UX -->
+    <script>
+        // Auto-focus sur le premier champ
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const firstInput = document.querySelector('#loginForm\:username');
+                if (firstInput) {
+                    firstInput.focus();
+                }
+            }, 100);
+        });
+
+        // Enter key submission
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const form = document.getElementById('loginForm');
+                const button = form.querySelector('button[type="submit"]');
+                if (button) {
+                    button.click();
+                }
+            }
+        });
+
+        // Animation au chargement
+        const cards = document.querySelectorAll('.login-card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+    </script>
+</h:body>
+</html>

@@ -1,0 +1,799 @@
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:define name="title">Admin — Gestion des Horaires</ui:define>
+
+    <ui:define name="content">
+        <f:event type="preRenderView" listener="#{loginBean.checkAccess('ADMIN')}"/>
+        
+        <div class="admin-horaires-container">
+            <!-- Header Section -->
+            <div class="page-header">
+                <div class="header-content">
+                    <div class="header-title">
+                        <i class="pi pi-clock header-icon"></i>
+                        <div>
+                            <h1 class="page-title">Gestion des Horaires</h1>
+                            <p class="page-subtitle">Planifiez les horaires de travail par employé</p>
+                        </div>
+                    </div>
+                    <div class="header-stats">
+                        <div class="stat-card">
+                            <i class="pi pi-users stat-icon"></i>
+                            <div class="stat-info">
+                                <span class="stat-number">#{adminHoraireBean.employesPlanifiables.size()}</span>
+                                <span class="stat-label">Employés</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="horaires-content">
+                <!-- Toolbar Card -->
+                <div class="toolbar-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Filtres et Actions</h3>
+                        <p class="card-description">Filtrez par employé ou créez de nouveaux horaires</p>
+                    </div>
+
+                    <h:form id="toolbar">
+                        <p:messages id="msgs" showDetail="true" closable="true" 
+                                  styleClass="custom-growl"/>
+                        
+                        <div class="toolbar-content">
+                            <div class="filter-section">
+                                <div class="filter-group">
+                                    <label class="filter-label">Filtrer par employé</label>
+                                    <div class="filter-controls">
+                                        <p:selectOneMenu id="userFilter" value="#{adminHoraireBean.selectedUserId}" 
+                                                       styleClass="modern-select">
+                                            <f:converter converterId="nullableLong"/>
+                                            <f:selectItem itemLabel="Tous les employés" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{adminHoraireBean.employesPlanifiables}" var="u"
+                                                         itemLabel="#{u.login} (#{u.email})" itemValue="#{u.id}"/>
+                                        </p:selectOneMenu>
+                                        
+                                        <p:commandButton value="Appliquer" icon="pi pi-filter"
+                                                       action="#{adminHoraireBean.search}"
+                                                       process="@this userFilter"
+                                                       update="tableForm:horairesTable toolbar:msgs createForm"
+                                                       styleClass="filter-button"/>
+                                    </div>
+                                </div>
+                                
+                                <p:commandButton value="Nouvel horaire" icon="pi pi-plus"
+                                               action="#{adminHoraireBean.nouveau}"
+                                               update="createForm"
+                                               process="@this"
+                                               styleClass="create-button"/>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+
+                <!-- Creation Form Card -->
+                <h:form id="createForm">
+                <ui:fragment rendered="#{adminHoraireBean.showNew}">
+                <div class="creation-card" >
+                        <div class="card-header">
+                            <div class="card-title-section">
+                                <i class="pi pi-plus-circle card-icon"></i>
+                                <h3 class="card-title">
+                                    #{adminHoraireBean.editMode ? 'Modifier l\'horaire' : 'Nouvel Horaire'}
+                                </h3>
+                            </div>
+                            <p class="card-description">
+                                #{adminHoraireBean.editMode ? 
+                                  'Modifiez les détails de cet horaire' : 
+                                  'Créez un nouvel horaire pour un employé'}
+                            </p>
+                        </div>
+
+                        <div class="form-content">
+                            <div class="form-grid">
+                                <!-- Employé -->
+                                <div class="form-field">
+                                    <label class="field-label">
+                                        Employé
+                                        <span class="required-asterisk">*</span>
+                                    </label>
+                                    <p:selectOneMenu value="#{adminHoraireBean.selectedUserId}" 
+                                                   required="true" 
+                                                   styleClass="modern-select">
+                                        <f:selectItems value="#{adminHoraireBean.employesPlanifiables}" var="u"
+                                                     itemLabel="#{u.login}" itemValue="#{u.id}"/>
+                                    </p:selectOneMenu>
+                                </div>
+
+                                <!-- Jour de la semaine -->
+                                <div class="form-field">
+                                    <label class="field-label">Jour de la semaine</label>
+                                    <p:selectOneMenu value="#{adminHoraireBean.current.jourSemaine}" 
+                                                   styleClass="modern-select">
+                                        <f:selectItem itemLabel="Lundi" itemValue="1"/>
+                                        <f:selectItem itemLabel="Mardi" itemValue="2"/>
+                                        <f:selectItem itemLabel="Mercredi" itemValue="3"/>
+                                        <f:selectItem itemLabel="Jeudi" itemValue="4"/>
+                                        <f:selectItem itemLabel="Vendredi" itemValue="5"/>
+                                        <f:selectItem itemLabel="Samedi" itemValue="6"/>
+                                        <f:selectItem itemLabel="Dimanche" itemValue="7"/>
+                                    </p:selectOneMenu>
+                                </div>
+
+                                <!-- Heure de début -->
+                                <div class="form-field">
+                                    <label class="field-label">Heure de début</label>
+                                    <p:datePicker value="#{adminHoraireBean.current.heureDebut}" 
+                                                timeOnly="true" 
+                                                hourFormat="24"
+                                                styleClass="modern-datepicker"/>
+                                </div>
+
+                                <!-- Heure de fin -->
+                                <div class="form-field">
+                                    <label class="field-label">Heure de fin</label>
+                                    <p:datePicker value="#{adminHoraireBean.current.heureFin}" 
+                                                timeOnly="true" 
+                                                hourFormat="24"
+                                                styleClass="modern-datepicker"/>
+                                </div>
+
+                                <!-- Date de début -->
+                                <div class="form-field">
+                                    <label class="field-label">Date de début</label>
+                                    <p:datePicker value="#{adminHoraireBean.current.dateDebut}" 
+                                                pattern="dd/MM/yyyy" 
+                                                showIcon="true"
+                                                styleClass="modern-datepicker"/>
+                                </div>
+
+                                <!-- Date de fin -->
+                                <div class="form-field">
+                                    <label class="field-label">Date de fin</label>
+                                    <p:datePicker value="#{adminHoraireBean.current.dateFin}" 
+                                                pattern="dd/MM/yyyy" 
+                                                showIcon="true"
+                                                styleClass="modern-datepicker"/>
+                                </div>
+
+                                <!-- Statut actif -->
+                                <div class="form-field">
+                                    <label class="field-label">Statut</label>
+                                    <div class="toggle-section">
+                                        <p:selectBooleanCheckbox value="#{adminHoraireBean.current.actif}"
+                                                               styleClass="status-toggle"/>
+                                        <span class="toggle-label">
+                                            #{adminHoraireBean.current.actif ? 'Actif' : 'Inactif'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="form-actions">
+                                <p:commandButton value="Annuler"
+                                               action="#{adminHoraireBean.cancel}"
+                                               update="createForm"
+                                               styleClass="secondary"/>
+                                <p:commandButton value="#{adminHoraireBean.editMode ? 'Modifier' : 'Enregistrer'}"
+                                               icon="pi pi-check"
+                                               action="#{adminHoraireBean.save}"
+                                               update="toolbar:msgs tableForm:horairesTable createForm"
+                                               styleClass=" primary"/>
+                            </div>
+                        </div>
+                    </div>
+                </ui:fragment>
+                    
+                </h:form>
+
+                <!-- Horaires Table Card -->
+                <div class="table-card">
+                    <div class="card-header">
+                        <div class="card-title-section">
+                            <i class="pi pi-list card-icon"></i>
+                            <h3 class="card-title">Liste des Horaires</h3>
+                        </div>
+                        <p class="card-description">
+                            #{empty adminHoraireBean.selectedUserId ? 
+                              'Tous les horaires' : 
+                              'Horaires filtrés par employé'}
+                        </p>
+                    </div>
+
+                    <h:form id="tableForm">
+                        <div class="table-container">
+                            <p:dataTable id="horairesTable" value="#{adminHoraireBean.horaires}" var="h"
+                                       paginator="true" rows="35"
+                                       emptyMessage="Aucun horaire trouvé"
+                                       styleClass="modern-table"
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rowsPerPageTemplate="10,15,20,50">
+
+                                <!-- Employé -->
+                                <p:column headerText="Employé" sortBy="#{h.utilisateur.name}" 
+                                        style="width: 180px;">
+                                    <div class="employee-info">
+                                        <i class="pi pi-user employee-avatar"></i>
+                                        <div class="employee-details">
+                                            <span class="employee-name">#{h.utilisateur.name}</span>
+                                            <small class="employee-login">#{h.utilisateur.login}</small>
+                                        </div>
+                                    </div>
+                                </p:column>
+
+                                <!-- Jour -->
+                                <p:column headerText="Jour" sortBy="#{h.jourSemaine}" style="width: 100px;">
+                                    <div class="day-badge day-#{h.jourSemaine}">
+                                        #{h.jourSemaine==1?'LUN':h.jourSemaine==2?'MAR':h.jourSemaine==3?'MER':
+                                          h.jourSemaine==4?'JEU':h.jourSemaine==5?'VEN':h.jourSemaine==6?'SAM':'DIM'}
+                                    </div>
+                                </p:column>
+
+                                <!-- Horaires -->
+                                <p:column headerText="Horaires" style="width: 140px;">
+                                    <div class="time-slot">
+                                        <span class="time-start">#{h.heureDebut}</span>
+                                        <i class="pi pi-arrow-right time-separator"></i>
+                                        <span class="time-end">#{h.heureFin}</span>
+                                    </div>
+                                </p:column>
+
+                                <!-- Période -->
+                                <p:column headerText="Période" style="width: 200px;">
+                                    <div class="period-info">
+                                        <div class="period-dates">
+                                            <span class="date-item">
+                                                <i class="pi pi-calendar"></i>
+                                                #{empty h.dateDebut ? '—' : h.dateDebut}
+                                            </span>
+                                            <i class="pi pi-arrow-right period-separator"></i>
+                                            <span class="date-item">
+                                                <i class="pi pi-calendar"></i>
+                                                #{empty h.dateFin ? '—' : h.dateFin}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </p:column>
+
+                                <!-- Statut -->
+                                <p:column headerText="Statut" sortBy="#{h.actif}" style="width: 100px;">
+                                    <div class="status-indicator status-#{h.actif ? 'active' : 'inactive'}">
+                                        <i class="pi #{h.actif ? 'pi-check-circle' : 'pi-times-circle'}"></i>
+                                        <span>#{h.actif ? 'Actif' : 'Inactif'}</span>
+                                    </div>
+                                </p:column>
+
+                                <!-- Actions -->
+                                <p:column headerText="Actions" style="width: 120px;">
+                                    <div class="action-buttons">
+                                        <p:commandButton icon="pi pi-pencil" 
+                                                       title="Modifier"
+                                                       action="#{adminHoraireBean.edit(h.id)}"
+                                                       update="createForm"
+                                                       process="@this"
+                                                       styleClass="action-button edit-button"/>
+                                        <p:commandButton icon="pi pi-trash" 
+                                                       title="Supprimer"
+                                                       action="#{adminHoraireBean.delete(h.id)}"
+                                                       update="toolbar:msgs tableForm:horairesTable"
+                                                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet horaire ?')"
+                                                       styleClass="action-button delete-button"/>
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            /* CSS Variables */
+            :root {
+                --primary: #4361ee;
+                --primary-dark: #3a56d4;
+                --success: #28a745;
+                --warning: #ffc107;
+                --danger: #dc3545;
+                --dark: #2c3e50;
+                --light: #f8f9fa;
+                --border: #e9ecef;
+                --text: #495057;
+                --text-light: #6c757d;
+                --radius: 12px;
+                --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                --transition: all 0.3s ease;
+            }
+
+            /* Main Container */
+            .admin-horaires-container {
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 0 1rem;
+            }
+
+            /* Page Header */
+            .page-header {
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                color: white;
+                border-radius: var(--radius);
+                margin-bottom: 2rem;
+                overflow: hidden;
+            }
+
+            .header-content {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 2rem;
+            }
+
+            .header-title {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .header-icon {
+                font-size: 2.5rem;
+                opacity: 0.9;
+            }
+
+            .page-title {
+                font-size: 2rem;
+                font-weight: 700;
+                margin: 0;
+                color: white;
+            }
+
+            .page-subtitle {
+                opacity: 0.9;
+                margin: 0.5rem 0 0 0;
+                font-size: 1.1rem;
+            }
+
+            .header-stats {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .stat-card {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem 1.5rem;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: var(--radius);
+                backdrop-filter: blur(10px);
+            }
+
+            .stat-icon {
+                font-size: 1.5rem;
+                opacity: 0.9;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+                font-weight: 700;
+                display: block;
+            }
+
+            .stat-label {
+                font-size: 0.875rem;
+                opacity: 0.8;
+            }
+
+            /* Content Layout */
+            .horaires-content {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            /* Cards */
+            .toolbar-card, .creation-card, .table-card {
+                background: white;
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+                overflow: hidden;
+            }
+
+            .card-header {
+                padding: 1.5rem 2rem;
+                border-bottom: 1px solid var(--border);
+                background: var(--light);
+            }
+
+            .card-title-section {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .card-icon {
+                color: var(--primary);
+                font-size: 1.25rem;
+            }
+
+            .card-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: var(--dark);
+                margin: 0;
+            }
+
+            .card-description {
+                color: var(--text-light);
+                margin: 0;
+                font-size: 0.9rem;
+            }
+
+            /* Toolbar */
+            .toolbar-content {
+                padding: 1.5rem 2rem;
+            }
+
+            .filter-section {
+                display: flex;
+                justify-content: space-between;
+                align-items: end;
+                gap: 1rem;
+            }
+
+            .filter-group {
+                flex: 1;
+            }
+
+            .filter-label {
+                font-weight: 600;
+                color: var(--dark);
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+                display: block;
+            }
+
+            .filter-controls {
+                display: flex;
+                gap: 0.75rem;
+                align-items: center;
+            }
+
+            .modern-select {
+                width: 300px;
+            }
+
+            .filter-button {
+                background: var(--primary);
+                border: none;
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 6px;
+                font-weight: 500;
+                transition: var(--transition);
+            }
+
+            .filter-button:hover {
+                background: var(--primary-dark);
+            }
+
+            .create-button {
+                background: linear-gradient(135deg, var(--success), #218838);
+                border: none;
+                color: white;
+                padding: 0.75rem 1.5rem;
+                border-radius: 8px;
+                font-weight: 600;
+                transition: var(--transition);
+            }
+
+            .create-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            }
+
+            /* Creation Form */
+            .form-content {
+                padding: 2rem;
+            }
+
+            .form-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .form-field {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .field-label {
+                font-weight: 600;
+                color: var(--dark);
+                font-size: 0.9rem;
+            }
+
+            .required-asterisk {
+                color: var(--danger);
+            }
+
+            .modern-datepicker {
+                width: 100%;
+            }
+
+            .toggle-section {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 0.5rem 0;
+            }
+
+            .status-toggle {
+                transform: scale(1.2);
+            }
+
+            .toggle-label {
+                font-weight: 500;
+                color: var(--text);
+            }
+
+            .form-actions {
+                display: flex;
+                gap: 1rem;
+                justify-content: flex-end;
+                padding-top: 1.5rem;
+                border-top: 1px solid var(--border);
+            }
+
+            .action-button {
+                padding: 0.75rem 1.5rem;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                transition: var(--transition);
+                cursor: pointer;
+            }
+
+            .action-button.primary {
+                background: var(--primary);
+                color: white;
+            }
+
+            .action-button.primary:hover {
+                background: var(--primary-dark);
+            }
+
+            .action-button.secondary {
+                background: var(--light);
+                color: var(--text);
+                border: 1px solid var(--border);
+            }
+
+            .action-button.secondary:hover {
+                background: #e9ecef;
+            }
+
+            /* Table */
+            .table-container {
+                padding: 0;
+            }
+
+            .modern-table {
+                border: none;
+            }
+
+            .modern-table .ui-datatable-header {
+                background: transparent;
+                border: none;
+                padding: 0 2rem;
+            }
+
+            /* Employee Info */
+            .employee-info {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+
+            .employee-avatar {
+                width: 32px;
+                height: 32px;
+                background: var(--primary);
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.875rem;
+            }
+
+            .employee-details {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .employee-name {
+                font-weight: 600;
+                color: var(--dark);
+            }
+
+            .employee-login {
+                font-size: 0.8rem;
+                color: var(--text-light);
+            }
+
+            /* Day Badges */
+            .day-badge {
+                padding: 0.375rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                text-align: center;
+                text-transform: uppercase;
+            }
+
+            .day-1 { background: #e3f2fd; color: #1976d2; }
+            .day-2 { background: #f3e5f5; color: #7b1fa2; }
+            .day-3 { background: #e8f5e8; color: #388e3c; }
+            .day-4 { background: #fff3e0; color: #f57c00; }
+            .day-5 { background: #fce4ec; color: #c2185b; }
+            .day-6 { background: #e1f5fe; color: #0288d1; }
+            .day-7 { background: #f9fbe7; color: #afb42b; }
+
+            /* Time Slot */
+            .time-slot {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-weight: 500;
+            }
+
+            .time-separator {
+                color: var(--text-light);
+                font-size: 0.8rem;
+            }
+
+            /* Period Info */
+            .period-info {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .period-dates {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .date-item {
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
+                font-size: 0.85rem;
+                color: var(--text);
+            }
+
+            .date-item i {
+                color: var(--primary);
+            }
+
+            .period-separator {
+                color: var(--text-light);
+                font-size: 0.7rem;
+            }
+
+            /* Status Indicator */
+            .status-indicator {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.375rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .status-active {
+                background: #d4edda;
+                color: #155724;
+            }
+
+            .status-inactive {
+                background: #f8d7da;
+                color: #721c24;
+            }
+
+            /* Action Buttons */
+            .action-buttons {
+                display: flex;
+                gap: 0.5rem;
+            }
+
+            .action-button {
+                width: 32px;
+                height: 32px;
+                border: none;
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: var(--transition);
+            }
+
+            .edit-button {
+                background: var(--primary);
+                color: white;
+            }
+
+            .edit-button:hover {
+                background: var(--primary-dark);
+            }
+
+            .delete-button {
+                background: var(--danger);
+                color: white;
+            }
+
+            .delete-button:hover {
+                background: #c82333;
+            }
+
+            /* Growl Notifications */
+            .custom-growl {
+                position: relative !important;
+                top: auto !important;
+                right: auto !important;
+                width: 100%;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .header-content {
+                    flex-direction: column;
+                    gap: 1rem;
+                    text-align: center;
+                }
+
+                .header-title {
+                    flex-direction: column;
+                }
+
+                .filter-section {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                .filter-controls {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                .modern-select {
+                    width: 100%;
+                }
+
+                .form-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .form-content, .toolbar-content {
+                    padding: 1rem;
+                }
+
+                .card-header {
+                    padding: 1rem 1.5rem;
+                }
+            }
+        </style>
+    </ui:define>
+</ui:composition>

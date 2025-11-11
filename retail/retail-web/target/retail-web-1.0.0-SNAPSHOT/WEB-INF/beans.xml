@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- src/main/webapp/WEB-INF/beans.xml -->
+<beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+       bean-discovery-mode="annotated" version="2.0"/>
+

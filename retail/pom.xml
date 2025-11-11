@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.example</groupId>
+    <artifactId>retail</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>retail-ejb</module>
+        <module>retail-web</module>
+    </modules>
+    <properties>
+        <maven.compiler.release>11</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <javaxee.version>9.1.0</javaxee.version>
+        <primefaces.version>13.0.5</primefaces.version>
+        <spring.version>6.1.6</spring.version>
+        <spring.security.version>6.3.1</spring.security.version>
+        <hibernate.version>6.4.4.Final</hibernate.version>
+    </properties>
+</project>

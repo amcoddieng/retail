@@ -1,0 +1,196 @@
+
+:root {
+    --brand: #3b82f6;
+    --brand-contrast: #0b3b8f;
+    --bg: #ffffff;
+    --panel: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e5e7eb;
+    --focus: #22c55e;
+    --danger: #ef4444;
+    --warn: #f59e0b;
+    --radius: 16px;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --density: 12px; /* row height delta */
+}
+
+:root[data-theme="dark"] {
+    --bg: #0b1220;
+    --panel: #0f172a;
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+    --border: #1f2937;
+    --brand: #60a5fa;
+    --brand-contrast: #1d4ed8;
+    --focus: #34d399;
+}
+
+:root[data-density="compact"] {
+    --density: 4px;
+}
+
+:root[data-density="comfortable"] {
+    --density: 16px;
+}
+
+html, body {
+    background: var(--bg);
+    color: var(--text);
+}
+
+.p-panel, .p-card, .p-dialog, .p-toast, .p-datatable, .p-menubar, .p-toolbar {
+    border-radius: var(--radius);
+}
+
+/* Focus ring accessible */
+:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+/* Buttons */
+.p-button {
+    border-radius: 12px;
+}
+
+.p-button.p-button-primary {
+    background: var(--brand);
+    border-color: var(--brand-contrast);
+}
+
+.p-button.p-button-danger {
+    background: var(--danger);
+}
+
+/* DataTable density & empty state */
+.p-datatable .p-datatable-tbody > tr > td,
+.p-datatable .p-datatable-thead > tr > th {
+    padding: calc(8px + var(--density)) 12px;
+}
+
+.empty-state {
+    border: 1px dashed var(--border);
+    padding: var(--space-5);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    color: var(--muted);
+}
+
+.empty-state .icon {
+    font-size: 2rem;
+}
+
+.empty-state .cta {
+    margin-left: auto;
+}
+
+/* Command Palette */
+#cmdk {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 10vh;
+    background: rgba(0, 0, 0, .4);
+    z-index: 9999;
+}
+
+#cmdk.open {
+    display: flex;
+}
+
+#cmdk .panel {
+    width: min(720px, 92vw);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
+}
+
+#cmdk input {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 16px 20px;
+    background: transparent;
+    color: var(--text);
+    font-size: 1rem;
+}
+
+#cmdk ul {
+    max-height: 50vh;
+    overflow: auto;
+    margin: 0;
+    padding: 8px 0;
+    list-style: none;
+}
+
+#cmdk li {
+    padding: 10px 16px;
+    cursor: pointer;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+#cmdk li:hover, #cmdk li[aria-selected="true"] {
+    background: rgba(99, 102, 241, .12);
+}
+
+#cmdk small {
+    color: var(--muted);
+}
+
+/* Topbar toggles */
+.topbar-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.toggle {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+/* Ajuste la largeur sur petits écrans */
+/* Dégradé de fond doux */
+.app-gradient {
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(99,102,241,.15), transparent 60%),
+    radial-gradient(1000px 500px at 90% 0%, rgba(16,185,129,.15), transparent 60%),
+    linear-gradient(180deg, var(--surface-ground), var(--surface-ground));
+}
+
+/* Mode sombre rapide (bascule via .pf-dark) */
+.pf-dark, .pf-dark .surface-ground {
+    --surface-ground: #0f172a;
+    --surface-card: #111827;
+    --text-color: #e5e7eb;
+    color: var(--text-color);
+    background: var(--surface-ground);
+}
+.pf-dark .surface-card {
+    background: var(--surface-card);
+}
+.pf-dark .text-600 { color: #9ca3af !important; }
+
+/* Arrondis + ombre un peu plus “premium” */
+.border-round-2xl { border-radius: 1.25rem; }
+.shadow-4 { box-shadow: 0 10px 30px rgba(2, 8, 23, .15) !important; }
+
+/* Mobile: largeur fluide */
+@media (max-width: 480px) {
+    .sm\:w-26rem { width: 100% !important; }
+}

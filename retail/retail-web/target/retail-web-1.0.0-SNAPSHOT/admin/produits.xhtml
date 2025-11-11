@@ -1,0 +1,869 @@
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:define name="title">Admin — Gestion des Produits</ui:define>
+
+    <ui:define name="content">
+        <f:event type="preRenderView" listener="#{loginBean.checkAccess('ADMIN')}"/>
+
+        <div class="admin-produits-container">
+            <!-- Header Section -->
+            <div class="page-header">
+                <div class="header-content">
+                    <div class="header-title">
+                        <i class="pi pi-shopping-bag header-icon"></i>
+                        <div>
+                            <h1 class="page-title">Gestion des Produits</h1>
+                            <p class="page-subtitle">Créez et gérez le catalogue de produits</p>
+                        </div>
+                    </div>
+                    <div class="header-stats">
+                        <div class="stat-card">
+                            <i class="pi pi-box stat-icon"></i>
+                            <div class="stat-info">
+                                <span class="stat-number">#{adminProduitBean.produits.size()}</span>
+                                <span class="stat-label">Produits</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="produits-content">
+                <!-- Toolbar Card -->
+                <div class="toolbar-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Actions et Recherche</h3>
+                        <p class="card-description">Créez de nouveaux produits ou recherchez dans le catalogue</p>
+                    </div>
+
+                    <h:form id="toolbarForm">
+                        <p:messages id="msgs" showDetail="true" closable="true" 
+                                  styleClass="custom-growl"/>
+                        
+                        <div class="toolbar-content">
+                            <div class="toolbar-section">
+                                <p:commandButton value="Nouveau produit" icon="pi pi-plus"
+                                               action="#{adminProduitBean.nouveau}"
+                                               process="@this"
+                                               update="createForm toolbarForm:msgs"
+                                               styleClass="create-button"/>
+                                
+                               
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+
+                <!-- Creation/Edit Form Card -->
+                <h:form id="createForm" enctype="multipart/form-data">
+                <ui:fragment rendered="#{adminProduitBean.showNew or adminProduitBean.editMode}">
+                 <div class="creation-card" >
+                        <div class="card-header">
+                            <div class="card-title-section">
+                                <i class="pi #{adminProduitBean.editMode ? 'pi-pencil' : 'pi-plus-circle'} card-icon"></i>
+                                <h3 class="card-title">
+                                    #{adminProduitBean.editMode ? 'Modifier le produit' : 'Nouveau produit'}
+                                </h3>
+                            </div>
+                            <p class="card-description">
+                                #{adminProduitBean.editMode ? 
+                                  'Modifiez les informations du produit' : 
+                                  'Ajoutez un nouveau produit au catalogue'}
+                            </p>
+                        </div>
+
+                        <div class="form-content">
+                            <div class="form-grid">
+                                <!-- Libellé -->
+                                <div class="form-field">
+                                    <label class="field-label">
+                                        Nom du produit
+                                        <span class="required-asterisk">*</span>
+                                    </label>
+                                    <p:inputText value="#{adminProduitBean.current.libelle}"
+                                               required="true" requiredMessage="Le nom du produit est requis"
+                                               placeholder="Saisissez le nom du produit"
+                                               styleClass="modern-input"/>
+                                </div>
+
+                                <!-- Prix -->
+                                <div class="form-field">
+                                    <label class="field-label">
+                                        Prix (FCFA)
+                                        <span class="required-asterisk">*</span>
+                                    </label>
+                                    <p:inputNumber value="#{adminProduitBean.current.prix}"
+                                                 minValue="0" decimalPlaces="0"
+                                                 required="true" requiredMessage="Le prix est requis"
+                                                 placeholder="0"
+                                                 styleClass="modern-input"/>
+                                </div>
+
+                                <!-- Stock -->
+                                <div class="form-field">
+                                    <label class="field-label">
+                                        Stock disponible
+                                        <span class="required-asterisk">*</span>
+                                    </label>
+                                    <p:inputNumber value="#{adminProduitBean.current.stockDisponible}"
+                                                 minValue="0" decimalPlaces="0"
+                                                 required="true" requiredMessage="Le stock est requis"
+                                                 placeholder="0"
+                                                 styleClass="modern-input"/>
+                                </div>
+
+                                <!-- Famille -->
+                                <div class="form-field">
+                                    <label class="field-label">Famille</label>
+                                    <p:selectOneMenu value="#{adminProduitBean.familleId}" 
+                                                   styleClass="modern-select">
+                                        <f:selectItem itemLabel="Sélectionnez une famille" itemValue="#{null}"/>
+                                        <f:selectItems value="#{adminProduitBean.familles}" var="f"
+                                                     itemLabel="#{f.nom}" itemValue="#{f.id}"/>
+                                    </p:selectOneMenu>
+                                </div>
+
+                                <!-- Image Upload -->
+                                <div class="form-field full-width">
+                                    <label class="field-label">Image du produit</label>
+                                    <div class="upload-section">
+                                        <div class="upload-controls">
+                                            <p:fileUpload mode="advanced"
+                                                        auto="true"
+                                                        label="Choisir une image"
+                                                        uploadLabel="Téléverser"
+                                                        cancelLabel="Annuler"
+                                                        chooseLabel="Parcourir"
+                                                        sizeLimit="10242880"
+                                                        multiple="false"
+                                                        allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+                                                        listener="#{adminProduitBean.upload}"
+                                                        update="imagePreview toolbarForm:msgs"
+                                                        process="@this"
+                                                        styleClass="modern-upload"/>
+                                        </div>
+                                        
+                                        <div class="image-preview-section">
+                                            <p:outputPanel id="imagePreview">
+                                            <ui:fragment rendered="#{not empty adminProduitBean.getCurrentImageBase64()}">
+                                            <div class="image-preview" >
+                                                    <img src="#{adminProduitBean.getCurrentImageBase64()}"
+                                                         class="product-image"/>
+                                                    <div class="image-overlay">
+                                                        <span class="image-text">Aperçu</span>
+                                                    </div>
+                                                </div>
+                                            </ui:fragment>
+                                            <ui:fragment rendered="#{empty adminProduitBean.getCurrentImageBase64()}">
+                                             <div class="no-image" >
+                                                    <i class="pi pi-image no-image-icon"></i>
+                                                    <span class="no-image-text">Aucune image sélectionnée</span>
+                                                </div>
+                                            </ui:fragment>
+                                                
+                                               
+                                            </p:outputPanel>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="form-actions">
+                                <p:commandButton value="Annuler"
+                                               action="#{adminProduitBean.annuler}"
+                                               process="@this"
+                                               update="createForm"
+                                               immediate="true"
+                                               styleClass="secondary"/>
+                                <p:commandButton value="#{adminProduitBean.editMode ? 'Mettre à jour' : 'Enregistrer'}"
+                                               icon="pi pi-check"
+                                               action="#{adminProduitBean.save}"
+                                               process="@form"
+                                               update="toolbarForm:msgs tableForm:produitsTable createForm"
+                                               styleClass="primary"/>
+                            </div>
+                        </div>
+                    </div>
+                    </ui:fragment>
+                   
+                </h:form>
+
+                <!-- Products Table Card -->
+                <div class="table-card">
+                    <div class="card-header">
+                        <div class="card-title-section">
+                            <i class="pi pi-list card-icon"></i>
+                            <h3 class="card-title">Catalogue des Produits</h3>
+                        </div>
+                        <p class="card-description">
+                            Liste complète des produits disponibles
+                            #{not empty adminProduitBean.filteredProduits ? 
+                              ' (filtrés: ' += adminProduitBean.filteredProduits.size() += ')' : 
+                              ' (' += adminProduitBean.produits.size() += ')'}
+                        </p>
+                    </div>
+
+                    <h:form id="tableForm">
+                        <div class="table-container">
+                            <p:dataTable id="produitsTable" value="#{adminProduitBean.produits}" var="p"
+                                       widgetVar="produitsTable" paginator="true" rows="30"
+                                       emptyMessage="Aucun produit trouvé"
+                                       styleClass="modern-table"
+                                       globalFilter="globalFilter"
+                                       filteredValue="#{adminProduitBean.filteredProduits}"
+                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                       rowsPerPageTemplate="10,15,20,25">
+
+                                <!-- ID -->
+                                <p:column headerText="ID" sortBy="#{p.id}" style="width: 80px;">
+                                    <span class="product-id">##{p.id}</span>
+                                </p:column>
+
+                                <!-- Libellé -->
+                                <p:column headerText="Produit" sortBy="#{p.libelle}" filterBy="#{p.libelle}"
+                                        filterMatchMode="contains" style="min-width: 250px;">
+                                    <div class="product-info">
+                                        <div class="product-image-small">
+                                            <ui:fragment rendered="#{not empty p.image}">
+                                                <img src="#{p.image}" class="product-thumbnail"/>
+                                            </ui:fragment>
+                                            <ui:fragment rendered="#{empty p.image}">
+                                                <div class="product-thumbnail-placeholder">
+                                                    <i class="pi pi-image"></i>
+                                                </div>
+                                            </ui:fragment>
+                                        </div>
+                                        <div class="product-details">
+                                            <span class="product-name">#{p.libelle}</span>
+                                            <ui:fragment rendered="#{p.famille != null}">
+                                                <small class="product-family">#{p.famille.nom}</small>
+                                            </ui:fragment>
+                                        </div>
+                                    </div>
+                                </p:column>
+
+                                <!-- Prix -->
+                                <p:column headerText="Prix" sortBy="#{p.prix}" style="width: 120px;">
+                                    <div class="price-display">
+                                        <span class="price-amount">#{p.prix}</span>
+                                        <span class="price-currency">FCFA</span>
+                                    </div>
+                                </p:column>
+
+                                <!-- Stock -->
+                                <p:column headerText="Stock" sortBy="#{p.stockDisponible}" style="width: 120px;">
+                                    <div class="stock-indicator stock-#{p.stockDisponible gt 10 ? 'high' : (p.stockDisponible gt 0 ? 'medium' : 'low')}">
+                                        <i class="pi pi-box stock-icon"></i>
+                                        <span class="stock-count">#{p.stockDisponible}</span>
+                                        <div class="stock-label">
+                                            #{p.stockDisponible gt 10 ? 'Disponible' : (p.stockDisponible gt 0 ? 'Stock bas' : 'Rupture')}
+                                        </div>
+                                    </div>
+                                </p:column>
+
+                                <!-- Actions -->
+                                <p:column headerText="Actions" style="width: 120px;">
+                                    <div class="action-buttons">
+                                        <p:commandButton icon="pi pi-pencil" 
+                                                       title="Modifier"
+                                                       action="#{adminProduitBean.edit(p.id)}"
+                                                       process="@this"
+                                                       update="createForm toolbarForm:msgs"
+                                                       oncomplete="if(!args.validationFailed){ scrollToCreateForm(); }"
+                                                       styleClass="action-button edit-button"/>
+                                        <p:commandButton icon="pi pi-trash" 
+                                                       title="Supprimer"
+                                                       action="#{adminProduitBean.delete(p.id)}"
+                                                       process="@this"
+                                                       update="toolbarForm:msgs produitsTable"
+                                                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer le produit \\'#{p.libelle}\\' ?')"
+                                                       styleClass="action-button delete-button"/>
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            /* CSS Variables */
+            :root {
+                --primary: #4361ee;
+                --primary-dark: #3a56d4;
+                --success: #28a745;
+                --warning: #ffc107;
+                --danger: #dc3545;
+                --dark: #2c3e50;
+                --light: #f8f9fa;
+                --border: #e9ecef;
+                --text: #495057;
+                --text-light: #6c757d;
+                --radius: 12px;
+                --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                --transition: all 0.3s ease;
+            }
+
+            /* Main Container */
+            .admin-produits-container {
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 0 1rem;
+            }
+
+            /* Page Header */
+            .page-header {
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                color: white;
+                border-radius: var(--radius);
+                margin-bottom: 2rem;
+                overflow: hidden;
+            }
+
+            .header-content {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 2rem;
+            }
+
+            .header-title {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .header-icon {
+                font-size: 2.5rem;
+                opacity: 0.9;
+            }
+
+            .page-title {
+                font-size: 2rem;
+                font-weight: 700;
+                margin: 0;
+                color: white;
+            }
+
+            .page-subtitle {
+                opacity: 0.9;
+                margin: 0.5rem 0 0 0;
+                font-size: 1.1rem;
+            }
+
+            .header-stats {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .stat-card {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem 1.5rem;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: var(--radius);
+                backdrop-filter: blur(10px);
+            }
+
+            .stat-icon {
+                font-size: 1.5rem;
+                opacity: 0.9;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+                font-weight: 700;
+                display: block;
+            }
+
+            .stat-label {
+                font-size: 0.875rem;
+                opacity: 0.8;
+            }
+
+            /* Content Layout */
+            .produits-content {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            /* Cards */
+            .toolbar-card, .creation-card, .table-card {
+                background: white;
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+                overflow: hidden;
+            }
+
+            .card-header {
+                padding: 1.5rem 2rem;
+                border-bottom: 1px solid var(--border);
+                background: var(--light);
+            }
+
+            .card-title-section {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .card-icon {
+                color: var(--primary);
+                font-size: 1.25rem;
+            }
+
+            .card-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: var(--dark);
+                margin: 0;
+            }
+
+            .card-description {
+                color: var(--text-light);
+                margin: 0;
+                font-size: 0.9rem;
+            }
+
+            /* Toolbar */
+            .toolbar-content {
+                padding: 1.5rem 2rem;
+            }
+
+            .toolbar-section {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .create-button {
+                background: linear-gradient(135deg, var(--success), #218838);
+                border: none;
+                color: white;
+                padding: 0.75rem 1.5rem;
+                border-radius: 8px;
+                font-weight: 600;
+                transition: var(--transition);
+            }
+
+            .create-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            }
+
+            .search-section {
+                flex: 1;
+                max-width: 400px;
+            }
+
+            .search-input {
+                position: relative;
+            }
+
+            .search-icon {
+                position: absolute;
+                left: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-light);
+                z-index: 1;
+            }
+
+            .modern-search {
+                width: 100%;
+                padding: 0.75rem 1rem 0.75rem 2.5rem;
+                border: 2px solid var(--border);
+                border-radius: 8px;
+                font-size: 0.95rem;
+                transition: var(--transition);
+            }
+
+            .modern-search:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+                outline: none;
+            }
+
+            /* Creation Form */
+            .form-content {
+                padding: 2rem;
+            }
+
+            .form-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .form-field {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .full-width {
+                grid-column: 1 / -1;
+            }
+
+            .field-label {
+                font-weight: 600;
+                color: var(--dark);
+                font-size: 0.9rem;
+            }
+
+            .required-asterisk {
+                color: var(--danger);
+            }
+
+            .modern-input, .modern-select {
+                width: 100%;
+                
+                border: 2px solid var(--border);
+                border-radius: 8px;
+                font-size: 0.95rem;
+                transition: var(--transition);
+            }
+
+            .modern-input:focus, .modern-select:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+                outline: none;
+            }
+
+            /* Upload Section */
+            .upload-section {
+                display: flex;
+                gap: 2rem;
+                align-items: flex-start;
+            }
+
+            .upload-controls {
+                flex: 1;
+            }
+
+            .modern-upload {
+                width: 100%;
+            }
+
+            .image-preview-section {
+                flex: 0 0 200px;
+            }
+
+            .image-preview {
+                position: relative;
+                border: 2px dashed var(--border);
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
+            .product-image {
+                width: 100%;
+                height: 150px;
+                object-fit: cover;
+                display: block;
+            }
+
+            .image-overlay {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 0.5rem;
+                text-align: center;
+                font-size: 0.8rem;
+            }
+
+            .no-image {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 150px;
+                border: 2px dashed var(--border);
+                border-radius: 8px;
+                color: var(--text-light);
+            }
+
+            .no-image-icon {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .no-image-text {
+                font-size: 0.9rem;
+            }
+
+            /* Form Actions */
+            .form-actions {
+                display: flex;
+                gap: 1rem;
+                justify-content: flex-end;
+                padding-top: 1.5rem;
+                border-top: 1px solid var(--border);
+            }
+
+            .action-button {
+                padding: 0.75rem 1.5rem;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                transition: var(--transition);
+                cursor: pointer;
+            }
+
+            .action-button.primary {
+                background: var(--primary);
+                color: white;
+            }
+
+            .action-button.primary:hover {
+                background: var(--primary-dark);
+            }
+
+            .action-button.secondary {
+                background: var(--light);
+                color: var(--text);
+                border: 1px solid var(--border);
+            }
+
+            .action-button.secondary:hover {
+                background: #e9ecef;
+            }
+
+            /* Table */
+            .table-container {
+                padding: 0;
+            }
+
+            .modern-table {
+                border: none;
+            }
+
+            .modern-table .ui-datatable-header {
+                background: transparent;
+                border: none;
+                padding: 0 2rem;
+            }
+
+            /* Product Info in Table */
+            .product-info {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .product-image-small {
+                flex-shrink: 0;
+            }
+
+            .product-thumbnail {
+                width: 40px;
+                height: 40px;
+                border-radius: 6px;
+                object-fit: cover;
+                border: 1px solid var(--border);
+            }
+
+            .product-thumbnail-placeholder {
+                width: 40px;
+                height: 40px;
+                border-radius: 6px;
+                background: var(--light);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--text-light);
+                border: 1px solid var(--border);
+            }
+
+            .product-details {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .product-name {
+                font-weight: 600;
+                color: var(--dark);
+            }
+
+            .product-family {
+                color: var(--text-light);
+                font-size: 0.8rem;
+            }
+
+            .product-id {
+                color: var(--text-light);
+                font-weight: 600;
+                font-size: 0.85rem;
+            }
+
+            /* Price Display */
+            .price-display {
+                display: flex;
+                align-items: baseline;
+                gap: 0.25rem;
+            }
+
+            .price-amount {
+                font-weight: 700;
+                color: var(--dark);
+                font-size: 1rem;
+            }
+
+            .price-currency {
+                color: var(--text-light);
+                font-size: 0.8rem;
+            }
+
+            /* Stock Indicator */
+            .stock-indicator {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem;
+                border-radius: 6px;
+                font-size: 0.85rem;
+            }
+
+            .stock-high {
+                background: #e6f4ea;
+                color: #137333;
+            }
+
+            .stock-medium {
+                background: #fef7e0;
+                color: #b06000;
+            }
+
+            .stock-low {
+                background: #fce8e6;
+                color: #c5221f;
+            }
+
+            .stock-icon {
+                font-size: 1rem;
+            }
+
+            .stock-count {
+                font-weight: 700;
+            }
+
+            .stock-label {
+                font-size: 0.75rem;
+            }
+
+            /* Action Buttons */
+            .action-buttons {
+                display: flex;
+                gap: 0.5rem;
+            }
+
+            .action-button {
+                width: 32px;
+                height: 32px;
+                border: none;
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: var(--transition);
+            }
+
+            .edit-button {
+                background: var(--primary);
+                color: white;
+            }
+
+            .edit-button:hover {
+                background: var(--primary-dark);
+            }
+
+            .delete-button {
+                background: var(--danger);
+                color: white;
+            }
+
+            .delete-button:hover {
+                background: #c82333;
+            }
+
+            /* Growl Notifications */
+            .custom-growl {
+                position: relative !important;
+                top: auto !important;
+                right: auto !important;
+                width: 100%;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .header-content {
+                    flex-direction: column;
+                    gap: 1rem;
+                    text-align: center;
+                }
+
+                .header-title {
+                    flex-direction: column;
+                }
+
+                .toolbar-section {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                .search-section {
+                    max-width: none;
+                }
+
+                .upload-section {
+                    flex-direction: column;
+                }
+
+                .image-preview-section {
+                    flex: none;
+                    width: 100%;
+                }
+
+                .form-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .form-content, .toolbar-content {
+                    padding: 1rem;
+                }
+
+                .card-header {
+                    padding: 1rem 1.5rem;
+                }
+            }
+        </style>
+
+        <script>
+            function scrollToCreateForm() {
+                const el = document.querySelector('.creation-card');
+                if (el) {
+                    window.scrollTo({
+                        top: el.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        </script>
+    </ui:define>
+</ui:composition>

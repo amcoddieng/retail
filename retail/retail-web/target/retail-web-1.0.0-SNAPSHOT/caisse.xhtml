@@ -1,0 +1,1136 @@
+<ui:composition template="/WEB-INF/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:define name="title">Caisse - Point de Vente</ui:define>
+    <ui:define name="content">
+        <div class="caisse-container">
+            <!-- Header Section -->
+            <div class="page-header">
+                <div class="header-content">
+                    <div class="header-title">
+                        <i class="pi pi-credit-card header-icon"></i>
+                        <div>
+                            <h1 class="page-title">Point de Caisse</h1>
+                            <p class="page-subtitle">Gérez les transactions et encaissements</p>
+                        </div>
+                    </div>
+                    <div class="header-stats">
+                        <div class="stat-card">
+                            <i class="pi pi-clock stat-icon"></i>
+                            <div class="stat-info">
+                                <span class="stat-number">#{caisseBean.enAttente.size()}</span>
+                                <span class="stat-label">En attente</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="caisse-content">
+                <!-- Messages Global -->
+                <p:messages id="globalMsg" showDetail="true" closable="true" 
+                          styleClass="custom-growl" globalOnly="true"/>
+
+                <!-- Two Column Layout -->
+                <div class="caisse-grid">
+                    <!-- Left Column: Pending Orders -->
+                    <div class="left-column">
+                        <!-- Pending Orders Card -->
+                        <div class="pending-orders-card">
+                            <div class="card-header">
+                                <div class="card-title-section">
+                                    <i class="pi pi-shopping-bag card-icon"></i>
+                                    <h3 class="card-title">Commandes en Attente</h3>
+                                </div>
+                                <p class="card-description">Sélectionnez une commande pour procéder au paiement</p>
+                            </div>
+
+                            <h:form id="selectionForm">
+                                <p:messages id="selectionMsg" showDetail="true" closable="true"/>
+                                
+                                <div class="table-container">
+                                    <p:dataTable value="#{caisseBean.enAttente}" var="commande"
+							             emptyMessage="Aucune commande en attente de paiement"
+							             rowKey="#{commande.id}"
+							             styleClass="modern-table">
+
+                                        <p:column headerText="Commande" style="width: 120px">
+                                            <div class="order-id">
+                                                <i class="pi pi-hashtag"></i>
+                                                <span>##{commande.id}</span>
+                                            </div>
+                                        </p:column>
+
+                                        <p:column headerText="Client" style="min-width: 150px">
+                                            <div class="client-info">
+                                                <i class="pi pi-user client-icon"></i>
+                                                <span class="client-name">#{commande.client.login}</span>
+                                            </div>
+                                        </p:column>
+
+                                        <p:column headerText="Total" style="width: 120px">
+                                            <div class="order-total">
+                                                <span class="amount">#{commande.total}</span>
+                                                <span class="currency">FCFA</span>
+                                            </div>
+                                        </p:column>
+
+                                        <p:column headerText="Action" style="width: 100px">
+                                            <div class="action-buttons">
+                                                <p:commandButton value="Sélectionner"
+                                                               icon="pi pi-check"
+                                                               action="#{caisseBean.choisir(commande.id)}"
+                                                               process="@this"
+                                                               update=":paiementForm :detailForm selectionForm:selectionMsg :globalMsg"
+                                                               styleClass="select-button"/>
+                                            </div>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </h:form>
+                        </div>
+
+                        <!-- Order Details Card -->
+                        <h:form id="detailForm">
+                            <p:outputPanel id="detailPanel">
+                                <div class="order-details-card" rendered="#{caisseBean.commandeId != null}">
+                                    <div class="card-header">
+                                        <div class="card-title-section">
+                                            <i class="pi pi-list card-icon"></i>
+                                            <h3 class="card-title">Détails de la Commande ##{caisseBean.commandeId}</h3>
+                                        </div>
+                                        <p class="card-description">Articles et montant total</p>
+                                    </div>
+
+                                    <div class="order-content">
+                                        <div class="products-list">
+                                            <p:dataTable value="#{caisseBean.commandeSelectionnee.lignes}" var="ligne"
+                                                       rendered="#{caisseBean.commandeSelectionnee != null and not empty caisseBean.commandeSelectionnee.lignes}"
+                                                       styleClass="simple-table">
+                                                <p:column headerText="Produit" style="width: 60%">
+                                                    <div class="product-item">
+                                                        <i class="pi pi-box product-icon"></i>
+                                                        <span class="product-name">#{ligne.produit.libelle}</span>
+                                                    </div>
+                                                </p:column>
+
+                                                <p:column headerText="Qté" style="width: 20%">
+                                                    <div class="quantity-badge">
+                                                        <span class="quantity">#{ligne.quantite}</span>
+                                                    </div>
+                                                </p:column>
+
+                                                <p:column headerText="Prix" style="width: 20%">
+                                                    <div class="price-display">
+                                                        <span class="price">#{ligne.prixUnitaire}</span>
+                                                        <small>FCFA</small>
+                                                    </div>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </div>
+
+                                        <div class="order-total-section">
+                                            <div class="total-line">
+                                                <span class="total-label">Total à régler :</span>
+                                                <span class="total-amount">#{caisseBean.commandeSelectionnee.total} FCFA</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                        </h:form>
+                    </div>
+
+                    <!-- Right Column: Payment -->
+                    <div class="right-column">
+                        <h:form id="paiementForm">
+						    <p:messages id="paiementMsg" showDetail="true" closable="true"/>
+						
+						    <p:outputPanel id="paiementPanel">
+						        <div class="payment-card" rendered="#{caisseBean.commandeId != null}">
+						            <div class="card-header">
+						                <div class="card-title-section">
+						                    <i class="pi pi-credit-card card-icon"></i>
+						                    <h3 class="card-title">Paiement</h3>
+						                </div>
+						                <p class="card-description">Procédez à l'encaissement de la commande</p>
+						            </div>
+						
+						            <div class="payment-content">
+						                <!-- Infos -->
+						                <div class="payment-info">
+						                    <div class="info-row">
+						                        <div class="info-label"><i class="pi pi-hashtag"></i><span>Commande :</span></div>
+						                        <div class="info-value">##{caisseBean.commandeId}</div>
+						                    </div>
+						                    <div class="info-row">
+						                        <div class="info-label"><i class="pi pi-user"></i><span>Client :</span></div>
+						                        <div class="info-value">#{caisseBean.commandeSelectionnee.client.login}</div>
+						                    </div>
+						                    <div class="info-row total-row">
+						                        <div class="info-label"><i class="pi pi-wallet"></i><span>Montant total :</span></div>
+						                        <div class="info-value total-amount">#{caisseBean.commandeSelectionnee.total} FCFA</div>
+						                    </div>
+						                </div>
+						
+						                <!-- Saisie paiement -->
+						                <div class="payment-form">
+						                    <div class="form-field">
+						                        <label for="montantInput" class="field-label">
+						                            <i class="pi pi-money-bill"></i>
+						                            Montant reçu <span class="required-asterisk">*</span>
+						                        </label>
+						
+						                        <div class="form-input">
+												    <p:inputNumber id="montantInput"
+												                   value="#{caisseBean.montant}"
+												                   min="0"
+												                   decimalPlaces="0"
+												                   thousandSeparator=" "
+												                   decimalSeparator=","
+												                   locale="fr"            
+												                   required="true"
+												                   requiredMessage="Veuillez saisir le montant reçu"
+												                   styleClass="modern-input"
+												                   placeholder="0">
+												       
+												        <p:ajax event="blur"
+												                process="@this"
+												                update="changeSection paiementActions paiementMsg"/>
+												
+												      
+												        <p:ajax event="keyup"
+												                process="@this"
+												                update="changeSection paiementActions"
+												                delay="300"/>
+												    </p:inputNumber>
+												    <span class="input-suffix">FCFA</span>
+												</div>
+												<p:message for="montantInput"/>
+
+						                    </div>
+						
+						                    <!-- Monnaie à rendre -->
+						                    <p:outputPanel id="changeSection">
+						                        <div class="change-section">
+						                            <div class="change-display #{caisseBean.renduMonnaie >= 0 ? 'positive' : 'negative'}">
+						                                <div class="change-icon">
+						                                    <i class="pi #{caisseBean.renduMonnaie >= 0 ? 'pi-arrow-up-right' : 'pi-arrow-down-left'}"></i>
+						                                </div>
+						                                <div class="change-info">
+						                                    <span class="change-label">Monnaie à rendre</span>
+						                                    <span class="change-amount">#{caisseBean.renduMonnaie} FCFA</span>
+						                                </div>
+						                            </div>
+						                        </div>
+						                    </p:outputPanel>
+						
+						                    <!-- Actions -->
+						                    <p:outputPanel id="paiementActions">
+						                        <div class="payment-actions">
+						                            <p:commandButton value="Procéder à l'encaissement"
+						                                             icon="pi pi-credit-card"
+						                                             action="#{caisseBean.encaisser}"
+						                                             process="@form"
+						                                             update=":selectionForm :detailForm :paiementForm :globalMsg"
+						                                             styleClass="payment-button"
+						                                             disabled="#{empty caisseBean.commandeId or empty caisseBean.montant or caisseBean.renduMonnaie lt 0}"/>
+						
+						                            <p:commandButton value="Annuler"
+						                                             icon="pi pi-times"
+						                                             action="#{caisseBean.annulerSelection}"
+						                                             process="@this"
+						                                             update=":selectionForm :detailForm :paiementForm :globalMsg"
+						                                             styleClass="cancel-button"
+						                                             immediate="true"/>
+						                        </div>
+						                    </p:outputPanel>
+						                </div>
+						            </div>
+						        </div>
+						
+						        <!-- Etat vide -->
+						        <div class="empty-payment-card" rendered="#{caisseBean.commandeId == null}">
+						            <div class="empty-state">
+						                <div class="empty-icon"><i class="pi pi-shopping-cart"></i></div>
+						                <h3 class="empty-title">Aucune commande sélectionnée</h3>
+						                <p class="empty-description">Veuillez sélectionner une commande en attente pour procéder au paiement</p>
+						            </div>
+						        </div>
+						    </p:outputPanel>
+						</h:form>
+                        
+                    </div>
+                </div>
+
+                <!-- Daily Summary Card -->
+                <h:form id="summaryForm">
+                    <div class="summary-card">
+                        <div class="card-header">
+                            <div class="card-title-section">
+                                <i class="pi pi-chart-line card-icon"></i>
+                                <h3 class="card-title">Résumé de la Journée</h3>
+                            </div>
+                            <p class="card-description">Statistiques et performances du point de caisse</p>
+                        </div>
+
+                        <div class="summary-content">
+                            <div class="stats-grid">
+                                <div class="stat-item pending">
+                                    <div class="stat-icon">
+                                        <i class="pi pi-clock"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <span class="stat-number">#{caisseBean.enAttente.size()}</span>
+                                        <span class="stat-label">En attente</span>
+                                    </div>
+                                </div>
+
+                             
+                                <div class="stat-item revenue">
+                                    <div class="stat-icon">
+                                        <i class="pi pi-wallet"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <span class="stat-number">#{caisseBean.totalEnAttente}</span>
+                                        <span class="stat-label">Chiffre en attente</span>
+                                        <span class="stat-currency">FCFA</span>
+                                    </div>
+                                </div>
+
+                             
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+
+        <style>
+            /* CSS Variables - Design amélioré */
+            :root {
+                --primary: #4361ee;
+                --primary-dark: #3a56d4;
+                --primary-light: #eef2ff;
+                --success: #10b981;
+                --success-dark: #059669;
+                --warning: #f59e0b;
+                --danger: #ef4444;
+                --dark: #1f2937;
+                --light: #f8fafc;
+                --border: #e2e8f0;
+                --text: #374151;
+                --text-light: #6b7280;
+                --radius: 16px;
+                --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+                --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            /* Main Container */
+            .caisse-container {
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 0 1rem;
+            }
+
+            /* Page Header */
+            .page-header {
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                color: white;
+                border-radius: var(--radius);
+                margin-bottom: 2rem;
+                overflow: hidden;
+                box-shadow: var(--shadow);
+            }
+
+            .header-content {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 2.5rem 2rem;
+            }
+
+            .header-title {
+                display: flex;
+                align-items: center;
+                gap: 1.25rem;
+            }
+
+            .header-icon {
+                font-size: 3rem;
+                opacity: 0.9;
+                filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+            }
+
+            .page-title {
+                font-size: 2.25rem;
+                font-weight: 800;
+                margin: 0;
+                color: white;
+                letter-spacing: -0.025em;
+            }
+
+            .page-subtitle {
+                opacity: 0.9;
+                margin: 0.5rem 0 0 0;
+                font-size: 1.125rem;
+                font-weight: 400;
+            }
+
+            .header-stats {
+                display: flex;
+                gap: 1.5rem;
+            }
+
+            .stat-card {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1.25rem 1.75rem;
+                background: rgba(255, 255, 255, 0.15);
+                border-radius: var(--radius);
+                backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                transition: var(--transition);
+            }
+
+            .stat-card:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: translateY(-2px);
+            }
+
+            .stat-icon {
+                font-size: 1.75rem;
+                opacity: 0.9;
+            }
+
+            .stat-number {
+                font-size: 1.75rem;
+                font-weight: 800;
+                display: block;
+            }
+
+            .stat-label {
+                font-size: 0.875rem;
+                opacity: 0.8;
+                font-weight: 500;
+            }
+
+            /* Content Layout */
+            .caisse-content {
+                display: flex;
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            /* Two Column Grid */
+            .caisse-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+
+            /* Cards */
+            .pending-orders-card, .order-details-card, .payment-card, .empty-payment-card, .summary-card {
+                background: white;
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+                overflow: hidden;
+                border: 1px solid var(--border);
+                transition: var(--transition);
+            }
+
+            .pending-orders-card:hover, .order-details-card:hover, .payment-card:hover, .summary-card:hover {
+                box-shadow: var(--shadow-lg);
+                transform: translateY(-2px);
+            }
+
+            .card-header {
+                padding: 1.75rem 2rem;
+                border-bottom: 1px solid var(--border);
+                background: var(--light);
+            }
+
+            .card-title-section {
+                display: flex;
+                align-items: center;
+                gap: 0.875rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .card-icon {
+                color: var(--primary);
+                font-size: 1.375rem;
+            }
+
+            .card-title {
+                font-size: 1.375rem;
+                font-weight: 700;
+                color: var(--dark);
+                margin: 0;
+                letter-spacing: -0.025em;
+            }
+
+            .card-description {
+                color: var(--text-light);
+                margin: 0;
+                font-size: 0.95rem;
+                font-weight: 400;
+            }
+
+            /* Table Container */
+            .table-container {
+                padding: 0;
+            }
+
+            .modern-table {
+                border: none;
+            }
+
+            .modern-table .ui-datatable-header {
+                background: transparent;
+                border: none;
+                padding: 0 2rem;
+            }
+
+            /* Order ID */
+            .order-id {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-weight: 700;
+                color: var(--dark);
+                font-size: 0.95rem;
+            }
+
+            .order-id i {
+                color: var(--primary);
+            }
+
+            /* Client Info */
+            .client-info {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .client-icon {
+                color: var(--text-light);
+            }
+
+            .client-name {
+                font-weight: 500;
+                color: var(--dark);
+            }
+
+            /* Order Total */
+            .order-total {
+                display: flex;
+                align-items: baseline;
+                gap: 0.25rem;
+            }
+
+            .amount {
+                font-weight: 700;
+                color: var(--dark);
+                font-size: 1rem;
+            }
+
+            .currency {
+                color: var(--text-light);
+                font-size: 0.8rem;
+                font-weight: 500;
+            }
+
+            /* Action Buttons */
+            .action-buttons {
+                display: flex;
+                gap: 0.5rem;
+            }
+
+            .select-button {
+                background: linear-gradient(135deg, var(--success), var(--success-dark));
+                color: white;
+                border: none;
+                padding: 0.625rem 1.25rem;
+                border-radius: 10px;
+                font-weight: 600;
+                font-size: 0.85rem;
+                transition: var(--transition);
+                cursor: pointer;
+                box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+            }
+
+            .select-button:hover {
+                background: linear-gradient(135deg, var(--success-dark), #047857);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
+            }
+
+            /* Order Details */
+            .order-content {
+                padding: 1.75rem 2rem;
+            }
+
+            .simple-table {
+                border: none;
+            }
+
+            .simple-table .ui-datatable-header {
+                display: none;
+            }
+
+            .product-item {
+                display: flex;
+                align-items: center;
+                gap: 0.875rem;
+            }
+
+            .product-icon {
+                color: var(--primary);
+                font-size: 1.125rem;
+            }
+
+            .product-name {
+                font-weight: 500;
+                color: var(--dark);
+            }
+
+            .quantity-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.25rem;
+                padding: 0.375rem 0.75rem;
+                background: var(--primary-light);
+                border-radius: 12px;
+                font-weight: 600;
+                font-size: 0.85rem;
+                color: var(--primary);
+                border: 1px solid var(--border);
+            }
+
+            .quantity {
+                color: var(--primary);
+            }
+
+            .price-display {
+                display: flex;
+                align-items: baseline;
+                gap: 0.25rem;
+            }
+
+            .price {
+                font-weight: 600;
+                color: var(--dark);
+                font-size: 0.95rem;
+            }
+
+            .price-display small {
+                color: var(--text-light);
+                font-size: 0.75rem;
+            }
+
+            .order-total-section {
+                margin-top: 1.75rem;
+                padding-top: 1.25rem;
+                border-top: 2px solid var(--border);
+            }
+
+            .total-line {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .total-label {
+                font-weight: 600;
+                color: var(--dark);
+                font-size: 1.125rem;
+            }
+
+            .total-amount {
+                font-weight: 800;
+                color: var(--success);
+                font-size: 1.375rem;
+            }
+
+            /* Payment Content */
+            .payment-content {
+                padding: 2rem;
+            }
+
+            .payment-info {
+                margin-bottom: 2rem;
+                padding: 1.75rem;
+                background: var(--light);
+                border-radius: var(--radius);
+                border: 1px solid var(--border);
+            }
+
+            .info-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.875rem 0;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .info-row:last-child {
+                border-bottom: none;
+            }
+
+            .info-label {
+                display: flex;
+                align-items: center;
+                gap: 0.625rem;
+                font-weight: 600;
+                color: var(--dark);
+                font-size: 0.95rem;
+            }
+
+            .info-label i {
+                color: var(--primary);
+                font-size: 1.125rem;
+            }
+
+            .info-value {
+                font-weight: 500;
+                color: var(--text);
+                font-size: 0.95rem;
+            }
+
+            .total-row {
+                background: #f0fdf4;
+                margin: 0 -1.75rem -1.75rem;
+                padding: 1.25rem 1.75rem;
+                border-radius: 0 0 var(--radius) var(--radius);
+                border-bottom: none;
+                border-top: 1px solid #dcfce7;
+            }
+
+            .total-row .info-value {
+                font-weight: 800;
+                color: var(--success);
+                font-size: 1.25rem;
+            }
+
+            /* Payment Form */
+            .payment-form {
+                display: flex;
+                flex-direction: column;
+                gap: 1.75rem;
+            }
+
+            .form-field {
+                display: flex;
+                flex-direction: column;
+                gap: 0.625rem;
+            }
+
+            .field-label {
+                display: flex;
+                align-items: center;
+                gap: 0.625rem;
+                font-weight: 600;
+                color: var(--dark);
+                font-size: 0.95rem;
+            }
+
+            .field-label i {
+                color: var(--primary);
+                font-size: 1.125rem;
+            }
+
+            .required-asterisk {
+                color: var(--danger);
+                font-weight: 700;
+            }
+
+            .form-input {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+
+            .modern-input {
+                width: 100%;
+                padding: 0.875rem 1rem;
+                border: 2px solid var(--border);
+                border-radius: 12px;
+                font-size: 1.125rem;
+                font-weight: 600;
+                transition: var(--transition);
+                background: var(--light);
+            }
+
+            .modern-input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+                outline: none;
+                background: white;
+            }
+
+            .input-suffix {
+                position: absolute;
+                right: 1rem;
+                color: var(--text-light);
+                font-weight: 600;
+                font-size: 0.95rem;
+            }
+
+            /* Change Section */
+            .change-section {
+                margin: 1.25rem 0;
+            }
+
+            .change-display {
+                display: flex;
+                align-items: center;
+                gap: 1.25rem;
+                padding: 1.75rem;
+                border-radius: var(--radius);
+                transition: var(--transition);
+                border: 2px solid transparent;
+            }
+
+            .change-display.positive {
+                background: #f0fdf4;
+                border-color: var(--success);
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+            }
+
+            .change-display.negative {
+                background: #fef2f2;
+                border-color: var(--danger);
+                box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+            }
+
+            .change-icon {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                transition: var(--transition);
+            }
+
+            .change-display.positive .change-icon {
+                background: linear-gradient(135deg, var(--success), var(--success-dark));
+                color: white;
+                box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+            }
+
+            .change-display.negative .change-icon {
+                background: linear-gradient(135deg, var(--danger), #dc2626);
+                color: white;
+                box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+            }
+
+            .change-info {
+                flex: 1;
+            }
+
+            .change-label {
+                display: block;
+                font-size: 0.95rem;
+                color: var(--text-light);
+                margin-bottom: 0.375rem;
+                font-weight: 500;
+            }
+
+            .change-amount {
+                display: block;
+                font-size: 1.75rem;
+                font-weight: 800;
+                letter-spacing: -0.025em;
+            }
+
+            .change-display.positive .change-amount {
+                color: var(--success);
+            }
+
+            .change-display.negative .change-amount {
+                color: var(--danger);
+            }
+
+            /* Payment Actions */
+            .payment-actions {
+                margin-top: 1.25rem;
+                display: flex;
+                gap: 1rem;
+            }
+
+            .payment-button {
+                flex: 2;
+                background: linear-gradient(135deg, var(--success), var(--success-dark));
+                border: none;
+                color: white;
+                padding: 1.125rem 2rem;
+                border-radius: 12px;
+                font-weight: 700;
+                font-size: 1.125rem;
+                transition: var(--transition);
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            }
+
+            .payment-button:hover:not(:disabled) {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+            }
+
+            .payment-button:disabled {
+                background: var(--text-light);
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+            }
+
+            .cancel-button {
+                flex: 1;
+                background: linear-gradient(135deg, var(--text-light), #9ca3af);
+                border: none;
+                color: white;
+                padding: 1.125rem 1.5rem;
+                border-radius: 12px;
+                font-weight: 600;
+                font-size: 1rem;
+                transition: var(--transition);
+            }
+
+            .cancel-button:hover {
+                background: linear-gradient(135deg, #9ca3af, #6b7280);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+            }
+
+            /* Empty State */
+            .empty-state {
+                text-align: center;
+                padding: 4rem 2rem;
+                color: var(--text-light);
+            }
+
+            .empty-icon {
+                font-size: 4.5rem;
+                color: var(--border);
+                margin-bottom: 1.75rem;
+                opacity: 0.5;
+            }
+
+            .empty-title {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--dark);
+                margin-bottom: 0.75rem;
+                letter-spacing: -0.025em;
+            }
+
+            .empty-description {
+                font-size: 1.05rem;
+                max-width: 300px;
+                margin: 0 auto;
+                line-height: 1.5;
+            }
+
+            /* Summary Stats */
+            .summary-content {
+                padding: 2rem;
+            }
+
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.75rem;
+            }
+
+            .stat-item {
+                display: flex;
+                align-items: center;
+                gap: 1.25rem;
+                padding: 1.75rem;
+                border-radius: var(--radius);
+                background: var(--light);
+                transition: var(--transition);
+                border-left: 4px solid transparent;
+            }
+
+            .stat-item:hover {
+                transform: translateY(-3px);
+                box-shadow: var(--shadow-lg);
+            }
+
+            .stat-item.pending {
+                border-left-color: var(--warning);
+                background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            }
+
+            .stat-item.paid {
+                border-left-color: var(--success);
+                background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            }
+
+            .stat-item.revenue {
+                border-left-color: var(--primary);
+                background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+            }
+
+            .stat-item.collected {
+                border-left-color: var(--danger);
+                background: linear-gradient(135deg, #fef2f2, #fecaca);
+            }
+
+            .stat-icon {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.375rem;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .stat-item.pending .stat-icon {
+                background: linear-gradient(135deg, var(--warning), #d97706);
+                color: white;
+            }
+
+            .stat-item.paid .stat-icon {
+                background: linear-gradient(135deg, var(--success), var(--success-dark));
+                color: white;
+            }
+
+            .stat-item.revenue .stat-icon {
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                color: white;
+            }
+
+            .stat-item.collected .stat-icon {
+                background: linear-gradient(135deg, var(--danger), #dc2626);
+                color: white;
+            }
+
+            .stat-info {
+                flex: 1;
+            }
+
+            .stat-number {
+                font-size: 1.875rem;
+                font-weight: 800;
+                display: block;
+                color: var(--dark);
+                letter-spacing: -0.025em;
+            }
+
+            .stat-label {
+                font-size: 0.95rem;
+                color: var(--text-light);
+                display: block;
+                font-weight: 500;
+            }
+
+            .stat-currency {
+                font-size: 0.85rem;
+                color: var(--text-light);
+                margin-left: 0.25rem;
+                font-weight: 500;
+            }
+
+            /* Growl Notifications */
+            .custom-growl {
+                position: relative !important;
+                top: auto !important;
+                right: auto !important;
+                width: 100%;
+            }
+
+            /* Responsive */
+            @media (max-width: 1200px) {
+                .caisse-grid {
+                    grid-template-columns: 1fr;
+                    gap: 1.5rem;
+                }
+
+                .stats-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            @media (max-width: 768px) {
+                .header-content {
+                    flex-direction: column;
+                    gap: 1.5rem;
+                    text-align: center;
+                    padding: 2rem 1.5rem;
+                }
+
+                .header-title {
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+
+                .header-icon {
+                    font-size: 2.5rem;
+                }
+
+                .page-title {
+                    font-size: 2rem;
+                }
+
+                .stats-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .card-header {
+                    padding: 1.25rem 1.5rem;
+                }
+
+                .payment-content, .order-content {
+                    padding: 1.5rem;
+                }
+
+                .change-display {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 1rem;
+                    padding: 1.5rem;
+                }
+
+                .payment-actions {
+                    flex-direction: column;
+                }
+
+                .stat-item {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 1rem;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .caisse-container {
+                    padding: 0 0.5rem;
+                }
+
+                .header-content {
+                    padding: 1.5rem 1rem;
+                }
+
+                .card-header {
+                    padding: 1rem 1.25rem;
+                }
+
+                .payment-content, .order-content {
+                    padding: 1rem;
+                }
+            }
+        </style>
+    </ui:define>
+</ui:composition>

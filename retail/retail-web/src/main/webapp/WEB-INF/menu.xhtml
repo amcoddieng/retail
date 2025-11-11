@@ -1,0 +1,447 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:form id="menuForm">
+        <!-- Header Utilisateur Connecté -->
+        <p:outputPanel rendered="#{loginBean.userLoggedIn}">
+            <div class="user-card">
+                <div class="user-avatar">
+                    <i class="pi pi-user"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-name">#{loginBean.name}</div>
+                    <div class="user-role">
+                        <span class="role-badge role-#{loginBean.admin ? 'admin' :
+                            loginBean.gerant ? 'gerant' :
+                            loginBean.fournisseur ? 'fournisseur' :
+                            loginBean.logistique ? 'logistique' :
+                            loginBean.gestionnaire ? 'gestionnaire' :
+                            loginBean.gardien ? 'gardien' :
+                            loginBean.livreur ? 'livreur' :
+                            loginBean.caissier ? 'caissier' : 'client'}">
+                            #{loginBean.admin ? 'Administrateur' :
+                              loginBean.gerant ? 'Gérant' :
+                              loginBean.fournisseur ? 'Fournisseur' :
+                              loginBean.logistique ? 'Logistique' :
+                              loginBean.gestionnaire ? 'Gestionnaire' :
+                              loginBean.gardien ? 'Gardien' :
+                              loginBean.livreur ? 'Livreur' :
+                              loginBean.caissier ? 'Caissier' : 'Client'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </p:outputPanel>
+
+        <!-- Header Visiteur -->
+        <p:outputPanel rendered="#{not loginBean.userLoggedIn}">
+            <div class="user-card visitor">
+                <div class="user-avatar">
+                    <i class="pi pi-user"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-name">Visiteur</div>
+                    <div class="user-role">Connectez-vous pour commander</div>
+                    <h:link outcome="/inscription.xhtml" styleClass="register-link">
+                        <i class="pi pi-user-plus"></i>
+                        Créer un compte
+                    </h:link>
+                </div>
+            </div>
+        </p:outputPanel>
+
+        <!-- Menu Navigation -->
+        <div class="nav-container">
+
+            <!-- Accueil (visiteur) -->
+            <ui:fragment rendered="#{not loginBean.userLoggedIn}">
+                <div class="nav-section">
+                    <div class="nav-header">
+                        <i class="pi pi-home"></i>
+                        <span>Accueil</span>
+                    </div>
+                    <div class="nav-items">
+                        <h:link outcome="/index.xhtml" styleClass="nav-item">
+                            <i class="pi pi-th-large"></i>
+                            <span>Catalogue</span>
+                        </h:link>
+                        <h:link outcome="/login.xhtml" styleClass="nav-item">
+                            <i class="pi pi-sign-in"></i>
+                            <span>Connexion</span>
+                        </h:link>
+                    </div>
+                </div>
+            </ui:fragment>
+
+            <!-- Accueil (connecté) -->
+            <ui:fragment rendered="#{loginBean.userLoggedIn and (loginBean.caissier or loginBean.gerant or loginBean.gestionnaire)}">
+                <div class="nav-section">
+                    <div class="nav-header">
+                        <i class="pi pi-home"></i>
+                        <span>Accueil</span>
+                    </div>
+                    <div class="nav-items">
+                        <h:link outcome="/home.xhtml" styleClass="nav-item">
+                            <i class="pi pi-chart-line"></i>
+                            <span>Tableau de bord</span>
+                        </h:link>
+                    </div>
+                </div>
+            </ui:fragment>
+
+            <!-- Boutique & Vente -->
+            <ui:fragment rendered="#{loginBean.userLoggedIn and (loginBean.caissier or loginBean.gerant or loginBean.gestionnaire or loginBean.client)}">
+                <div class="nav-section">
+                    <div class="nav-header">
+                        <i class="pi pi-shopping-cart"></i>
+                        <span>Boutique &amp; Vente</span>
+                    </div>
+                    <div class="nav-items">
+                        <h:link outcome="/index.xhtml" styleClass="nav-item"
+                                rendered="#{loginBean.userLoggedIn and (loginBean.caissier or loginBean.gerant or loginBean.gestionnaire or loginBean.client)}">
+                            <i class="pi pi-th-large"></i>
+                            <span>Catalogue produits</span>
+                        </h:link>
+
+                        <h:link outcome="/mes-commandes.xhtml" styleClass="nav-item"
+                                rendered="#{loginBean.userLoggedIn and loginBean.client}">
+                            <i class="pi pi-shopping-bag"></i>
+                            <span>Mes commandes</span>
+                        </h:link>
+
+                        <h:link outcome="/caisse.xhtml" styleClass="nav-item"
+                                rendered="#{loginBean.userLoggedIn and (loginBean.caissier)}">
+                            <i class="pi pi-credit-card"></i>
+                            <span>Point de caisse</span>
+                        </h:link>
+                    </div>
+                </div>
+            </ui:fragment>
+
+            <!-- Logistique & Stock -->
+            <ui:fragment rendered="#{loginBean.userLoggedIn and (loginBean.logistique or loginBean.gerant or loginBean.gestionnaire or loginBean.livreur)}">
+                <div class="nav-section">
+                    <div class="nav-header">
+                        <i class="pi pi-truck"></i>
+                        <span>Logistique &amp; Stock</span>
+                    </div>
+                    <div class="nav-items">
+                        <h:link outcome="/logistique/lots-reception.xhtml" styleClass="nav-item"
+                                rendered="#{loginBean.logistique or loginBean.gerant or loginBean.gestionnaire}">
+                            <i class="pi pi-inbox"></i>
+                            <span>Contrôle des lots</span>
+                        </h:link>
+
+                        <h:link outcome="/stock.xhtml" styleClass="nav-item"
+                                rendered="#{loginBean.logistique or loginBean.gerant or loginBean.gestionnaire or loginBean.caissier}">
+                            <i class="pi pi-box"></i>
+                            <span>Gestion du stock</span>
+                        </h:link>
+
+                        <h:link outcome="/livraisons.xhtml" styleClass="nav-item"
+                                rendered="#{loginBean.gerant or loginBean.gestionnaire or loginBean.caissier or loginBean.client or loginBean.livreur}">
+                            <i class="pi pi-map-marker"></i>
+                            <span>Suivi des livraisons</span>
+                        </h:link>
+                    </div>
+                </div>
+            </ui:fragment>
+
+            <!-- Espace Fournisseur -->
+            <ui:fragment rendered="#{loginBean.userLoggedIn and loginBean.fournisseur}">
+                <div class="nav-section">
+                    <div class="nav-header">
+                        <i class="pi pi-briefcase"></i>
+                        <span>Espace Fournisseur</span>
+                    </div>
+                    <div class="nav-items">
+                        <h:link outcome="/fournisseur/lots.xhtml" styleClass="nav-item">
+                            <i class="pi pi-palette"></i>
+                            <span>Approvisionnement</span>
+                        </h:link>
+                    </div>
+                </div>
+            </ui:fragment>
+
+            <!-- Gestion -->
+            <ui:fragment rendered="#{loginBean.userLoggedIn and (loginBean.gerant or loginBean.gestionnaire)}">
+                <div class="nav-section">
+                    <div class="nav-header">
+                        <i class="pi pi-chart-bar"></i>
+                        <span>Gestion</span>
+                    </div>
+                    <div class="nav-items">
+                        <h:link outcome="/gerant/supervision.xhtml" styleClass="nav-item">
+                            <i class="pi pi-users"></i>
+                            <span>Supervision RH</span>
+                        </h:link>
+                    </div>
+                </div>
+            </ui:fragment>
+
+            <!-- Administration -->
+            <ui:fragment rendered="#{loginBean.userLoggedIn and loginBean.admin}">
+                <div class="nav-section admin-section">
+                    <div class="nav-header">
+                        <i class="pi pi-cog"></i>
+                        <span>Administration</span>
+                    </div>
+                    <div class="nav-items">
+                        <h:link outcome="/admin/horaires.xhtml" styleClass="nav-item">
+                            <i class="pi pi-clock"></i>
+                            <span>Horaire</span>
+                        </h:link>
+                        <h:link outcome="/admin/produits.xhtml" styleClass="nav-item">
+                            <i class="pi pi-tags"></i>
+                            <span>Gestion des produits</span>
+                        </h:link>
+                        <h:link outcome="/admin/catalogues.xhtml" styleClass="nav-item">
+                            <i class="pi pi-sitemap"></i>
+                            <span>Gestion des catalogues</span>
+                        </h:link>
+                        <h:link outcome="/admin/familles.xhtml" styleClass="nav-item">
+                            <i class="pi pi-sitemap"></i>
+                            <span>Gestion des familles</span>
+                        </h:link>
+                        <h:link outcome="/admin/utilisateurs.xhtml" styleClass="nav-item">
+                            <i class="pi pi-shield"></i>
+                            <span>Utilisateurs &amp; Rôles</span>
+                        </h:link>
+                    </div>
+                </div>
+            </ui:fragment>
+        </div>
+
+        <!-- Footer -->
+        <div class="menu-footer">
+            <div class="app-version">
+                <i class="pi pi-star-fill"></i>
+                <span>Retail v1.0</span>
+            </div>
+        </div>
+    </h:form>
+
+    <style>
+        /* Variables */
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --dark: #343a40;
+            --light: #f8f9fa;
+            --border: #e9ecef;
+            --text: #495057;
+            --text-light: #6c757d;
+            --admin-bg: #fff5f5;
+            --admin-text: #c53030;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+        }
+
+        /* User Card */
+        .user-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .user-card.visitor {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-role {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .register-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .register-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            text-decoration: none;
+            color: white;
+        }
+
+        /* Role Badges */
+        .role-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .role-admin { background: var(--danger); color: white; }
+        .role-gerant { background: var(--warning); color: var(--dark); }
+        .role-gestionnaire { background: var(--info); color: white; }
+        .role-fournisseur { background: #8b5cf6; color: white; }
+        .role-logistique { background: #06b6d4; color: white; }
+        .role-caissier { background: #10b981; color: white; }
+        .role-livreur { background: #f59e0b; color: white; }
+        .role-gardien { background: #6b7280; color: white; }
+        .role-client { background: var(--success); color: white; }
+
+        /* Navigation */
+        .nav-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-section {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-section.admin-section {
+            border-left: 4px solid var(--danger);
+        }
+
+        .nav-header {
+            background: var(--light);
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-header i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .admin-section .nav-header i {
+            color: var(--danger);
+        }
+
+        .nav-items {
+            padding: 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-item:last-child { margin-bottom: 0; }
+
+        .nav-item:hover {
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-item:hover i { color: white; }
+
+        .nav-item i {
+            color: var(--text-light);
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Footer */
+        .menu-footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .app-version {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--light);
+            color: var(--text-light);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .app-version i { color: var(--warning); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .user-card { flex-direction: column; text-align: center; padding: 1.25rem; }
+            .user-details { width: 100%; }
+            .nav-header { padding: 0.875rem 1rem; font-size: 0.95rem; }
+            .nav-item { padding: 0.625rem 0.875rem; font-size: 0.9rem; }
+        }
+
+        /* Scroll personnalisé */
+        .nav-items::-webkit-scrollbar { width: 4px; }
+        .nav-items::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .nav-items::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
+        .nav-items::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+    </style>
+</ui:composition>
