@@ -17,7 +17,7 @@ public class StockService {
 
     @PersistenceContext
     EntityManager em;
-
+ 
     /** Pour la table et le selectOneMenu */
 
     public List<Produit> listProduits() {

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>Gestion des caissiers - #{boutiqueBean.boutique.nom}</title>
+</h:head>
+
+<h:body>
+    <h:form id="form">
+        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+        
+        <p:panel header="Gestion des caissiers - #{boutiqueBean.boutique.nom}" style="margin-bottom: 20px">
+            <h:panelGrid columns="2" style="width: 100%; margin-bottom: 20px">
+                <p:outputLabel for="caissier" value="Ajouter un caissier" />
+                <p:selectOneMenu id="caissier" value="#{boutiqueBean.selectedCaissierId}" style="width: 300px">
+                    <f:selectItem itemLabel="Sélectionner un caissier" itemValue="" />
+                    <f:selectItems value="#{boutiqueBean.availableCaissiers}" var="caissier" 
+                                 itemLabel="#{caissier.name} (#{caissier.login})" itemValue="#{caissier.id}" />
+                </p:selectOneMenu>
+                
+                <p:commandButton value="Ajouter" action="#{boutiqueBean.ajouterCaissier}" update="@form" 
+                               style="margin-top: 5px" icon="pi pi-user-plus" />
+            </h:panelGrid>
+            
+            <p:dataTable id="caissiersTable" value="#{boutiqueBean.boutique.caissiers}" var="caissier" 
+                        paginator="true" rows="10" paginatorPosition="bottom" 
+                        emptyMessage="Aucun caissier trouvé" style="margin-top: 20px">
+                
+                <p:column headerText="Nom" sortBy="#{caissier.name}">
+                    <h:outputText value="#{caissier.name}" />
+                </p:column>
+                
+                <p:column headerText="Login" sortBy="#{caissier.login}">
+                    <h:outputText value="#{caissier.login}" />
+                </p:column>
+                
+                <p:column headerText="Email" sortBy="#{caissier.email}">
+                    <h:outputText value="#{caissier.email}" />
+                </p:column>
+                
+                <p:column headerText="Actions" style="width: 100px; text-align: center">
+                    <p:commandButton icon="pi pi-user-minus" title="Retirer" 
+                                   action="#{boutiqueBean.retirerCaissier(caissier)}" 
+                                   update="@form" styleClass="ui-button-danger" />
+                </p:column>
+            </p:dataTable>
+            
+            <f:facet name="footer">
+                <p:button value="Retour" outcome="/admin/boutiques/liste" styleClass="ui-button-secondary" />
+            </f:facet>
+        </p:panel>
+    </h:form>
+    
+    <script type="text/javascript">
+        // Script pour gérer les confirmations de suppression
+        function confirmRetrait(event) {
+            if (!confirm('Êtes-vous sûr de vouloir retirer ce caissier de la boutique ?')) {
+                event.preventDefault();
+            }
+        }
+    </script>
+</h:body>
+</html>

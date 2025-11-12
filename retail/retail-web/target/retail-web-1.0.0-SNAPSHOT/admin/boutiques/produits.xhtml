@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>Gestion des produits - #{boutiqueBean.boutique.nom}</title>
+</h:head>
+
+<h:body>
+    <h:form id="form">
+        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+        
+        <p:panel header="Gestion des produits - #{boutiqueBean.boutique.nom}" style="margin-bottom: 20px">
+            <h:panelGrid columns="2" style="width: 100%; margin-bottom: 20px">
+                <p:outputLabel for="produit" value="Ajouter un produit" />
+                <p:selectOneMenu id="produit" value="#{boutiqueBean.selectedProduitId}" style="width: 300px">
+                    <f:selectItem itemLabel="Sélectionner un produit" itemValue="" />
+                    <f:selectItems value="#{boutiqueBean.availableProduits}" var="produit" 
+                                 itemLabel="#{produit.nom} (Ref: #{produit.reference})" itemValue="#{produit.id}" />
+                </p:selectOneMenu>
+                
+                <p:commandButton value="Ajouter" action="#{boutiqueBean.ajouterProduit}" update="@form" 
+                               style="margin-top: 5px" icon="pi pi-plus" />
+            </h:panelGrid>
+            
+            <p:dataTable id="produitsTable" value="#{boutiqueBean.boutique.produits}" var="produit" 
+                        paginator="true" rows="10" paginatorPosition="bottom" 
+                        emptyMessage="Aucun produit trouvé" style="margin-top: 20px">
+                
+                <p:column headerText="Référence" sortBy="#{produit.reference}">
+                    <h:outputText value="#{produit.reference}" />
+                </p:column>
+                
+                <p:column headerText="Nom" sortBy="#{produit.nom}">
+                    <h:outputText value="#{produit.nom}" />
+                </p:column>
+                
+                <p:column headerText="Description" sortBy="#{produit.description}">
+                    <h:outputText value="#{produit.description}" />
+                </p:column>
+                
+                <p:column headerText="Prix" sortBy="#{produit.prixVente}">
+                    <h:outputText value="#{produit.prixVente}">
+                        <f:convertNumber type="currency" currencySymbol="€" />
+                    </h:outputText>
+                </p:column>
+                
+                <p:column headerText="Actions" style="width: 100px; text-align: center">
+                    <p:commandButton icon="pi pi-trash" title="Retirer" 
+                                   action="#{boutiqueBean.retirerProduit(produit)}" 
+                                   update="@form" styleClass="ui-button-danger" />
+                </p:column>
+            </p:dataTable>
+            
+            <f:facet name="footer">
+                <p:button value="Retour" outcome="/admin/boutiques/liste" styleClass="ui-button-secondary" />
+            </f:facet>
+        </p:panel>
+    </h:form>
+    
+    <script type="text/javascript">
+        // Script pour gérer les confirmations de suppression
+        function confirmRetrait(event) {
+            if (!confirm('Êtes-vous sûr de vouloir retirer ce produit de la boutique ?')) {
+                event.preventDefault();
+            }
+        }
+    </script>
+</h:body>
+</html>

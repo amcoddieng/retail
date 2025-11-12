@@ -128,7 +128,7 @@ public class LoginBean implements Serializable {
         if (hasRole("ADMIN")) {
             return "/admin/utilisateurs.xhtml?faces-redirect=true";
         } else if (hasRole("GERANT")) {
-            return "/gerant/supervision.xhtml?faces-redirect=true";
+            return "/admin/boutiques/liste.xhtml?faces-redirect=true";
         } else if (hasRole("FOURNISSEUR")) {
             return "/fournisseur/lots.xhtml?faces-redirect=true";
         } else if (hasRole("LOGISTIQUE")) {
@@ -225,6 +225,10 @@ public class LoginBean implements Serializable {
     public void setRememberMe(boolean rememberMe) { this.rememberMe = rememberMe; }
 
     public Utilisateur getLoggedInUser() { return loggedInUser; }
+
+    public Utilisateur getCurrentUser() {
+        return getLoggedInUser();
+    }
 
     public String getName() {
         return name;

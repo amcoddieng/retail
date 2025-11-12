@@ -1,3 +1,4 @@
+C:\Users\Dieng\Desktop\work-space-java\retail\retail\retail-ejb\src\main\java\com\example\retail\domain\Boutique.java
 C:\Users\Dieng\Desktop\work-space-java\retail\retail\retail-ejb\src\main\java\com\example\retail\domain\Catalogue.java
 C:\Users\Dieng\Desktop\work-space-java\retail\retail\retail-ejb\src\main\java\com\example\retail\domain\Commande.java
 C:\Users\Dieng\Desktop\work-space-java\retail\retail\retail-ejb\src\main\java\com\example\retail\domain\CommandeLigne.java
@@ -18,8 +19,10 @@ C:\Users\Dieng\Desktop\work-space-java\retail\retail\retail-ejb\src\main\java\co
 C:\Users\Dieng\Desktop\work-space-java\retail\retail\retail-ejb\src\main\java\com\example\retail\domain\UtilisateurRole.java
 C:\Users\Dieng\Desktop\work-space-java\retail\retail\retail-ejb\src\main\java\com\example\retail\service\AdminService.java
 C:\Users\Dieng\Desktop\work-space-java\retail\retail\retail-ejb\src\main\java\com\example\retail\service\AuthService.java
+C:\Users\Dieng\Desktop\work-space-java\retail\retail\retail-ejb\src\main\java\com\example\retail\service\BoutiqueService.java
 C:\Users\Dieng\Desktop\work-space-java\retail\retail\retail-ejb\src\main\java\com\example\retail\service\BusinessException.java
 C:\Users\Dieng\Desktop\work-space-java\retail\retail\retail-ejb\src\main\java\com\example\retail\service\CaisseService.java
+C:\Users\Dieng\Desktop\work-space-java\retail\retail\retail-ejb\src\main\java\com\example\retail\service\CatalogueService.java
 C:\Users\Dieng\Desktop\work-space-java\retail\retail\retail-ejb\src\main\java\com\example\retail\service\CommandeService.java
 C:\Users\Dieng\Desktop\work-space-java\retail\retail\retail-ejb\src\main\java\com\example\retail\service\dto\PickItem.java
 C:\Users\Dieng\Desktop\work-space-java\retail\retail\retail-ejb\src\main\java\com\example\retail\service\FournisseurService.java

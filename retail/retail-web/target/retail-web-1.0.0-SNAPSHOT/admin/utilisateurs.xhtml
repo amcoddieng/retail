@@ -15,15 +15,19 @@
             <div class="page-header">
                 <div class="header-content">
                     <div class="header-title">
-                        <i class="pi pi-users header-icon"></i>
-                        <div>
+                        <div class="header-icon-container">
+                            <i class="pi pi-users header-icon"></i>
+                        </div>
+                        <div class="header-text">
                             <h1 class="page-title">Gestion des Utilisateurs</h1>
                             <p class="page-subtitle">Administrez les comptes et permissions du système</p>
                         </div>
                     </div>
                     <div class="header-stats">
                         <div class="stat-card">
-                            <i class="pi pi-user-plus stat-icon"></i>
+                            <div class="stat-icon-container">
+                                <i class="pi pi-user-plus stat-icon"></i>
+                            </div>
                             <div class="stat-info">
                                 <span class="stat-number">#{adminUsersBean.users.size()}</span>
                                 <span class="stat-label">Utilisateurs</span>
@@ -35,235 +39,260 @@
 
             <!-- Main Content -->
             <div class="users-content">
-                <!-- Creation Card -->
-                <div class="creation-card">
-                    <div class="card-header">
-                        <div class="card-title-section">
-                            <i class="pi pi-user-plus card-icon"></i>
-                            <h3 class="card-title">Nouvel Utilisateur</h3>
-                        </div>
-                        <p class="card-description">Créez un nouveau compte utilisateur</p>
-                    </div>
-
-                    <h:form id="createForm">
-                        <p:growl id="createGrowl" showDetail="true" life="3000" sticky="false" 
-                                styleClass="custom-growl" />
-
-                        <div class="form-content">
-                            <div class="form-grid">
-                                <!-- Login Field -->
-                                <div class="form-field">
-                                    <label for="login" class="field-label">
-                                        Identifiant
-                                        <span class="required-asterisk">*</span>
-                                    </label>
-                                    <div class="form-input">
-                                        <p:inputText id="login" value="#{adminUsersBean.login}"
-                                                   required="true" requiredMessage="L'identifiant est requis"
-                                                   placeholder="saisir l'identifiant"
-                                                   styleClass="modern-input"/>
-                                      
-                                    </div>
-                                    <p:message for="login" styleClass="error-message"/>
+                <div class="content-grid">
+                    <!-- Creation Card -->
+                    <div class="creation-card">
+                        <div class="card-header creation-header">
+                            <div class="card-title-section">
+                                <div class="card-icon-container">
+                                    <i class="pi pi-user-plus card-icon"></i>
                                 </div>
-
-                                <!-- Name Field -->
-                                <div class="form-field">
-                                    <label for="name" class="field-label">
-                                        Nom complet
-                                        <span class="required-asterisk">*</span>
-                                    </label>
-                                    <div class="form-input">
-                                        <p:inputText id="name" value="#{adminUsersBean.name}"
-                                                   required="true" requiredMessage="Le nom complet est requis"
-                                                   placeholder="saisir le nom complet"
-                                                   styleClass="modern-input"/>
-                                      
-                                    </div>
-                                    <p:message for="name" styleClass="error-message"/>
-                                </div>
-
-                                <!-- Email Field -->
-                                <div class="form-field">
-                                    <label for="email" class="field-label">Adresse email</label>
-                                    <div class="form-input">
-                                        <p:inputText id="email" value="#{adminUsersBean.email}"
-                                                   placeholder="email@exemple.com"
-                                                   styleClass="modern-input"/>
-                                   
-                                    </div>
-                                    <p:message for="email" styleClass="error-message"/>
-                                </div>
-
-                                <!-- Password Field -->
-                                <div class="form-field">
-                                    <label for="pwd" class="field-label">Mot de passe</label>
-                                    <div class="form-input">
-                                        <p:password id="pwd" value="#{adminUsersBean.password}"
-                                                  toggleMask="true" feedback="false"
-                                                  placeholder="laisser vide pour 'changeme'"
-                                                  styleClass="modern-input"/>
-                                      
-                                    </div>
-                                    <p:message for="pwd" styleClass="error-message"/>
-                                    <div class="field-hint">Laisser vide pour définir "changeme" comme mot de passe par défaut</div>
+                                <div class="card-text">
+                                    <h3 class="card-title">Nouvel Utilisateur</h3>
+                                    <p class="card-description">Créez un nouveau compte utilisateur</p>
                                 </div>
                             </div>
-	                            
-	                        <div class="form-grid">
-	        <!-- Téléphone -->
-						        <div class="form-field">
-						            <label for="telephone" class="field-label">Téléphone</label>
-						            <div class="form-input">
-						                <p:inputText id="telephone" value="#{adminUsersBean.telephone}" styleClass="modern-input"/>
-						            </div>
-						        </div>
-						
-						        <!-- Code postal -->
-						        <div class="form-field">
-						            <label for="cp" class="field-label">Code postal</label>
-						            <div class="form-input">
-						                <p:inputText id="cp" value="#{adminUsersBean.codePostal}" styleClass="modern-input"/>
-						            </div>
-						        </div>
-						
-						        <!-- Adresse -->
-						        <div class="form-field full-width">
-						            <label for="adresse" class="field-label">Adresse</label>
-						            <div class="form-input">
-						                <p:inputTextarea id="adresse" value="#{adminUsersBean.adresse}" rows="3" styleClass="modern-input"/>
-						            </div>
-						        </div>
-						
-						 </div>
-
-                            <!-- Roles Section -->
-                            <div class="form-field full-width">
-                                <label class="field-label">Rôles et Permissions</label>
-                                <div class="roles-selector">
-                                    <p:selectCheckboxMenu value="#{adminUsersBean.roles}"
-                                                        label="Sélectionner les rôles"
-                                                        panelStyle="min-width:20rem"
-                                                        style="width:100%"
-                                                        styleClass="modern-select">
-                                        <f:selectItems value="#{adminUsersBean.allRoles}"
-                                                     var="r" itemLabel="#{r.code}" itemValue="#{r.code}"/>
-                                    </p:selectCheckboxMenu>
-                                </div>
-                                <div class="field-hint">Sélectionnez un ou plusieurs rôles pour cet utilisateur</div>
-                            </div>
-
-                            <!-- Actions -->
-                            <div class="form-actions">
-                                <p:commandButton value="Créer l'utilisateur"
-                                               action="#{adminUsersBean.create}"
-                                               update="listForm:usersTable listForm:listGrowl createGrowl"
-                                               process="@form"
-                                               icon="pi pi-user-plus"
-                                               styleClass="create-button"
-                                               oncomplete="if(!args.validationFailed) { resetCreateForm(); }"/>
-                            </div>
                         </div>
-                    </h:form>
-                </div>
 
-                <!-- Users List Card -->
-                <div class="users-list-card">
-                    <div class="card-header">
-                        <div class="card-title-section">
-                            <i class="pi pi-list card-icon"></i>
-                            <h3 class="card-title">Liste des Utilisateurs</h3>
-                        </div>
-                        <p class="card-description">Gérez les comptes existants et leurs permissions</p>
-                    </div>
+                        <h:form id="createForm">
+                            <p:growl id="createGrowl" showDetail="true" life="3000" sticky="false" 
+                                    styleClass="custom-growl" />
 
-                    <h:form id="listForm">
-                        <p:growl id="listGrowl" showDetail="true" life="3000" sticky="false"
-                                styleClass="custom-growl" />
-
-                        <div class="table-container">
-                            <p:dataTable id="usersTable" value="#{adminUsersBean.users}" var="u"
-                                       paginator="true" rows="25" rowKey="#{u.login}"
-                                       selectionMode="single" selection="#{adminUsersBean.selectedUser}"
-                                       emptyMessage="Aucun utilisateur trouvé"
-                                       styleClass="modern-table"
-                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                       rowsPerPageTemplate="10,15,20,25">
-
-                                <!-- Login -->
-                                <p:column headerText="Utilisateur" sortBy="#{u.login}" filterBy="#{u.login}" 
-                                        style="width: 180px;">
-                                    <div class="user-info">
-                                        <div class="user-avatar">
-                                            <i class="pi pi-user"></i>
+                            <div class="form-content">
+                                <div class="form-grid">
+                                    <!-- Login Field -->
+                                    <div class="form-field">
+                                        <label for="login" class="field-label">
+                                            <span class="label-text">Identifiant</span>
+                                            <span class="required-asterisk">*</span>
+                                        </label>
+                                        <div class="form-input-container">
+                                            <i class="pi pi-user input-icon"></i>
+                                            <p:inputText id="login" value="#{adminUsersBean.login}"
+                                                       required="true" requiredMessage="L'identifiant est requis"
+                                                       placeholder="saisir l'identifiant"
+                                                       styleClass="modern-input"/>
                                         </div>
-                                        <div class="user-details">
-                                            <span class="user-login">#{u.login}</span>
-                                            <small class="user-name">#{u.name}</small>
-                                        </div>
+                                        <p:message for="login" styleClass="error-message"/>
                                     </div>
-                                </p:column>
 
-                                <!-- Email -->
-                                <p:column headerText="Contact" sortBy="#{u.email}" filterBy="#{u.email}">
-                                    <div class="contact-info">
-                                        <ui:fragment rendered="#{not empty u.email}">
-                                            <i class="pi pi-envelope contact-icon"></i>
-                                            <span class="user-email">#{u.email}</span>
-                                        </ui:fragment>
-                                        <ui:fragment rendered="#{empty u.email}">
-                                            <span class="no-email">Aucun email</span>
-                                        </ui:fragment>
+                                    <!-- Name Field -->
+                                    <div class="form-field">
+                                        <label for="name" class="field-label">
+                                            <span class="label-text">Nom complet</span>
+                                            <span class="required-asterisk">*</span>
+                                        </label>
+                                        <div class="form-input-container">
+                                            <i class="pi pi-id-card input-icon"></i>
+                                            <p:inputText id="name" value="#{adminUsersBean.name}"
+                                                       required="true" requiredMessage="Le nom complet est requis"
+                                                       placeholder="saisir le nom complet"
+                                                       styleClass="modern-input"/>
+                                        </div>
+                                        <p:message for="name" styleClass="error-message"/>
                                     </div>
-                                </p:column>
+
+                                    <!-- Email Field -->
+                                    <div class="form-field">
+                                        <label for="email" class="field-label">
+                                            <span class="label-text">Adresse email</span>
+                                        </label>
+                                        <div class="form-input-container">
+                                            <i class="pi pi-envelope input-icon"></i>
+                                            <p:inputText id="email" value="#{adminUsersBean.email}"
+                                                       placeholder="email@exemple.com"
+                                                       styleClass="modern-input"/>
+                                        </div>
+                                        <p:message for="email" styleClass="error-message"/>
+                                    </div>
+
+                                    <!-- Password Field -->
+                                    <div class="form-field">
+                                        <label for="pwd" class="field-label">
+                                            <span class="label-text">Mot de passe</span>
+                                        </label>
+                                        <div class="form-input-container">
+                                            <i class="pi pi-lock input-icon"></i>
+                                            <p:password id="pwd" value="#{adminUsersBean.password}"
+                                                      toggleMask="true" feedback="false"
+                                                      placeholder="laisser vide pour 'changeme'"
+                                                      styleClass="modern-input"/>
+                                        </div>
+                                        <p:message for="pwd" styleClass="error-message"/>
+                                        <div class="field-hint">Laisser vide pour définir "changeme" comme mot de passe par défaut</div>
+                                    </div>
+                                </div>
                                 
-                                <!-- Colonne Téléphone -->
-								<p:column headerText="Téléphone" sortBy="#{u.telephone}" filterBy="#{u.telephone}">
-								    <span>#{u.telephone}</span>
-								</p:column>
-								
-								<!-- Colonne Adresse -->
-								<p:column headerText="Adresse">
-								    <div>
-								        <div>#{u.adresse}</div>
-								        <small>#{u.codePostal}</small>
-								    </div>
-								</p:column>
-
-
-                             
-
-
-                                <!-- Statut -->
-                                <p:column headerText="Statut" sortBy="#{u.actif}" style="width: 120px;">
-                                    <div class="status-toggle">
-                                        <p:selectBooleanButton value="#{u.actif}"
-                                                             onLabel="ACTIF" offLabel="INACTIF"
-                                                             onIcon="pi pi-check" offIcon="pi pi-times"
-                                                             styleClass="status-button"
-                                                             update="usersTable listForm:listGrowl"
-                                                             process="@this">
-                                            <p:ajax listener="#{adminUsersBean.setEnabled(u, not u.actif)}"
-                                                  update="listForm:usersTable listForm:listGrowl"/>
-                                        </p:selectBooleanButton>
+                                <div class="form-grid additional-fields">
+                                    <!-- Téléphone -->
+                                    <div class="form-field">
+                                        <label for="telephone" class="field-label">
+                                            <span class="label-text">Téléphone</span>
+                                        </label>
+                                        <div class="form-input-container">
+                                            <i class="pi pi-phone input-icon"></i>
+                                            <p:inputText id="telephone" value="#{adminUsersBean.telephone}" 
+                                                       styleClass="modern-input" placeholder="Numéro de téléphone"/>
+                                        </div>
                                     </div>
-                                </p:column>
+                            
+                                    <!-- Code postal -->
+                                    <div class="form-field">
+                                        <label for="cp" class="field-label">
+                                            <span class="label-text">Code postal</span>
+                                        </label>
+                                        <div class="form-input-container">
+                                            <i class="pi pi-map-marker input-icon"></i>
+                                            <p:inputText id="cp" value="#{adminUsersBean.codePostal}" 
+                                                       styleClass="modern-input" placeholder="Code postal"/>
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Adresse -->
+                                    <div class="form-field full-width">
+                                        <label for="adresse" class="field-label">
+                                            <span class="label-text">Adresse</span>
+                                        </label>
+                                        <div class="form-input-container">
+                                            <i class="pi pi-home input-icon"></i>
+                                            <p:inputTextarea id="adresse" value="#{adminUsersBean.adresse}" rows="3" 
+                                                           styleClass="modern-input textarea" placeholder="Adresse complète"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Roles Section -->
+                                <div class="form-field full-width roles-field">
+                                    <label class="field-label">
+                                        <span class="label-text">Rôles et Permissions</span>
+                                    </label>
+                                    <div class="roles-selector">
+                                        <p:selectCheckboxMenu value="#{adminUsersBean.roles}"
+                                                            label="Sélectionner les rôles"
+                                                            panelStyle="min-width:20rem"
+                                                            style="width:100%"
+                                                            styleClass="modern-select">
+                                            <f:selectItems value="#{adminUsersBean.allRoles}"
+                                                         var="r" itemLabel="#{r.code}" itemValue="#{r.code}"/>
+                                        </p:selectCheckboxMenu>
+                                    </div>
+                                    <div class="field-hint">Sélectionnez un ou plusieurs rôles pour cet utilisateur</div>
+                                </div>
 
                                 <!-- Actions -->
-                                <p:column headerText="Actions" style="width: 100px;">
-                                    <div class="action-buttons">
-                                        <p:commandButton icon="pi pi-users" 
-                                                       title="Gérer les rôles"
-                                                       process="@this"
-                                                       onclick="PF('rolesDialog').show()"
-                                                       update=":rolesForm:rolesPanel"
-                                                       action="#{adminUsersBean.openEdit(u)}"
-                                                       styleClass="action-button role-button"/>
-                                    </div>
-                                </p:column>
-                            </p:dataTable>
+                                <div class="form-actions">
+                                    <p:commandButton value="Créer l'utilisateur"
+                                                   action="#{adminUsersBean.create}"
+                                                   update="listForm:usersTable listForm:listGrowl createGrowl"
+                                                   process="@form"
+                                                   icon="pi pi-user-plus"
+                                                   styleClass="create-button"
+                                                   oncomplete="if(!args.validationFailed) { resetCreateForm(); }"/>
+                                </div>
+                            </div>
+                        </h:form>
+                    </div>
+
+                    <!-- Users List Card -->
+                    <div class="users-list-card">
+                        <div class="card-header list-header">
+                            <div class="card-title-section">
+                                <div class="card-icon-container">
+                                    <i class="pi pi-list card-icon"></i>
+                                </div>
+                                <div class="card-text">
+                                    <h3 class="card-title">Liste des Utilisateurs</h3>
+                                    <p class="card-description">Gérez les comptes existants et leurs permissions</p>
+                                </div>
+                            </div>
+                            <div class="header-actions">
+                                <div class="search-container">
+                                    <i class="pi pi-search search-icon"></i>
+                                    <p:inputText placeholder="Rechercher..." 
+                                               styleClass="search-input"/>
+                                </div>
+                            </div>
                         </div>
-                    </h:form>
+
+                        <h:form id="listForm">
+                            <p:growl id="listGrowl" showDetail="true" life="3000" sticky="false"
+                                    styleClass="custom-growl" />
+
+                            <div class="table-container">
+                                <p:dataTable id="usersTable" value="#{adminUsersBean.users}" var="u"
+                                           paginator="true" rows="10" rowKey="#{u.login}"
+                                           selectionMode="single" selection="#{adminUsersBean.selectedUser}"
+                                           emptyMessage="Aucun utilisateur trouvé"
+                                           styleClass="modern-table"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rowsPerPageTemplate="5,10,15,20">
+
+                                    <!-- Login -->
+                                    <p:column headerText="Utilisateur" sortBy="#{u.login}" filterBy="#{u.login}" 
+                                            style="width: 200px;">
+                                        <div class="user-info">
+                                            <div class="user-avatar">
+                                                <i class="pi pi-user"></i>
+                                            </div>
+                                            <div class="user-details">
+                                                <span class="user-login">#{u.login}</span>
+                                                <small class="user-name">#{u.name}</small>
+                                            </div>
+                                        </div>
+                                    </p:column>
+
+                                    <!-- Email -->
+                                    <p:column headerText="Contact" sortBy="#{u.email}" filterBy="#{u.email}" style="width: 200px;">
+                                        <div class="contact-info">
+                                            <ui:fragment rendered="#{not empty u.email}">
+                                                <i class="pi pi-envelope contact-icon"></i>
+                                                <span class="user-email">#{u.email}</span>
+                                            </ui:fragment>
+                                            <ui:fragment rendered="#{empty u.email}">
+                                                <span class="no-email">Aucun email</span>
+                                            </ui:fragment>
+                                        </div>
+                                    </p:column>
+                                    
+                                    <!-- Téléphone -->
+                                    <p:column headerText="Téléphone" sortBy="#{u.telephone}" filterBy="#{u.telephone}" style="width: 140px;">
+                                        <div class="phone-info">
+                                            <i class="pi pi-phone contact-icon"></i>
+                                            <span>#{u.telephone}</span>
+                                        </div>
+                                    </p:column>
+                                    
+                                    <!-- Statut -->
+                                    <p:column headerText="Statut" sortBy="#{u.actif}" style="width: 120px;">
+                                        <div class="status-toggle">
+                                            <p:selectBooleanButton value="#{u.actif}"
+                                                                 onLabel="ACTIF" offLabel="INACTIF"
+                                                                 onIcon="pi pi-check" offIcon="pi pi-times"
+                                                                 styleClass="status-button"
+                                                                 update="usersTable listForm:listGrowl"
+                                                                 process="@this">
+                                                <p:ajax listener="#{adminUsersBean.setEnabled(u, not u.actif)}"
+                                                      update="listForm:usersTable listForm:listGrowl"/>
+                                            </p:selectBooleanButton>
+                                        </div>
+                                    </p:column>
+
+                                    <!-- Actions -->
+                                    <p:column headerText="Actions" style="width: 80px;">
+                                        <div class="action-buttons">
+                                            <p:commandButton icon="pi pi-users" 
+                                                           title="Gérer les rôles"
+                                                           process="@this"
+                                                           onclick="PF('rolesDialog').show()"
+                                                           update=":rolesForm:rolesPanel"
+                                                           action="#{adminUsersBean.openEdit(u)}"
+                                                           styleClass="action-button role-button"/>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </h:form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -286,7 +315,7 @@
                                     <p class="user-dialog-login">@#{adminUsersBean.selectedUser.login}</p>
                                     <div class="user-status">
                                         <i class="pi pi-circle-fill status-dot #{adminUsersBean.selectedUser.actif ? 'active' : 'inactive'}"></i>
-                                        <span>#{adminUsersBean.selectedUser.actif ? 'Compte actif' : 'Compte inactif'}</span>
+                                        <span class="status-text">#{adminUsersBean.selectedUser.actif ? 'Compte actif' : 'Compte inactif'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -307,12 +336,11 @@
                                 <div class="dialog-hint">Cochez les rôles à attribuer à cet utilisateur</div>
 
                                 <div class="current-roles" rendered="#{not empty adminUsersBean.selectedUser.roles}">
-                                    <h5>Rôles actuels :</h5>
+                                    <h5 class="current-roles-title">Rôles actuels :</h5>
                                     <div class="roles-list">
-                                        <div class="role-tag" rendered="#{adminUsersBean.selectedUser.roles.size() > 0}">
-                                            <span class="role-count">#{adminUsersBean.selectedUser.roles.size()} rôle(s)</span>
-                                            <small>attribué(s)</small>
-                                        </div>
+                                        <ui:repeat value="#{adminUsersBean.selectedUser.roles}" var="role">
+                                            <span class="role-badge">#{role.code}</span>
+                                        </ui:repeat>
                                     </div>
                                 </div>
                             </div>
@@ -322,7 +350,7 @@
                                                onclick="PF('rolesDialog').hide()"
                                                styleClass="dialog-button secondary"
                                                immediate="true"/>
-                                <p:commandButton value="Enregistrer les modifications"
+                                <p:commandButton value="Enregistrer"
                                                icon="pi pi-check"
                                                action="#{adminUsersBean.saveRoles}"
                                                update="listForm:usersTable listForm:listGrowl"
@@ -336,55 +364,82 @@
         </h:form>
 
         <style>
-            /* CSS Variables */
+            /* CSS Variables - Palette moderne */
             :root {
-                --primary: #4361ee;
-                --primary-dark: #3a56d4;
-                --success: #28a745;
-                --warning: #ffc107;
-                --danger: #dc3545;
-                --dark: #2c3e50;
-                --light: #f8f9fa;
-                --border: #e9ecef;
-                --text: #495057;
-                --text-light: #6c757d;
+                --primary: #6366f1;
+                --primary-dark: #4f46e5;
+                --primary-light: #a5b4fc;
+                --success: #10b981;
+                --success-dark: #059669;
+                --warning: #f59e0b;
+                --danger: #ef4444;
+                --dark: #1f2937;
+                --darker: #111827;
+                --light: #f8fafc;
+                --lighter: #f1f5f9;
+                --border: #e2e8f0;
+                --border-light: #f1f5f9;
+                --text: #374151;
+                --text-light: #6b7280;
+                --text-lighter: #9ca3af;
                 --radius: 12px;
-                --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-                --transition: all 0.3s ease;
+                --radius-lg: 16px;
+                --radius-sm: 8px;
+                --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+                --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+                --transition: all 0.2s ease-in-out;
             }
 
             /* Main Container */
             .admin-users-container {
-                max-width: 1400px;
+                max-width: 100%;
                 margin: 0 auto;
-                padding: 0 1rem;
+                padding: 0;
+                background: var(--lighter);
+                min-height: 100vh;
             }
 
             /* Page Header */
             .page-header {
                 background: linear-gradient(135deg, var(--primary), var(--primary-dark));
                 color: white;
-                border-radius: var(--radius);
                 margin-bottom: 2rem;
-                overflow: hidden;
+                box-shadow: var(--shadow-lg);
             }
 
             .header-content {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 2rem;
+                padding: 2rem 2.5rem;
+                max-width: 1400px;
+                margin: 0 auto;
             }
 
             .header-title {
                 display: flex;
                 align-items: center;
-                gap: 1rem;
+                gap: 1.25rem;
+            }
+
+            .header-icon-container {
+                background: rgba(255, 255, 255, 0.15);
+                padding: 1rem;
+                border-radius: var(--radius);
+                backdrop-filter: blur(10px);
             }
 
             .header-icon {
-                font-size: 2.5rem;
-                opacity: 0.9;
+                font-size: 2.25rem;
+                color: white;
+            }
+
+            .header-text {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
             }
 
             .page-title {
@@ -392,12 +447,14 @@
                 font-weight: 700;
                 margin: 0;
                 color: white;
+                letter-spacing: -0.025em;
             }
 
             .page-subtitle {
                 opacity: 0.9;
-                margin: 0.5rem 0 0 0;
+                margin: 0;
                 font-size: 1.1rem;
+                font-weight: 400;
             }
 
             .header-stats {
@@ -409,59 +466,115 @@
                 display: flex;
                 align-items: center;
                 gap: 1rem;
-                padding: 1rem 1.5rem;
+                padding: 1.25rem 1.5rem;
                 background: rgba(255, 255, 255, 0.1);
                 border-radius: var(--radius);
                 backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                transition: var(--transition);
+            }
+
+            .stat-card:hover {
+                background: rgba(255, 255, 255, 0.15);
+                transform: translateY(-2px);
+            }
+
+            .stat-icon-container {
+                background: rgba(255, 255, 255, 0.2);
+                padding: 0.75rem;
+                border-radius: 10px;
             }
 
             .stat-icon {
                 font-size: 1.5rem;
-                opacity: 0.9;
+                color: white;
+            }
+
+            .stat-info {
+                display: flex;
+                flex-direction: column;
             }
 
             .stat-number {
-                font-size: 1.5rem;
+                font-size: 1.75rem;
                 font-weight: 700;
                 display: block;
+                line-height: 1;
             }
 
             .stat-label {
                 font-size: 0.875rem;
-                opacity: 0.8;
+                opacity: 0.9;
+                font-weight: 500;
             }
 
             /* Content Layout */
             .users-content {
-                display: flex;
-                flex-direction: column;
-                gap: 1.5rem;
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 0 2rem;
+            }
+
+            .content-grid {
+                display: grid;
+                grid-template-columns: 400px 1fr;
+                gap: 2rem;
+                align-items: start;
             }
 
             /* Cards */
             .creation-card, .users-list-card {
                 background: white;
-                border-radius: var(--radius);
-                box-shadow: var(--shadow);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-md);
                 overflow: hidden;
+                border: 1px solid var(--border-light);
+                transition: var(--transition);
+            }
+
+            .creation-card:hover, .users-list-card:hover {
+                box-shadow: var(--shadow-lg);
+                transform: translateY(-1px);
             }
 
             .card-header {
-                padding: 1.5rem 2rem;
-                border-bottom: 1px solid var(--border);
-                background: var(--light);
+                padding: 1.75rem 2rem;
+                border-bottom: 1px solid var(--border-light);
+            }
+
+            .creation-header {
+                background: linear-gradient(135deg, var(--lighter), white);
+            }
+
+            .list-header {
+                background: linear-gradient(135deg, var(--lighter), white);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
             }
 
             .card-title-section {
                 display: flex;
                 align-items: center;
-                gap: 0.75rem;
-                margin-bottom: 0.5rem;
+                gap: 1rem;
+            }
+
+            .card-icon-container {
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                padding: 0.75rem;
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
             }
 
             .card-icon {
-                color: var(--primary);
                 font-size: 1.25rem;
+                color: white;
+            }
+
+            .card-text {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
             }
 
             .card-title {
@@ -477,6 +590,31 @@
                 font-size: 0.9rem;
             }
 
+            .header-actions {
+                display: flex;
+                align-items: center;
+            }
+
+            .search-container {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+
+            .search-icon {
+                position: absolute;
+                left: 1rem;
+                color: var(--text-lighter);
+                z-index: 2;
+            }
+
+            .search-input {
+                padding-left: 2.5rem !important;
+                border: 1px solid var(--border) !important;
+                border-radius: var(--radius) !important;
+                background: var(--light) !important;
+            }
+
             /* Forms */
             .form-content {
                 padding: 2rem;
@@ -484,9 +622,18 @@
 
             .form-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 1.5rem;
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
                 margin-bottom: 1.5rem;
+            }
+
+            .additional-fields {
+                grid-template-columns: 1fr 1fr;
+                margin-top: 1rem;
+            }
+
+            .additional-fields .full-width {
+                grid-column: 1 / -1;
             }
 
             .form-field {
@@ -500,46 +647,65 @@
             }
 
             .field-label {
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
                 font-weight: 600;
                 color: var(--dark);
                 font-size: 0.9rem;
             }
 
+            .label-text {
+                font-weight: 500;
+            }
+
             .required-asterisk {
                 color: var(--danger);
+                font-weight: 700;
             }
 
-            .form-input {
+            .form-input-container {
                 position: relative;
-            }
-
-            .modern-input {
-                width: 100%;
-                padding: 0.75rem 1rem 0.75rem 2.5rem;
-                border: 2px solid var(--border);
-                border-radius: 8px;
-                font-size: 0.95rem;
-                transition: var(--transition);
-            }
-
-            .modern-input:focus {
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-                outline: none;
+                display: flex;
+                align-items: center;
             }
 
             .input-icon {
                 position: absolute;
                 left: 1rem;
-                top: 50%;
-                transform: translateY(-50%);
-                color: var(--text-light);
+                color: var(--text-lighter);
+                z-index: 2;
+            }
+
+            .modern-input {
+                width: 100%;
+                padding: 0.875rem 1rem 0.875rem 2.75rem;
+                border: 1.5px solid var(--border);
+                border-radius: var(--radius-sm);
+                font-size: 0.95rem;
+                transition: var(--transition);
+                background: var(--light);
+                color: var(--text);
+            }
+
+            .modern-input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+                outline: none;
+                background: white;
+            }
+
+            .modern-input.textarea {
+                padding: 0.875rem 1rem;
+                min-height: 80px;
+                resize: vertical;
             }
 
             .field-hint {
                 font-size: 0.8rem;
                 color: var(--text-light);
                 margin-top: 0.25rem;
+                line-height: 1.4;
             }
 
             .error-message {
@@ -549,9 +715,16 @@
                 display: flex;
                 align-items: center;
                 gap: 0.25rem;
+                font-weight: 500;
             }
 
             /* Roles Selector */
+            .roles-field {
+                margin-top: 1rem;
+                padding-top: 1.5rem;
+                border-top: 1px solid var(--border-light);
+            }
+
             .roles-selector {
                 margin-bottom: 0.5rem;
             }
@@ -564,23 +737,30 @@
             .form-actions {
                 display: flex;
                 justify-content: flex-end;
-                padding-top: 1rem;
-                border-top: 1px solid var(--border);
+                padding-top: 1.5rem;
+                border-top: 1px solid var(--border-light);
+                margin-top: 1rem;
             }
 
             .create-button {
-                background: linear-gradient(135deg, var(--success), #218838);
+                background: linear-gradient(135deg, var(--success), var(--success-dark));
                 border: none;
-                padding: 0.75rem 1.5rem;
-                border-radius: 8px;
+                padding: 0.875rem 2rem;
+                border-radius: var(--radius-sm);
                 color: white;
                 font-weight: 600;
+                font-size: 0.95rem;
                 transition: var(--transition);
+                box-shadow: var(--shadow);
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
             }
 
             .create-button:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+                box-shadow: var(--shadow-lg);
+                background: linear-gradient(135deg, var(--success-dark), var(--success));
             }
 
             /* Table */
@@ -590,42 +770,67 @@
 
             .modern-table {
                 border: none;
+                background: transparent;
             }
 
             .modern-table .ui-datatable-header {
                 background: transparent;
                 border: none;
-                padding: 0 2rem;
+                padding: 0;
+            }
+
+            .modern-table .ui-datatable-thead > tr > th {
+                background: var(--lighter);
+                border-bottom: 2px solid var(--border);
+                padding: 1rem 1.25rem;
+                font-weight: 600;
+                color: var(--dark);
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            .modern-table .ui-datatable-data > tr > td {
+                padding: 1.25rem;
+                border-bottom: 1px solid var(--border-light);
+                vertical-align: middle;
+                background: white;
+            }
+
+            .modern-table .ui-datatable-data > tr:hover > td {
+                background: var(--lighter);
             }
 
             /* User Info in Table */
             .user-info {
                 display: flex;
                 align-items: center;
-                gap: 0.75rem;
+                gap: 0.875rem;
             }
 
             .user-avatar {
-                width: 40px;
-                height: 40px;
-                background: var(--primary);
+                width: 42px;
+                height: 42px;
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
                 color: white;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-size: 1rem;
+                flex-shrink: 0;
             }
 
             .user-details {
                 display: flex;
                 flex-direction: column;
-                gap: 0.125rem;
+                gap: 0.25rem;
             }
 
             .user-login {
                 font-weight: 600;
                 color: var(--dark);
+                font-size: 0.95rem;
             }
 
             .user-name {
@@ -634,38 +839,27 @@
             }
 
             /* Contact Info */
-            .contact-info {
+            .contact-info, .phone-info {
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
             }
 
             .contact-icon {
-                color: var(--text-light);
+                color: var(--text-lighter);
                 font-size: 0.9rem;
+                flex-shrink: 0;
             }
 
             .user-email {
                 color: var(--text);
+                font-size: 0.9rem;
             }
 
             .no-email {
                 color: var(--text-light);
                 font-style: italic;
                 font-size: 0.85rem;
-            }
-
-            /* User Roles */
-            .user-roles {
-                display: flex;
-                gap: 0.5rem;
-            }
-
-            .role-chip {
-                background: var(--primary);
-                color: white;
-                border: none;
-                font-size: 0.75rem;
             }
 
             /* Status Toggle */
@@ -675,9 +869,11 @@
             }
 
             .status-button {
-                width: 90px;
+                width: 100px;
                 border: none;
                 border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 600;
             }
 
             .status-button.ui-button.ui-togglebutton.ui-state-active {
@@ -693,35 +889,46 @@
             }
 
             .action-button {
-                width: 36px;
-                height: 36px;
+                width: 38px;
+                height: 38px;
                 border: none;
-                border-radius: 8px;
+                border-radius: var(--radius-sm);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 transition: var(--transition);
+                box-shadow: var(--shadow);
             }
 
             .role-button {
-                background: var(--primary);
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
                 color: white;
             }
 
             .role-button:hover {
-                background: var(--primary-dark);
+                background: linear-gradient(135deg, var(--primary-dark), var(--primary));
                 transform: scale(1.05);
+                box-shadow: var(--shadow-md);
             }
 
             /* Dialog */
+            .modern-dialog {
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-xl);
+                border: none;
+            }
+
             .modern-dialog .ui-dialog-titlebar {
-                background: var(--light);
-                border-bottom: 1px solid var(--border);
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                color: white;
+                border: none;
                 padding: 1.5rem 2rem;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
             }
 
             .modern-dialog .ui-dialog-content {
                 padding: 0;
+                background: var(--light);
             }
 
             .dialog-content {
@@ -737,22 +944,25 @@
             .selected-user {
                 display: flex;
                 align-items: center;
-                gap: 1rem;
+                gap: 1.25rem;
                 padding: 1.5rem;
-                background: var(--light);
+                background: white;
                 border-radius: var(--radius);
+                box-shadow: var(--shadow);
+                border: 1px solid var(--border-light);
             }
 
             .user-avatar-large {
-                width: 60px;
-                height: 60px;
-                background: var(--primary);
+                width: 64px;
+                height: 64px;
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
                 color: white;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-size: 1.5rem;
+                flex-shrink: 0;
             }
 
             .user-dialog-info {
@@ -763,13 +973,13 @@
                 margin: 0;
                 color: var(--dark);
                 font-weight: 600;
-                font-size: 1.25rem;
+                font-size: 1.3rem;
             }
 
             .user-dialog-login {
                 margin: 0.25rem 0;
                 color: var(--text-light);
-                font-size: 0.9rem;
+                font-size: 0.95rem;
             }
 
             .user-status {
@@ -780,7 +990,7 @@
             }
 
             .status-dot {
-                font-size: 0.5rem;
+                font-size: 0.6rem;
             }
 
             .status-dot.active {
@@ -791,11 +1001,17 @@
                 color: var(--danger);
             }
 
+            .status-text {
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+
             .roles-section {
-                border: 1px solid var(--border);
-                border-radius: 8px;
+                border: 1px solid var(--border-light);
+                border-radius: var(--radius);
                 padding: 1.5rem;
-                background: var(--light);
+                background: white;
+                box-shadow: var(--shadow);
             }
 
             .dialog-label {
@@ -803,6 +1019,7 @@
                 color: var(--dark);
                 margin-bottom: 0.75rem;
                 display: block;
+                font-size: 1rem;
             }
 
             .roles-grid {
@@ -810,41 +1027,38 @@
             }
 
             .dialog-hint {
-                font-size: 0.8rem;
+                font-size: 0.85rem;
                 color: var(--text-light);
                 margin-bottom: 1rem;
+                line-height: 1.4;
             }
 
             .current-roles {
                 padding-top: 1rem;
-                border-top: 1px solid var(--border);
+                border-top: 1px solid var(--border-light);
             }
 
-            .current-roles h5 {
+            .current-roles-title {
                 margin: 0 0 0.75rem 0;
                 color: var(--dark);
-                font-size: 0.9rem;
+                font-size: 0.95rem;
+                font-weight: 600;
             }
 
             .roles-list {
                 display: flex;
+                flex-wrap: wrap;
                 gap: 0.5rem;
             }
 
-            .role-tag {
-                background: var(--primary);
+            .role-badge {
+                background: linear-gradient(135deg, var(--primary-light), var(--primary));
                 color: white;
-                padding: 0.5rem 0.75rem;
-                border-radius: 6px;
-                font-size: 0.85rem;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 0.125rem;
-            }
-
-            .role-count {
-                font-weight: 600;
+                padding: 0.5rem 0.875rem;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 500;
+                box-shadow: var(--shadow);
             }
 
             .dialog-actions {
@@ -852,71 +1066,106 @@
                 gap: 1rem;
                 justify-content: flex-end;
                 padding-top: 1.5rem;
-                border-top: 1px solid var(--border);
+                border-top: 1px solid var(--border-light);
             }
 
             .dialog-button {
                 padding: 0.75rem 1.5rem;
                 border: none;
-                border-radius: 8px;
+                border-radius: var(--radius-sm);
                 font-weight: 600;
                 transition: var(--transition);
+                font-size: 0.9rem;
             }
 
             .dialog-button.primary {
-                background: var(--primary);
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
                 color: white;
+                box-shadow: var(--shadow);
             }
 
             .dialog-button.primary:hover {
-                background: var(--primary-dark);
+                background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+                transform: translateY(-1px);
+                box-shadow: var(--shadow-md);
             }
 
             .dialog-button.secondary {
                 background: var(--light);
                 color: var(--text);
-                border: 1px solid var(--border);
+                border: 1.5px solid var(--border);
             }
 
             .dialog-button.secondary:hover {
-                background: #e9ecef;
+                background: var(--lighter);
+                border-color: var(--text-lighter);
             }
 
             /* Growl Notifications */
             .custom-growl {
-                position: relative !important;
-                top: auto !important;
-                right: auto !important;
-                width: 100%;
+                position: fixed !important;
+                top: 20px !important;
+                right: 20px !important;
+                width: auto !important;
+                min-width: 300px;
+                z-index: 10000;
             }
 
             /* Responsive */
+            @media (max-width: 1200px) {
+                .content-grid {
+                    grid-template-columns: 1fr;
+                    gap: 1.5rem;
+                }
+                
+                .creation-card {
+                    order: 2;
+                }
+                
+                .users-list-card {
+                    order: 1;
+                }
+            }
+
             @media (max-width: 768px) {
+                .users-content {
+                    padding: 0 1rem;
+                }
+                
                 .header-content {
                     flex-direction: column;
-                    gap: 1rem;
+                    gap: 1.5rem;
                     text-align: center;
+                    padding: 1.5rem;
                 }
 
                 .header-title {
                     flex-direction: column;
-                }
-
-                .form-grid {
-                    grid-template-columns: 1fr;
+                    text-align: center;
                 }
 
                 .form-content {
-                    padding: 1rem;
+                    padding: 1.5rem;
                 }
 
                 .card-header {
-                    padding: 1rem 1.5rem;
+                    padding: 1.5rem;
+                }
+
+                .list-header {
+                    flex-direction: column;
+                    gap: 1rem;
+                    align-items: stretch;
+                }
+
+                .additional-fields {
+                    grid-template-columns: 1fr;
                 }
 
                 .selected-user {
                     flex-direction: column;
                     text-align: center;
+                    gap: 1rem;
                 }
 
                 .dialog-actions {
@@ -924,12 +1173,49 @@
                 }
 
                 .action-buttons {
-                    justify-content: flex-start;
+                    justify-content: center;
                 }
+                
+                .modern-table .ui-datatable-data > tr > td {
+                    padding: 1rem;
+                }
+            }
+
+            /* Animation */
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .creation-card, .users-list-card {
+                animation: fadeInUp 0.5s ease-out;
+            }
+
+            .creation-card {
+                animation-delay: 0.1s;
+            }
+
+            .users-list-card {
+                animation-delay: 0.2s;
             }
         </style>
 
-        
-    <h:outputScript library="js" name="admin.js" target="body"/>
+        <h:outputScript>
+            function resetCreateForm() {
+                // Réinitialiser le formulaire de création
+                document.getElementById('createForm').reset();
+                
+                // Réinitialiser les sélecteurs PrimeFaces si nécessaire
+                if (PF('widgets')) {
+                    // Logique supplémentaire pour réinitialiser les widgets
+                }
+            }
+        </h:outputScript>
     </ui:define>
 </ui:composition>

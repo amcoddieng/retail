@@ -1,9 +1,8 @@
 package com.example.retail.domain;
 
 import javax.persistence.*;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 public class Catalogue {
@@ -18,6 +17,28 @@ public class Catalogue {
             joinColumns = @JoinColumn(name = "catalogue_id"),
             inverseJoinColumns = @JoinColumn(name = "produit_id"))
     private List<Produit> produits = new ArrayList<>();
+    
+    @ManyToMany
+    @JoinTable(name = "catalogue_famille",
+            joinColumns = @JoinColumn(name = "catalogue_id"),
+            inverseJoinColumns = @JoinColumn(name = "famille_id"))
+    private List<Famille> familles = new ArrayList<>();
+    
+    // Méthodes utilitaires pour gérer la relation avec les familles
+    public void addFamille(Famille famille) {
+        if (!familles.contains(famille)) {
+            familles.add(famille);
+            if (!famille.getCatalogues().contains(this)) {
+                famille.getCatalogues().add(this);
+            }
+        }
+    }
+    
+    public void removeFamille(Famille famille) {
+        if (familles.remove(famille)) {
+            famille.getCatalogues().remove(this);
+        }
+    }
 
     public Long getId() {
         return id;
@@ -45,5 +66,13 @@ public class Catalogue {
 
     public void setProduits(List<Produit> p) {
         produits = p;
+    }
+    
+    public List<Famille> getFamilles() {
+        return familles;
+    }
+    
+    public void setFamilles(List<Famille> familles) {
+        this.familles = familles;
     }
 }

@@ -1,52 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      lang="fr">
 <h:head>
-    <title>Retail Pro | Connexion</title>
+    <title>Connexion - Gestion Commande</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <h:outputStylesheet library="primefaces" name="primeicons/primeicons.css"/>
-    <h:outputStylesheet library="css" name="app.css"/>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
     
-    <style>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"/>
+    <!-- PrimeIcons -->
+    <h:outputStylesheet library="primefaces" name="primeicons/primeicons.css" />
+    
+    <style type="text/css">
         :root {
-            /* Palette de couleurs néon */
-            --neon-pink: #ff2bff;
-            --neon-blue: #00f7ff;
-            --neon-purple: #b300ff;
-            --neon-cyan: #00ffd5;
-            --dark-bg: #0a0a1a;
-            --darker-bg: #050510;
-            --card-bg: rgba(15, 15, 40, 0.8);
-            --text-light: #e0e0ff;
-            --text-lighter: #ffffff;
-            --text-muted: #8a8ab5;
-            --border: rgba(138, 138, 181, 0.2);
-            --radius: 16px;
-            --shadow: 0 10px 30px -15px rgba(0, 247, 255, 0.2);
-            --shadow-neon: 0 0 20px rgba(255, 43, 255, 0.3), 0 0 40px rgba(0, 247, 255, 0.2);
-            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            --font-primary: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #eef2ff;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --lighter: #f1f5f9;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body, html {
-            font-family: var(--font-primary);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background: var(--dark-bg);
-            color: var(--text-light);
-            overflow-x: hidden;
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 1rem;
         }
         
         .forgot-link {
@@ -101,44 +95,98 @@
             overflow: hidden;
         }
         
-        .login-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            position: relative;
-            background: linear-gradient(135deg, #f8f9fc 0%, #f1f5f9 100%);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-        
         .login-card {
-            width: 100%;
-            max-width: 400px;
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 3rem 2.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-            margin: 0 auto;
-            border: 1px solid rgba(0, 0, 0, 0.04);
-            position: relative;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 100%;
+            margin: 0 auto;
         }
-        
-        .login-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-        }
-        
-        .login-card h1 {
-            color: #111827;
-            text-align: center;
-            margin: 0 0 2rem 0;
-            font-size: 1.875rem;
+
+        .logo-text {
+            font-size: 1.75rem;
             font-weight: 700;
-            letter-spacing: -0.025em;
-            line-height: 1.2;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .form-control, .form-select {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.2), 0 4px 6px -4px rgba(79, 70, 229, 0.2);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .login-link {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            position: relative;
+            margin-left: 0.5rem;
+        }
+
+        .login-link:hover {
+            color: var(--primary-dark);
+        }
+
+        .login-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .login-link:hover::after {
+            width: 100%;
+        }
+
+        .required-asterisk {
+            color: var(--error);
+            font-size: 1.2em;
+            line-height: 1;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--darker);
+            margin-bottom: 0.5rem;
         }
         
         .form-group {
@@ -414,87 +462,158 @@
     </style>
 </h:head>
 <h:body class="login-container">
-    <!-- Carte de connexion simplifiée -->
-    <div class="login-card">
-        <h1>Bienvenue</h1>
-        <p style="text-align: center; color: #64748b; margin-top: -1.25rem; margin-bottom: 2rem; font-size: 0.95rem;">Connectez-vous à votre compte</p>
-        
-        <!-- Formulaire -->
-        <h:form id="loginForm" style="width: 100%;">
-            <!-- Messages d'erreur -->
-            <p:growl id="messages" showDetail="true" autoUpdate="true" />
-            
-            <!-- Champ Email -->
-            <div class="form-group">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-envelope"></i>
-                    </span>
-                    <p:inputText id="username" 
-                               value="#{loginBean.username}" 
-                               placeholder="Adresse email"
-                               required="true" 
-                               requiredMessage="L'email est requis"
-                               styleClass="p-inputtext"
-                               style="width: 100%;"/>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="login-card">
+                    <!-- En-tête -->
+                    <div class="text-center mb-4">
+                        <div class="d-flex align-items-center justify-content-center mb-3">
+                            <div class="bg-primary text-white d-flex align-items-center justify-content-center rounded" style="width: 40px; height: 40px; font-size: 1.25rem; font-weight: 700;">
+                                G
+                            </div>
+                            <span class="logo-text ms-2">Gestion Commande</span>
+                        </div>
+                        <h2 class="h3 mb-2">Connexion</h2>
+                        <p class="text-muted">Accédez à votre compte</p>
+                    </div>
+
+                    <!-- Messages d'erreur -->
+                    <div class="mb-4">
+                        <p:messages id="messages" showDetail="true" closable="true" />
+                    </div>
+
+                    <h:form id="loginForm" class="needs-validation" novalidate="true">
+                        <div class="row g-3">
+                            <!-- Identifiant -->
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="j_username" class="form-label">
+                                        <i class="bi bi-person me-1"></i>
+                                        Identifiant
+                                        <span class="required-asterisk">*</span>
+                                    </label>
+                                    <p:inputText id="j_username" 
+                                               value="#{loginBean.username}" 
+                                               required="true"
+                                               requiredMessage="L'identifiant est requis"
+                                               styleClass="form-control"
+                                               placeholder="Votre identifiant" />
+                                    <p:message for="j_username" styleClass="invalid-feedback d-block" />
+                                </div>
+                            </div>
+
+                            <!-- Mot de passe -->
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="j_password" class="form-label">
+                                        <i class="bi bi-lock me-1"></i>
+                                        Mot de passe
+                                        <span class="required-asterisk">*</span>
+                                    </label>
+                                    <p:password id="j_password" 
+                                              value="#{loginBean.password}" 
+                                              required="true"
+                                              requiredMessage="Le mot de passe est requis"
+                                              styleClass="form-control"
+                                              placeholder="Votre mot de passe"
+                                              feedback="false"
+                                              toggleMask="true" />
+                                    <p:message for="j_password" styleClass="invalid-feedback d-block" />
+                                </div>
+                            </div>
+
+                            <!-- Options de connexion -->
+                            <div class="col-12 d-flex justify-content-between align-items-center">
+                                <div class="form-check">
+                                    <p:selectBooleanCheckbox id="rememberMe" 
+                                                           value="#{loginBean.rememberMe}" 
+                                                           styleClass="form-check-input" />
+                                    <label for="loginForm:rememberMe" class="form-check-label">
+                                        Se souvenir de moi
+                                    </label>
+                                </div>
+                                <h:link value="Mot de passe oublié ?" 
+                                       outcome="/forgot-password" 
+                                       styleClass="login-link" />
+                            </div>
+
+                            <!-- Bouton de connexion -->
+                            <div class="col-12 mt-3">
+                                <p:commandButton value="Se connecter" 
+                                               icon="pi pi-sign-in me-2"
+                                               action="#{loginBean.login}" 
+                                               update="messages @form"
+                                               styleClass="btn btn-primary w-100 py-2"
+                                               onstart="this.classList.add('disabled')"
+                                               oncomplete="this.classList.remove('disabled')" />
+                            </div>
+
+                            <!-- Ligne de séparation -->
+                            <div class="col-12">
+                                <div class="position-relative text-center my-3">
+                                    <hr class="my-0" />
+                                    <span class="px-2 bg-white text-muted small position-absolute top-50 translate-middle">OU</span>
+                                </div>
+                            </div>
+
+                            <!-- Bouton Google -->
+                            <div class="col-12">
+                                <p:commandButton value="Se connecter avec Google"
+                                               icon="pi pi-google me-2"
+                                               styleClass="btn btn-outline-secondary w-100"
+                                               action="#{loginBean.loginWithGoogle}" />
+                            </div>
+
+                            <!-- Lien vers l'inscription -->
+                            <div class="col-12 text-center mt-4">
+                                <span class="text-muted">Pas encore de compte ?</span>
+                                <h:link value="S'inscrire" outcome="/inscription" styleClass="login-link" />
+                            </div>
+                        </div>
+                    </h:form>
                 </div>
-                <p:message for="username" styleClass="error-message"/>
             </div>
-            
-            <!-- Champ Mot de passe -->
-            <div class="form-group">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-lock"></i>
-                    </span>
-                    <p:password id="password" 
-                              value="#{loginBean.password}" 
-                              placeholder="Mot de passe"
-                              required="true" 
-                              requiredMessage="Le mot de passe est requis"
-                              feedback="false"
-                              toggleMask="true"
-                              styleClass="p-password-input"
-                              style="width: 100%;"/>
-                </div>
-                <p:message for="password" styleClass="error-message"/>
-            </div>
-            
-            <!-- Options -->
-            <div class="form-options">
-                <div class="form-check">
-                    <p:selectBooleanCheckbox id="remember" 
-                                          value="#{loginBean.rememberMe}" 
-                                          styleClass="form-check-input"/>
-                    <label for="loginForm:remember" class="form-check-label">Rester connecté</label>
-                </div>
-                <a href="#" class="forgot-link">Mot de passe oublié ?</a>
-            </div>
-            
-            <!-- Bouton de connexion -->
-            <div class="form-group" style="margin-top: 2.25rem; margin-bottom: 1.5rem;">
-                <p:commandButton value="Se connecter" 
-                              action="#{loginBean.login}" 
-                              styleClass="p-button"
-                              update="messages @form"
-                              process="@form"
-                              style="width: 100%;"/>
-            </div>
-            
-        </h:form>
-        
-        <!-- Effet de lueur -->
-        <div class="glow-effect"></div>
+        </div>
     </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Scripts -->
-    <h:outputScript library="primefaces" name="jquery/jquery.js" />
-    <!-- Script pour améliorations UX -->
+    <script>
+        // Activer les tooltips Bootstrap
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation de fondu à l'ouverture
+            const card = document.querySelector('.login-card');
+            if (card) {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100);
+            }
+            
+            // Validation des champs du formulaire
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        });
+    </script>
     <script>
         // Auto-focus sur le premier champ
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
-                const firstInput = document.querySelector('#loginForm\:username');
+                const firstInput = document.querySelector('#loginForm\:j_username');
                 if (firstInput) {
                     firstInput.focus();
                 }

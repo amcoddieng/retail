@@ -3,6 +3,10 @@ package com.example.retail.web.bean;
 import com.example.retail.domain.Commande;
 import com.example.retail.domain.Produit;
 import com.example.retail.service.CommandeService;
+import com.example.retail.service.CatalogueService;
+import com.example.retail.domain.Catalogue;
+import com.example.retail.domain.Famille;
+import com.example.retail.service.AdminService;
 import com.example.retail.web.aop.Auditable;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -18,23 +22,56 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Named
 @SessionScoped
 public class CatalogueBean implements Serializable {
     @EJB
     private CommandeService service;
+    
+    @EJB
+    private CatalogueService catalogueService;
+    
+    @EJB
+    private AdminService adminService;
+    
     @Inject
     private LoginBean loginBean;
+    
+    // Pour la gestion du panier
     private List<Produit> produits;
     private Map<Long, Integer> panier = new LinkedHashMap<>();
+    
+    // Pour la gestion des catalogues et familles
+    private List<Catalogue> catalogues;
+    private Catalogue selectedCatalogue;
+    private List<Famille> famillesDisponibles;
+    private List<Famille> famillesSelectionnees;
+    private Long familleId;
+    private Famille familleASupprimer;
 
     @PostConstruct
     public void init() {
         produits = service.listerProduits();
-        System.out.println("CatalogueBean initialisé avec " + produits.size() + " produits");
+        catalogues = catalogueService.listerCatalogues();
+        chargerFamillesDisponibles();
+        System.out.println("CatalogueBean initialisé avec " + produits.size() + " produits et " + catalogues.size() + " catalogues");
+    }
+    
+    private void chargerFamillesDisponibles() {
+        if (selectedCatalogue != null) {
+            // Charger les familles disponibles pour le catalogue sélectionné
+            famillesDisponibles = adminService.familles().stream()
+                    .filter(f -> !selectedCatalogue.getFamilles().contains(f))
+                    .collect(Collectors.toList());
+        } else {
+            // Si aucun catalogue n'est sélectionné, charger toutes les familles
+            famillesDisponibles = adminService.familles();
+        }
     }
 
+    // Méthodes pour la gestion du panier
     public void ajouter(Long pid) {
         if (!loginBean.isUserLoggedIn()) {
             FacesContext.getCurrentInstance().addMessage(null,
@@ -47,6 +84,98 @@ public class CatalogueBean implements Serializable {
         Integer quantite = panier.get(pid);
         panier.put(pid, quantite == null ? 1 : quantite + 1);
         System.out.println("Panier après ajout: " + panier);
+    }
+    
+    // Méthodes pour la gestion des catalogues et familles
+    public void onCatalogueSelect() {
+        if (selectedCatalogue != null) {
+            // Charger les familles du catalogue sélectionné
+            famillesSelectionnees = new ArrayList<>(selectedCatalogue.getFamilles());
+            chargerFamillesDisponibles();
+        }
+    }
+    
+    public void ajouterFamille() {
+        if (selectedCatalogue != null && familleId != null) {
+            catalogueService.ajouterFamilleAuCatalogue(selectedCatalogue.getId(), familleId);
+            // Mettre à jour les listes
+            selectedCatalogue = catalogueService.trouverCatalogueParId(selectedCatalogue.getId());
+            onCatalogueSelect();
+            
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Famille ajoutée", "La famille a été ajoutée au catalogue avec succès"));
+        }
+    }
+    
+    public void retirerFamille() {
+        if (selectedCatalogue != null && familleASupprimer != null) {
+            catalogueService.retirerFamilleDuCatalogue(selectedCatalogue.getId(), familleASupprimer.getId());
+            // Mettre à jour les listes
+            selectedCatalogue = catalogueService.trouverCatalogueParId(selectedCatalogue.getId());
+            onCatalogueSelect();
+            
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Famille retirée", "La famille a été retirée du catalogue avec succès"));
+        }
+    }
+    
+    public void retirerFamille(Famille famille) {
+        this.familleASupprimer = famille;
+        retirerFamille();
+    }
+    
+    // Getters et setters
+    public List<Catalogue> getCatalogues() {
+        return catalogues;
+    }
+
+    public void setCatalogues(List<Catalogue> catalogues) {
+        this.catalogues = catalogues;
+    }
+
+    public Catalogue getSelectedCatalogue() {
+        return selectedCatalogue;
+    }
+
+    public void setSelectedCatalogue(Catalogue selectedCatalogue) {
+        this.selectedCatalogue = selectedCatalogue;
+        if (selectedCatalogue != null) {
+            onCatalogueSelect();
+        }
+    }
+
+    public List<Famille> getFamillesDisponibles() {
+        return famillesDisponibles;
+    }
+
+    public void setFamillesDisponibles(List<Famille> famillesDisponibles) {
+        this.famillesDisponibles = famillesDisponibles;
+    }
+
+    public List<Famille> getFamillesSelectionnees() {
+        return famillesSelectionnees;
+    }
+
+    public void setFamillesSelectionnees(List<Famille> famillesSelectionnees) {
+        this.famillesSelectionnees = famillesSelectionnees;
+    }
+
+    public Long getFamilleId() {
+        return familleId;
+    }
+
+    public void setFamilleId(Long familleId) {
+        this.familleId = familleId;
+    }
+    
+    public Famille getFamilleASupprimer() {
+        return familleASupprimer;
+    }
+    
+    public void setFamilleASupprimer(Famille familleASupprimer) {
+        this.familleASupprimer = familleASupprimer;
     }
 
     public void inc(Long pid) {

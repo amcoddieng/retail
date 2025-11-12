@@ -3,11 +3,12 @@ package com.example.retail.service;
 import com.example.retail.domain.Catalogue;
 import com.example.retail.domain.Famille;
 import com.example.retail.domain.Produit;
-import javax.annotation.security.RolesAllowed;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 
 @Stateless
@@ -79,13 +80,34 @@ public class AdminService {
     }
 
     public Catalogue saveCatalogue(Catalogue c, List<Long> produitIds) {
-        List<Produit> list = produitIds == null ? java.util.Collections.emptyList() :
-                em.createQuery("select p from Produit p where p.id in :ids", Produit.class).setParameter("ids", produitIds).getResultList();
-        c.setProduits(list);
-        System.out.println(list);
-        if (c.getId() == null) em.persist(c);
-        else c = em.merge(c);
-        return c;
+        try {
+            // Gérer les produits
+            List<Produit> produits = new ArrayList<>();
+            if (produitIds != null && !produitIds.isEmpty()) {
+                produits = em.createQuery("select p from Produit p where p.id in :ids", Produit.class)
+                          .setParameter("ids", produitIds)
+                          .getResultList();
+            }
+            
+            // Si c'est une mise à jour, charger l'entité existante
+            if (c.getId() != null) {
+                Catalogue existing = em.find(Catalogue.class, c.getId());
+                if (existing != null) {
+                    existing.setNom(c.getNom());
+                    existing.setDescription(c.getDescription());
+                    existing.setProduits(produits);
+                    return em.merge(existing);
+                }
+            }
+            
+            // Pour une nouvelle création
+            c.setProduits(produits);
+            em.persist(c);
+            
+            return c;
+        } catch (Exception e) {
+            throw new BusinessException("Erreur lors de la sauvegarde du catalogue: " + e.getMessage());
+        }
     }
 
     public void deleteCatalogue(Long id) {

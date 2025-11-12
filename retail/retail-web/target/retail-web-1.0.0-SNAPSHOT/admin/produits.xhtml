@@ -9,23 +9,25 @@
     <ui:define name="content">
         <f:event type="preRenderView" listener="#{loginBean.checkAccess('ADMIN')}"/>
 
-        <div class="admin-produits-container">
+        <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
             <!-- Header Section -->
-            <div class="page-header">
-                <div class="header-content">
-                    <div class="header-title">
-                        <i class="pi pi-shopping-bag header-icon"></i>
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl shadow-xl mb-8">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between p-8">
+                    <div class="flex items-center mb-6 lg:mb-0">
+                        <div class="bg-white/20 p-4 rounded-2xl mr-6 backdrop-blur-sm">
+                            <i class="pi pi-shopping-bag text-3xl text-white"></i>
+                        </div>
                         <div>
-                            <h1 class="page-title">Gestion des Produits</h1>
-                            <p class="page-subtitle">Créez et gérez le catalogue de produits</p>
+                            <h1 class="text-3xl font-bold text-white mb-2">Gestion des Produits</h1>
+                            <p class="text-indigo-100 text-lg">Créez et gérez le catalogue de produits</p>
                         </div>
                     </div>
-                    <div class="header-stats">
-                        <div class="stat-card">
-                            <i class="pi pi-box stat-icon"></i>
-                            <div class="stat-info">
-                                <span class="stat-number">#{adminProduitBean.produits.size()}</span>
-                                <span class="stat-label">Produits</span>
+                    <div class="bg-white/10 px-6 py-4 rounded-xl border border-white/20 backdrop-blur-sm">
+                        <div class="flex items-center">
+                            <i class="pi pi-box text-white text-xl mr-3"></i>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-white">#{adminProduitBean.produits.size()}</div>
+                                <div class="text-indigo-100 text-sm">Produits en stock</div>
                             </div>
                         </div>
                     </div>
@@ -33,27 +35,35 @@
             </div>
 
             <!-- Main Content -->
-            <div class="produits-content">
+            <div class="space-y-6">
                 <!-- Toolbar Card -->
-                <div class="toolbar-card">
-                    <div class="card-header">
-                        <h3 class="card-title">Actions et Recherche</h3>
-                        <p class="card-description">Créez de nouveaux produits ou recherchez dans le catalogue</p>
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-100">
+                        <h3 class="text-xl font-semibold text-gray-800">Actions et Recherche</h3>
+                        <p class="text-gray-600 mt-1">Créez de nouveaux produits ou recherchez dans le catalogue</p>
                     </div>
 
                     <h:form id="toolbarForm">
                         <p:messages id="msgs" showDetail="true" closable="true" 
                                   styleClass="custom-growl"/>
                         
-                        <div class="toolbar-content">
-                            <div class="toolbar-section">
-                                <p:commandButton value="Nouveau produit" icon="pi pi-plus"
-                                               action="#{adminProduitBean.nouveau}"
-                                               process="@this"
-                                               update="createForm toolbarForm:msgs"
-                                               styleClass="create-button"/>
+                        <div class="p-6">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                <div class="flex items-center gap-4">
+                                    <p:commandButton value="Nouveau produit" icon="pi pi-plus"
+                                                   action="#{adminProduitBean.nouveau}"
+                                                   process="@this"
+                                                   update="createForm toolbarForm:msgs"
+                                                   styleClass="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"/>
+                                </div>
                                 
-                               
+                                <div class="flex-1 max-w-md">
+                                    <div class="relative">
+                                        <i class="pi pi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                        <p:inputText placeholder="Rechercher un produit..." 
+                                                   styleClass="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"/>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </h:form>
@@ -62,66 +72,72 @@
                 <!-- Creation/Edit Form Card -->
                 <h:form id="createForm" enctype="multipart/form-data">
                 <ui:fragment rendered="#{adminProduitBean.showNew or adminProduitBean.editMode}">
-                 <div class="creation-card" >
-                        <div class="card-header">
-                            <div class="card-title-section">
-                                <i class="pi #{adminProduitBean.editMode ? 'pi-pencil' : 'pi-plus-circle'} card-icon"></i>
-                                <h3 class="card-title">
-                                    #{adminProduitBean.editMode ? 'Modifier le produit' : 'Nouveau produit'}
-                                </h3>
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transform transition-all duration-300">
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-100">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-indigo-500 p-2 rounded-lg">
+                                        <i class="pi #{adminProduitBean.editMode ? 'pi-pencil' : 'pi-plus-circle'} text-white text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-semibold text-gray-800">
+                                            #{adminProduitBean.editMode ? 'Modifier le produit' : 'Nouveau produit'}
+                                        </h3>
+                                        <p class="text-gray-600 text-sm mt-1">
+                                            #{adminProduitBean.editMode ? 
+                                              'Modifiez les informations du produit' : 
+                                              'Ajoutez un nouveau produit au catalogue'}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
-                            <p class="card-description">
-                                #{adminProduitBean.editMode ? 
-                                  'Modifiez les informations du produit' : 
-                                  'Ajoutez un nouveau produit au catalogue'}
-                            </p>
                         </div>
 
-                        <div class="form-content">
-                            <div class="form-grid">
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                                 <!-- Libellé -->
-                                <div class="form-field">
-                                    <label class="field-label">
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-semibold text-gray-700">
                                         Nom du produit
-                                        <span class="required-asterisk">*</span>
+                                        <span class="text-red-500 ml-1">*</span>
                                     </label>
                                     <p:inputText value="#{adminProduitBean.current.libelle}"
                                                required="true" requiredMessage="Le nom du produit est requis"
                                                placeholder="Saisissez le nom du produit"
-                                               styleClass="modern-input"/>
+                                               styleClass="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"/>
                                 </div>
 
                                 <!-- Prix -->
-                                <div class="form-field">
-                                    <label class="field-label">
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-semibold text-gray-700">
                                         Prix (FCFA)
-                                        <span class="required-asterisk">*</span>
+                                        <span class="text-red-500 ml-1">*</span>
                                     </label>
                                     <p:inputNumber value="#{adminProduitBean.current.prix}"
                                                  minValue="0" decimalPlaces="0"
                                                  required="true" requiredMessage="Le prix est requis"
                                                  placeholder="0"
-                                                 styleClass="modern-input"/>
+                                                 styleClass="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"/>
                                 </div>
 
                                 <!-- Stock -->
-                                <div class="form-field">
-                                    <label class="field-label">
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-semibold text-gray-700">
                                         Stock disponible
-                                        <span class="required-asterisk">*</span>
+                                        <span class="text-red-500 ml-1">*</span>
                                     </label>
                                     <p:inputNumber value="#{adminProduitBean.current.stockDisponible}"
                                                  minValue="0" decimalPlaces="0"
                                                  required="true" requiredMessage="Le stock est requis"
                                                  placeholder="0"
-                                                 styleClass="modern-input"/>
+                                                 styleClass="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"/>
                                 </div>
 
                                 <!-- Famille -->
-                                <div class="form-field">
-                                    <label class="field-label">Famille</label>
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-semibold text-gray-700">Famille</label>
                                     <p:selectOneMenu value="#{adminProduitBean.familleId}" 
-                                                   styleClass="modern-select">
+                                                   styleClass="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200">
                                         <f:selectItem itemLabel="Sélectionnez une famille" itemValue="#{null}"/>
                                         <f:selectItems value="#{adminProduitBean.familles}" var="f"
                                                      itemLabel="#{f.nom}" itemValue="#{f.id}"/>
@@ -129,10 +145,10 @@
                                 </div>
 
                                 <!-- Image Upload -->
-                                <div class="form-field full-width">
-                                    <label class="field-label">Image du produit</label>
-                                    <div class="upload-section">
-                                        <div class="upload-controls">
+                                <div class="lg:col-span-2 space-y-4">
+                                    <label class="block text-sm font-semibold text-gray-700">Image du produit</label>
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <div class="space-y-3">
                                             <p:fileUpload mode="advanced"
                                                         auto="true"
                                                         label="Choisir une image"
@@ -145,28 +161,27 @@
                                                         listener="#{adminProduitBean.upload}"
                                                         update="imagePreview toolbarForm:msgs"
                                                         process="@this"
-                                                        styleClass="modern-upload"/>
+                                                        styleClass="w-full"/>
+                                            <p class="text-xs text-gray-500">Formats acceptés: JPG, PNG, GIF (max 10MB)</p>
                                         </div>
                                         
-                                        <div class="image-preview-section">
+                                        <div class="flex justify-center">
                                             <p:outputPanel id="imagePreview">
-                                            <ui:fragment rendered="#{not empty adminProduitBean.getCurrentImageBase64()}">
-                                            <div class="image-preview" >
-                                                    <img src="#{adminProduitBean.getCurrentImageBase64()}"
-                                                         class="product-image"/>
-                                                    <div class="image-overlay">
-                                                        <span class="image-text">Aperçu</span>
+                                                <ui:fragment rendered="#{not empty adminProduitBean.getCurrentImageBase64()}">
+                                                    <div class="relative group">
+                                                        <img src="#{adminProduitBean.getCurrentImageBase64()}"
+                                                             class="w-48 h-48 object-cover rounded-xl border-2 border-gray-300 shadow-md group-hover:shadow-lg transition-shadow duration-200"/>
+                                                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-xl transition-all duration-200 flex items-center justify-center">
+                                                            <span class="text-white opacity-0 group-hover:opacity-100 font-semibold text-sm transition-opacity duration-200">Aperçu</span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </ui:fragment>
-                                            <ui:fragment rendered="#{empty adminProduitBean.getCurrentImageBase64()}">
-                                             <div class="no-image" >
-                                                    <i class="pi pi-image no-image-icon"></i>
-                                                    <span class="no-image-text">Aucune image sélectionnée</span>
-                                                </div>
-                                            </ui:fragment>
-                                                
-                                               
+                                                </ui:fragment>
+                                                <ui:fragment rendered="#{empty adminProduitBean.getCurrentImageBase64()}">
+                                                    <div class="w-48 h-48 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center bg-gray-50">
+                                                        <i class="pi pi-image text-gray-400 text-3xl mb-2"></i>
+                                                        <span class="text-gray-500 text-sm text-center">Aucune image sélectionnée</span>
+                                                    </div>
+                                                </ui:fragment>
                                             </p:outputPanel>
                                         </div>
                                     </div>
@@ -174,119 +189,148 @@
                             </div>
 
                             <!-- Actions -->
-                            <div class="form-actions">
+                            <div class="flex flex-col sm:flex-row gap-3 justify-end pt-6 border-t border-gray-100">
                                 <p:commandButton value="Annuler"
                                                action="#{adminProduitBean.annuler}"
                                                process="@this"
                                                update="createForm"
                                                immediate="true"
-                                               styleClass="secondary"/>
+                                               styleClass="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors duration-200"/>
                                 <p:commandButton value="#{adminProduitBean.editMode ? 'Mettre à jour' : 'Enregistrer'}"
                                                icon="pi pi-check"
                                                action="#{adminProduitBean.save}"
                                                process="@form"
                                                update="toolbarForm:msgs tableForm:produitsTable createForm"
-                                               styleClass="primary"/>
+                                               styleClass="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"/>
                             </div>
                         </div>
                     </div>
-                    </ui:fragment>
-                   
+                </ui:fragment>
                 </h:form>
 
                 <!-- Products Table Card -->
-                <div class="table-card">
-                    <div class="card-header">
-                        <div class="card-title-section">
-                            <i class="pi pi-list card-icon"></i>
-                            <h3 class="card-title">Catalogue des Produits</h3>
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-100">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                            <div class="flex items-center gap-3 mb-4 sm:mb-0">
+                                <div class="bg-indigo-500 p-2 rounded-lg">
+                                    <i class="pi pi-list text-white text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-800">Catalogue des Produits</h3>
+                                    <p class="text-gray-600 text-sm mt-1">
+                                        Liste complète des produits disponibles
+                                        <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full text-xs font-semibold ml-2">
+                                            #{adminProduitBean.produits.size()}
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                        <p class="card-description">
-                            Liste complète des produits disponibles
-                            #{not empty adminProduitBean.filteredProduits ? 
-                              ' (filtrés: ' += adminProduitBean.filteredProduits.size() += ')' : 
-                              ' (' += adminProduitBean.produits.size() += ')'}
-                        </p>
                     </div>
 
                     <h:form id="tableForm">
-                        <div class="table-container">
+                        <div class="overflow-x-auto">
                             <p:dataTable id="produitsTable" value="#{adminProduitBean.produits}" var="p"
-                                       widgetVar="produitsTable" paginator="true" rows="30"
+                                       widgetVar="produitsTable" paginator="true" rows="10"
                                        emptyMessage="Aucun produit trouvé"
-                                       styleClass="modern-table"
+                                       styleClass="min-w-full divide-y divide-gray-200"
                                        globalFilter="globalFilter"
                                        filteredValue="#{adminProduitBean.filteredProduits}"
                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                       rowsPerPageTemplate="10,15,20,25">
+                                       rowsPerPageTemplate="5,10,15,20"
+                                       style="border: none;">
 
-                                <!-- ID -->
-                                <p:column headerText="ID" sortBy="#{p.id}" style="width: 80px;">
-                                    <span class="product-id">##{p.id}</span>
-                                </p:column>
-
-                                <!-- Libellé -->
+                                <!-- Produit -->
                                 <p:column headerText="Produit" sortBy="#{p.libelle}" filterBy="#{p.libelle}"
-                                        filterMatchMode="contains" style="min-width: 250px;">
-                                    <div class="product-info">
-                                        <div class="product-image-small">
+                                        filterMatchMode="contains" 
+                                        styleClass="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-shrink-0">
                                             <ui:fragment rendered="#{not empty p.image}">
-                                                <img src="#{p.image}" class="product-thumbnail"/>
+                                                <img src="#{p.image}" 
+                                                     class="w-12 h-12 rounded-lg object-cover border border-gray-200 shadow-sm"/>
                                             </ui:fragment>
                                             <ui:fragment rendered="#{empty p.image}">
-                                                <div class="product-thumbnail-placeholder">
-                                                    <i class="pi pi-image"></i>
+                                                <div class="w-12 h-12 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
+                                                    <i class="pi pi-image text-gray-400 text-lg"></i>
                                                 </div>
                                             </ui:fragment>
                                         </div>
-                                        <div class="product-details">
-                                            <span class="product-name">#{p.libelle}</span>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="text-sm font-semibold text-gray-900 truncate">#{p.libelle}</p>
                                             <ui:fragment rendered="#{p.famille != null}">
-                                                <small class="product-family">#{p.famille.nom}</small>
+                                                <p class="text-sm text-gray-500 truncate">#{p.famille.nom}</p>
                                             </ui:fragment>
                                         </div>
                                     </div>
                                 </p:column>
 
                                 <!-- Prix -->
-                                <p:column headerText="Prix" sortBy="#{p.prix}" style="width: 120px;">
-                                    <div class="price-display">
-                                        <span class="price-amount">#{p.prix}</span>
-                                        <span class="price-currency">FCFA</span>
+                                <p:column headerText="Prix" sortBy="#{p.prix}" style="width: 120px;"
+                                        styleClass="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <div class="bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
+                                        <span class="text-blue-800 font-bold text-sm">#{p.prix}</span>
+                                        <span class="text-blue-600 text-xs ml-1">FCFA</span>
                                     </div>
                                 </p:column>
 
                                 <!-- Stock -->
-                                <p:column headerText="Stock" sortBy="#{p.stockDisponible}" style="width: 120px;">
-                                    <div class="stock-indicator stock-#{p.stockDisponible gt 10 ? 'high' : (p.stockDisponible gt 0 ? 'medium' : 'low')}">
-                                        <i class="pi pi-box stock-icon"></i>
-                                        <span class="stock-count">#{p.stockDisponible}</span>
-                                        <div class="stock-label">
+                                <p:column headerText="Stock" sortBy="#{p.stockDisponible}" style="width: 140px;"
+                                        styleClass="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <div class="flex items-center gap-2 px-3 py-2 rounded-lg border #{p.stockDisponible gt 10 ? 'bg-green-50 border-green-200' : (p.stockDisponible gt 0 ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200')}">
+                                        <i class="pi pi-box #{p.stockDisponible gt 10 ? 'text-green-600' : (p.stockDisponible gt 0 ? 'text-yellow-600' : 'text-red-600')} text-sm"></i>
+                                        <span class="#{p.stockDisponible gt 10 ? 'text-green-800' : (p.stockDisponible gt 0 ? 'text-yellow-800' : 'text-red-800')} font-semibold text-sm">#{p.stockDisponible}</span>
+                                        <span class="#{p.stockDisponible gt 10 ? 'text-green-600' : (p.stockDisponible gt 0 ? 'text-yellow-600' : 'text-red-600')} text-xs">
                                             #{p.stockDisponible gt 10 ? 'Disponible' : (p.stockDisponible gt 0 ? 'Stock bas' : 'Rupture')}
-                                        </div>
+                                        </span>
                                     </div>
                                 </p:column>
 
                                 <!-- Actions -->
-                                <p:column headerText="Actions" style="width: 120px;">
-                                    <div class="action-buttons">
+                                <p:column headerText="Actions" style="width: 100px;"
+                                        styleClass="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <div class="flex items-center space-x-2">
                                         <p:commandButton icon="pi pi-pencil" 
                                                        title="Modifier"
                                                        action="#{adminProduitBean.edit(p.id)}"
                                                        process="@this"
                                                        update="createForm toolbarForm:msgs"
                                                        oncomplete="if(!args.validationFailed){ scrollToCreateForm(); }"
-                                                       styleClass="action-button edit-button"/>
+                                                       styleClass="w-9 h-9 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center justify-center transition-colors duration-200 shadow-sm hover:shadow-md"/>
                                         <p:commandButton icon="pi pi-trash" 
                                                        title="Supprimer"
                                                        action="#{adminProduitBean.delete(p.id)}"
                                                        process="@this"
                                                        update="toolbarForm:msgs produitsTable"
-                                                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer le produit \\'#{p.libelle}\\' ?')"
-                                                       styleClass="action-button delete-button"/>
+                                                       onclick="return confirm('Supprimer le produit ?')"
+                                                       styleClass="w-9 h-9 bg-red-500 hover:bg-red-600 text-white rounded-lg flex items-center justify-center transition-colors duration-200 shadow-sm hover:shadow-md"/>
                                     </div>
                                 </p:column>
                             </p:dataTable>
+                        </div>
+
+                        <!-- Table Summary -->
+                        <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+                            <div class="flex flex-wrap items-center justify-between gap-4">
+                                <div class="flex items-center space-x-6">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                                        <span class="text-sm text-gray-600">Stock bon</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                                        <span class="text-sm text-gray-600">Stock bas</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                                        <span class="text-sm text-gray-600">Rupture</span>
+                                    </div>
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    Total: <span class="font-semibold text-gray-700">#{adminProduitBean.produits.size()}</span> produits
+                                </div>
+                            </div>
                         </div>
                     </h:form>
                 </div>
@@ -294,563 +338,110 @@
         </div>
 
         <style>
-            /* CSS Variables */
-            :root {
-                --primary: #4361ee;
-                --primary-dark: #3a56d4;
-                --success: #28a745;
-                --warning: #ffc107;
-                --danger: #dc3545;
-                --dark: #2c3e50;
-                --light: #f8f9fa;
-                --border: #e9ecef;
-                --text: #495057;
-                --text-light: #6c757d;
-                --radius: 12px;
-                --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-                --transition: all 0.3s ease;
-            }
-
-            /* Main Container */
-            .admin-produits-container {
-                max-width: 1400px;
-                margin: 0 auto;
-                padding: 0 1rem;
-            }
-
-            /* Page Header */
-            .page-header {
-                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-                color: white;
-                border-radius: var(--radius);
-                margin-bottom: 2rem;
-                overflow: hidden;
-            }
-
-            .header-content {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 2rem;
-            }
-
-            .header-title {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-            }
-
-            .header-icon {
-                font-size: 2.5rem;
-                opacity: 0.9;
-            }
-
-            .page-title {
-                font-size: 2rem;
-                font-weight: 700;
-                margin: 0;
-                color: white;
-            }
-
-            .page-subtitle {
-                opacity: 0.9;
-                margin: 0.5rem 0 0 0;
-                font-size: 1.1rem;
-            }
-
-            .header-stats {
-                display: flex;
-                gap: 1rem;
-            }
-
-            .stat-card {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                padding: 1rem 1.5rem;
-                background: rgba(255, 255, 255, 0.1);
-                border-radius: var(--radius);
-                backdrop-filter: blur(10px);
-            }
-
-            .stat-icon {
-                font-size: 1.5rem;
-                opacity: 0.9;
-            }
-
-            .stat-number {
-                font-size: 1.5rem;
-                font-weight: 700;
-                display: block;
-            }
-
-            .stat-label {
-                font-size: 0.875rem;
-                opacity: 0.8;
-            }
-
-            /* Content Layout */
-            .produits-content {
-                display: flex;
-                flex-direction: column;
-                gap: 1.5rem;
-            }
-
-            /* Cards */
-            .toolbar-card, .creation-card, .table-card {
-                background: white;
-                border-radius: var(--radius);
-                box-shadow: var(--shadow);
-                overflow: hidden;
-            }
-
-            .card-header {
-                padding: 1.5rem 2rem;
-                border-bottom: 1px solid var(--border);
-                background: var(--light);
-            }
-
-            .card-title-section {
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .card-icon {
-                color: var(--primary);
-                font-size: 1.25rem;
-            }
-
-            .card-title {
-                font-size: 1.25rem;
-                font-weight: 600;
-                color: var(--dark);
-                margin: 0;
-            }
-
-            .card-description {
-                color: var(--text-light);
-                margin: 0;
-                font-size: 0.9rem;
-            }
-
-            /* Toolbar */
-            .toolbar-content {
-                padding: 1.5rem 2rem;
-            }
-
-            .toolbar-section {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 1rem;
-            }
-
-            .create-button {
-                background: linear-gradient(135deg, var(--success), #218838);
-                border: none;
-                color: white;
-                padding: 0.75rem 1.5rem;
-                border-radius: 8px;
-                font-weight: 600;
-                transition: var(--transition);
-            }
-
-            .create-button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-            }
-
-            .search-section {
-                flex: 1;
-                max-width: 400px;
-            }
-
-            .search-input {
-                position: relative;
-            }
-
-            .search-icon {
-                position: absolute;
-                left: 1rem;
-                top: 50%;
-                transform: translateY(-50%);
-                color: var(--text-light);
-                z-index: 1;
-            }
-
-            .modern-search {
-                width: 100%;
-                padding: 0.75rem 1rem 0.75rem 2.5rem;
-                border: 2px solid var(--border);
-                border-radius: 8px;
-                font-size: 0.95rem;
-                transition: var(--transition);
-            }
-
-            .modern-search:focus {
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-                outline: none;
-            }
-
-            /* Creation Form */
-            .form-content {
-                padding: 2rem;
-            }
-
-            .form-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 1.5rem;
-                margin-bottom: 2rem;
-            }
-
-            .form-field {
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .full-width {
-                grid-column: 1 / -1;
-            }
-
-            .field-label {
-                font-weight: 600;
-                color: var(--dark);
-                font-size: 0.9rem;
-            }
-
-            .required-asterisk {
-                color: var(--danger);
-            }
-
-            .modern-input, .modern-select {
-                width: 100%;
-                
-                border: 2px solid var(--border);
-                border-radius: 8px;
-                font-size: 0.95rem;
-                transition: var(--transition);
-            }
-
-            .modern-input:focus, .modern-select:focus {
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-                outline: none;
-            }
-
-            /* Upload Section */
-            .upload-section {
-                display: flex;
-                gap: 2rem;
-                align-items: flex-start;
-            }
-
-            .upload-controls {
-                flex: 1;
-            }
-
-            .modern-upload {
-                width: 100%;
-            }
-
-            .image-preview-section {
-                flex: 0 0 200px;
-            }
-
-            .image-preview {
-                position: relative;
-                border: 2px dashed var(--border);
-                border-radius: 8px;
-                overflow: hidden;
-            }
-
-            .product-image {
-                width: 100%;
-                height: 150px;
-                object-fit: cover;
-                display: block;
-            }
-
-            .image-overlay {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background: rgba(0, 0, 0, 0.7);
-                color: white;
-                padding: 0.5rem;
-                text-align: center;
-                font-size: 0.8rem;
-            }
-
-            .no-image {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 150px;
-                border: 2px dashed var(--border);
-                border-radius: 8px;
-                color: var(--text-light);
-            }
-
-            .no-image-icon {
-                font-size: 2rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .no-image-text {
-                font-size: 0.9rem;
-            }
-
-            /* Form Actions */
-            .form-actions {
-                display: flex;
-                gap: 1rem;
-                justify-content: flex-end;
-                padding-top: 1.5rem;
-                border-top: 1px solid var(--border);
-            }
-
-            .action-button {
-                padding: 0.75rem 1.5rem;
-                border: none;
-                border-radius: 8px;
-                font-weight: 600;
-                transition: var(--transition);
-                cursor: pointer;
-            }
-
-            .action-button.primary {
-                background: var(--primary);
-                color: white;
-            }
-
-            .action-button.primary:hover {
-                background: var(--primary-dark);
-            }
-
-            .action-button.secondary {
-                background: var(--light);
-                color: var(--text);
-                border: 1px solid var(--border);
-            }
-
-            .action-button.secondary:hover {
-                background: #e9ecef;
-            }
-
-            /* Table */
-            .table-container {
-                padding: 0;
-            }
-
-            .modern-table {
-                border: none;
-            }
-
-            .modern-table .ui-datatable-header {
-                background: transparent;
-                border: none;
-                padding: 0 2rem;
-            }
-
-            /* Product Info in Table */
-            .product-info {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-            }
-
-            .product-image-small {
-                flex-shrink: 0;
-            }
-
-            .product-thumbnail {
-                width: 40px;
-                height: 40px;
-                border-radius: 6px;
-                object-fit: cover;
-                border: 1px solid var(--border);
-            }
-
-            .product-thumbnail-placeholder {
-                width: 40px;
-                height: 40px;
-                border-radius: 6px;
-                background: var(--light);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: var(--text-light);
-                border: 1px solid var(--border);
-            }
-
-            .product-details {
-                display: flex;
-                flex-direction: column;
-                gap: 0.25rem;
-            }
-
-            .product-name {
-                font-weight: 600;
-                color: var(--dark);
-            }
-
-            .product-family {
-                color: var(--text-light);
-                font-size: 0.8rem;
-            }
-
-            .product-id {
-                color: var(--text-light);
-                font-weight: 600;
-                font-size: 0.85rem;
-            }
-
-            /* Price Display */
-            .price-display {
-                display: flex;
-                align-items: baseline;
-                gap: 0.25rem;
-            }
-
-            .price-amount {
-                font-weight: 700;
-                color: var(--dark);
-                font-size: 1rem;
-            }
-
-            .price-currency {
-                color: var(--text-light);
-                font-size: 0.8rem;
-            }
-
-            /* Stock Indicator */
-            .stock-indicator {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                padding: 0.5rem;
-                border-radius: 6px;
-                font-size: 0.85rem;
-            }
-
-            .stock-high {
-                background: #e6f4ea;
-                color: #137333;
-            }
-
-            .stock-medium {
-                background: #fef7e0;
-                color: #b06000;
-            }
-
-            .stock-low {
-                background: #fce8e6;
-                color: #c5221f;
-            }
-
-            .stock-icon {
-                font-size: 1rem;
-            }
-
-            .stock-count {
-                font-weight: 700;
-            }
-
-            .stock-label {
-                font-size: 0.75rem;
-            }
-
-            /* Action Buttons */
-            .action-buttons {
-                display: flex;
-                gap: 0.5rem;
-            }
-
-            .action-button {
-                width: 32px;
-                height: 32px;
-                border: none;
-                border-radius: 6px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: var(--transition);
-            }
-
-            .edit-button {
-                background: var(--primary);
-                color: white;
-            }
-
-            .edit-button:hover {
-                background: var(--primary-dark);
-            }
-
-            .delete-button {
-                background: var(--danger);
-                color: white;
-            }
-
-            .delete-button:hover {
-                background: #c82333;
-            }
-
-            /* Growl Notifications */
+            /* Styles personnalisés pour compléter Tailwind */
             .custom-growl {
                 position: relative !important;
                 top: auto !important;
                 right: auto !important;
                 width: 100%;
+                margin-bottom: 1rem;
             }
 
-            /* Responsive */
-            @media (max-width: 768px) {
-                .header-content {
-                    flex-direction: column;
-                    gap: 1rem;
-                    text-align: center;
-                }
+            /* Personnalisation de la pagination PrimeFaces */
+            .ui-paginator {
+                background: #f9fafb !important;
+                border: none !important;
+                border-top: 1px solid #e5e7eb !important;
+                padding: 1rem 1.5rem !important;
+            }
 
-                .header-title {
-                    flex-direction: column;
-                }
+            .ui-paginator .ui-paginator-page,
+            .ui-paginator .ui-paginator-first,
+            .ui-paginator .ui-paginator-prev,
+            .ui-paginator .ui-paginator-next,
+            .ui-paginator .ui-paginator-last {
+                border: 1px solid #d1d5db !important;
+                background: white !important;
+                color: #374151 !important;
+                border-radius: 8px !important;
+                margin: 0 2px !important;
+                transition: all 0.2s ease;
+            }
 
-                .toolbar-section {
-                    flex-direction: column;
-                    align-items: stretch;
-                }
+            .ui-paginator .ui-state-active {
+                background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+                color: white !important;
+                border-color: #6366f1 !important;
+            }
 
-                .search-section {
-                    max-width: none;
-                }
+            .ui-paginator .ui-paginator-page:hover,
+            .ui-paginator .ui-paginator-first:hover,
+            .ui-paginator .ui-paginator-prev:hover,
+            .ui-paginator .ui-paginator-next:hover,
+            .ui-paginator .ui-paginator-last:hover {
+                background: #e0e7ff !important;
+                color: #3730a3 !important;
+            }
 
-                .upload-section {
-                    flex-direction: column;
-                }
+            /* Style pour la table */
+            .ui-datatable .ui-datatable-thead > tr > th {
+                background: #f8fafc !important;
+                border-bottom: 2px solid #e2e8f0 !important;
+                font-weight: 600 !important;
+                color: #374151 !important;
+            }
 
-                .image-preview-section {
-                    flex: none;
-                    width: 100%;
-                }
+            .ui-datatable .ui-datatable-data > tr {
+                transition: background-color 0.2s ease;
+            }
 
-                .form-grid {
-                    grid-template-columns: 1fr;
-                }
+            .ui-datatable .ui-datatable-data > tr:hover {
+                background-color: #f8fafc !important;
+            }
 
-                .form-content, .toolbar-content {
-                    padding: 1rem;
-                }
+            .ui-datatable .ui-datatable-data > tr > td {
+                border-color: #f1f5f9 !important;
+                vertical-align: middle !important;
+            }
 
-                .card-header {
-                    padding: 1rem 1.5rem;
+            /* Style pour le fileUpload */
+            .ui-fileupload .ui-fileupload-buttonbar {
+                background: #f8fafc !important;
+                border: 2px dashed #d1d5db !important;
+                border-radius: 12px !important;
+                padding: 2rem !important;
+            }
+
+            .ui-fileupload .ui-fileupload-content {
+                border: none !important;
+                background: transparent !important;
+            }
+
+            /* Animation pour le formulaire de création */
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
                 }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .creation-card {
+                animation: slideDown 0.3s ease-out;
+            }
+
+            /* Style pour le selectOneMenu */
+            .ui-selectonemenu {
+                width: 100% !important;
+            }
+
+            .ui-selectonemenu .ui-selectonemenu-trigger {
+                background: #6366f1 !important;
+                border-color: #6366f1 !important;
+                color: white !important;
             }
         </style>
 
@@ -864,6 +455,20 @@
                     });
                 }
             }
+
+            // Animation pour les cartes au chargement
+            document.addEventListener('DOMContentLoaded', function() {
+                const cards = document.querySelectorAll('.bg-white.rounded-2xl');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.5s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            });
         </script>
     </ui:define>
 </ui:composition>

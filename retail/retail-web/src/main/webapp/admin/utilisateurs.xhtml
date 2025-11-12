@@ -15,15 +15,19 @@
             <div class="page-header">
                 <div class="header-content">
                     <div class="header-title">
-                        <i class="pi pi-users header-icon"></i>
-                        <div>
+                        <div class="header-icon-container">
+                            <i class="pi pi-users header-icon"></i>
+                        </div>
+                        <div class="header-text">
                             <h1 class="page-title">Gestion des Utilisateurs</h1>
                             <p class="page-subtitle">Administrez les comptes et permissions du système</p>
                         </div>
                     </div>
                     <div class="header-stats">
                         <div class="stat-card">
-                            <i class="pi pi-user-plus stat-icon"></i>
+                            <div class="stat-icon-container">
+                                <i class="pi pi-user-plus stat-icon"></i>
+                            </div>
                             <div class="stat-info">
                                 <span class="stat-number">#{adminUsersBean.users.size()}</span>
                                 <span class="stat-label">Utilisateurs</span>
@@ -35,213 +39,265 @@
 
             <!-- Main Content -->
             <div class="users-content">
-                <!-- Add User Button -->
-                <div class="add-user-button-container">
-                    <p:commandButton value="Ajouter un utilisateur" 
-                                   onclick="PF('createUserDialog').show()"
-                                   styleClass="btn btn-primary"
-                                   icon="pi pi-plus" />
+                <div class="content-grid">
+                    <!-- Creation Card -->
+                    <div class="creation-card">
+                        <div class="card-header creation-header">
+                            <div class="card-title-section">
+                                <div class="card-icon-container">
+                                    <i class="pi pi-user-plus card-icon"></i>
+                                </div>
+                                <div class="card-text">
+                                    <h3 class="card-title">Nouvel Utilisateur</h3>
+                                    <p class="card-description">Créez un nouveau compte utilisateur</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h:form id="createForm">
+                            <p:growl id="createGrowl" showDetail="true" life="3000" sticky="false" 
+                                    styleClass="custom-growl" />
+
+                            <div class="form-content">
+                                <div class="form-grid">
+                                    <!-- Login Field -->
+                                    <div class="form-field">
+                                        <label for="login" class="field-label">
+                                            <span class="label-text">Identifiant</span>
+                                            <span class="required-asterisk">*</span>
+                                        </label>
+                                        <div class="form-input-container">
+                                            <i class="pi pi-user input-icon"></i>
+                                            <p:inputText id="login" value="#{adminUsersBean.login}"
+                                                       required="true" requiredMessage="L'identifiant est requis"
+                                                       placeholder="saisir l'identifiant"
+                                                       styleClass="modern-input"/>
+                                        </div>
+                                        <p:message for="login" styleClass="error-message"/>
+                                    </div>
+
+                                    <!-- Name Field -->
+                                    <div class="form-field">
+                                        <label for="name" class="field-label">
+                                            <span class="label-text">Nom complet</span>
+                                            <span class="required-asterisk">*</span>
+                                        </label>
+                                        <div class="form-input-container">
+                                            <i class="pi pi-id-card input-icon"></i>
+                                            <p:inputText id="name" value="#{adminUsersBean.name}"
+                                                       required="true" requiredMessage="Le nom complet est requis"
+                                                       placeholder="saisir le nom complet"
+                                                       styleClass="modern-input"/>
+                                        </div>
+                                        <p:message for="name" styleClass="error-message"/>
+                                    </div>
+
+                                    <!-- Email Field -->
+                                    <div class="form-field">
+                                        <label for="email" class="field-label">
+                                            <span class="label-text">Adresse email</span>
+                                        </label>
+                                        <div class="form-input-container">
+                                            <i class="pi pi-envelope input-icon"></i>
+                                            <p:inputText id="email" value="#{adminUsersBean.email}"
+                                                       placeholder="email@exemple.com"
+                                                       styleClass="modern-input"/>
+                                        </div>
+                                        <p:message for="email" styleClass="error-message"/>
+                                    </div>
+
+                                    <!-- Password Field -->
+                                    <div class="form-field">
+                                        <label for="pwd" class="field-label">
+                                            <span class="label-text">Mot de passe</span>
+                                        </label>
+                                        <div class="form-input-container">
+                                            <i class="pi pi-lock input-icon"></i>
+                                            <p:password id="pwd" value="#{adminUsersBean.password}"
+                                                      toggleMask="true" feedback="false"
+                                                      placeholder="laisser vide pour 'changeme'"
+                                                      styleClass="modern-input"/>
+                                        </div>
+                                        <p:message for="pwd" styleClass="error-message"/>
+                                        <div class="field-hint">Laisser vide pour définir "changeme" comme mot de passe par défaut</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-grid additional-fields">
+                                    <!-- Téléphone -->
+                                    <div class="form-field">
+                                        <label for="telephone" class="field-label">
+                                            <span class="label-text">Téléphone</span>
+                                        </label>
+                                        <div class="form-input-container">
+                                            <i class="pi pi-phone input-icon"></i>
+                                            <p:inputText id="telephone" value="#{adminUsersBean.telephone}" 
+                                                       styleClass="modern-input" placeholder="Numéro de téléphone"/>
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Code postal -->
+                                    <div class="form-field">
+                                        <label for="cp" class="field-label">
+                                            <span class="label-text">Code postal</span>
+                                        </label>
+                                        <div class="form-input-container">
+                                            <i class="pi pi-map-marker input-icon"></i>
+                                            <p:inputText id="cp" value="#{adminUsersBean.codePostal}" 
+                                                       styleClass="modern-input" placeholder="Code postal"/>
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Adresse -->
+                                    <div class="form-field full-width">
+                                        <label for="adresse" class="field-label">
+                                            <span class="label-text">Adresse</span>
+                                        </label>
+                                        <div class="form-input-container">
+                                            <i class="pi pi-home input-icon"></i>
+                                            <p:inputTextarea id="adresse" value="#{adminUsersBean.adresse}" rows="3" 
+                                                           styleClass="modern-input textarea" placeholder="Adresse complète"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Roles Section -->
+                                <div class="form-field full-width roles-field">
+                                    <label class="field-label">
+                                        <span class="label-text">Rôles et Permissions</span>
+                                    </label>
+                                    <div class="roles-selector">
+                                        <p:selectCheckboxMenu value="#{adminUsersBean.roles}"
+                                                            label="Sélectionner les rôles"
+                                                            panelStyle="min-width:20rem"
+                                                            style="width:100%"
+                                                            styleClass="modern-select">
+                                            <f:selectItems value="#{adminUsersBean.allRoles}"
+                                                         var="r" itemLabel="#{r.code}" itemValue="#{r.code}"/>
+                                        </p:selectCheckboxMenu>
+                                    </div>
+                                    <div class="field-hint">Sélectionnez un ou plusieurs rôles pour cet utilisateur</div>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="form-actions">
+                                    <p:commandButton value="Créer l'utilisateur"
+                                                   action="#{adminUsersBean.create}"
+                                                   update="listForm:usersTable listForm:listGrowl createGrowl"
+                                                   process="@form"
+                                                   icon="pi pi-user-plus"
+                                                   styleClass="create-button"
+                                                   oncomplete="if(!args.validationFailed) { resetCreateForm(); }"/>
+                                </div>
+                            </div>
+                        </h:form>
+                    </div>
+
+                    <!-- Users List Card -->
+                    <div class="users-list-card">
+                        <div class="card-header list-header">
+                            <div class="card-title-section">
+                                <div class="card-icon-container">
+                                    <i class="pi pi-list card-icon"></i>
+                                </div>
+                                <div class="card-text">
+                                    <h3 class="card-title">Liste des Utilisateurs</h3>
+                                    <p class="card-description">Gérez les comptes existants et leurs permissions</p>
+                                </div>
+                            </div>
+                            <div class="header-actions">
+                                <div class="search-container">
+                                    <i class="pi pi-search search-icon"></i>
+                                    <p:inputText placeholder="Rechercher..." 
+                                               styleClass="search-input"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h:form id="listForm">
+                            <p:growl id="listGrowl" showDetail="true" life="3000" sticky="false"
+                                    styleClass="custom-growl" />
+
+                            <div class="table-container">
+                                <p:dataTable id="usersTable" value="#{adminUsersBean.users}" var="u"
+                                           paginator="true" rows="10" rowKey="#{u.login}"
+                                           selectionMode="single" selection="#{adminUsersBean.selectedUser}"
+                                           emptyMessage="Aucun utilisateur trouvé"
+                                           styleClass="modern-table"
+                                           paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                           rowsPerPageTemplate="5,10,15,20">
+
+                                    <!-- Login -->
+                                    <p:column headerText="Utilisateur" sortBy="#{u.login}" filterBy="#{u.login}" 
+                                            style="width: 200px;">
+                                        <div class="user-info">
+                                            <div class="user-avatar">
+                                                <i class="pi pi-user"></i>
+                                            </div>
+                                            <div class="user-details">
+                                                <span class="user-login">#{u.login}</span>
+                                                <small class="user-name">#{u.name}</small>
+                                            </div>
+                                        </div>
+                                    </p:column>
+
+                                    <!-- Email -->
+                                    <p:column headerText="Contact" sortBy="#{u.email}" filterBy="#{u.email}" style="width: 200px;">
+                                        <div class="contact-info">
+                                            <ui:fragment rendered="#{not empty u.email}">
+                                                <i class="pi pi-envelope contact-icon"></i>
+                                                <span class="user-email">#{u.email}</span>
+                                            </ui:fragment>
+                                            <ui:fragment rendered="#{empty u.email}">
+                                                <span class="no-email">Aucun email</span>
+                                            </ui:fragment>
+                                        </div>
+                                    </p:column>
+                                    
+                                    <!-- Téléphone -->
+                                    <p:column headerText="Téléphone" sortBy="#{u.telephone}" filterBy="#{u.telephone}" style="width: 140px;">
+                                        <div class="phone-info">
+                                            <i class="pi pi-phone contact-icon"></i>
+                                            <span>#{u.telephone}</span>
+                                        </div>
+                                    </p:column>
+                                    
+                                    <!-- Statut -->
+                                    <p:column headerText="Statut" sortBy="#{u.actif}" style="width: 120px;">
+                                        <div class="status-toggle">
+                                            <p:selectBooleanButton value="#{u.actif}"
+                                                                 onLabel="ACTIF" offLabel="INACTIF"
+                                                                 onIcon="pi pi-check" offIcon="pi pi-times"
+                                                                 styleClass="status-button"
+                                                                 update="usersTable listForm:listGrowl"
+                                                                 process="@this">
+                                                <p:ajax listener="#{adminUsersBean.setEnabled(u, not u.actif)}"
+                                                      update="listForm:usersTable listForm:listGrowl"/>
+                                            </p:selectBooleanButton>
+                                        </div>
+                                    </p:column>
+
+                                    <!-- Actions -->
+                                    <p:column headerText="Actions" style="width: 80px;">
+                                        <div class="action-buttons">
+                                            <p:commandButton icon="pi pi-users" 
+                                                           title="Gérer les rôles"
+                                                           process="@this"
+                                                           onclick="PF('rolesDialog').show()"
+                                                           update=":rolesForm:rolesPanel"
+                                                           action="#{adminUsersBean.openEdit(u)}"
+                                                           styleClass="action-button role-button"/>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </h:form>
+                    </div>
                 </div>
-
-                <!-- Create User Dialog -->
-                <p:dialog header="Nouvel Utilisateur" 
-                         widgetVar="createUserDialog" 
-                         modal="true" 
-                         draggable="false" 
-                         resizable="false"
-                         styleClass="create-user-dialog"
-                         appendTo="@(body)">
-                    <h:form id="createForm">
-                        <p:growl id="createGrowl" showDetail="true" life="3000" sticky="false" 
-                                styleClass="custom-growl" />
-
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <p:outputLabel for="nom" value="Nom *" />
-                                <p:inputText id="nom" value="#{adminUsersBean.name}" 
-                                           required="true" requiredMessage="Le nom est obligatoire"
-                                           styleClass="form-control" />
-                                <p:message for="nom" display="text" styleClass="error-message" />
-                            </div>
-
-                            <div class="form-group">
-                                <p:outputLabel for="login" value="Login *" />
-                                <p:inputText id="login" value="#{adminUsersBean.login}" 
-                                           required="true" requiredMessage="Le login est obligatoire"
-                                           styleClass="form-control" />
-                                <p:message for="login" display="text" styleClass="error-message" />
-                            </div>
-
-                            <div class="form-group">
-                                <p:outputLabel for="password" value="Mot de passe *" />
-                                <p:password id="password" value="#{adminUsersBean.password}" 
-                                          required="true" requiredMessage="Le mot de passe est obligatoire"
-                                          styleClass="form-control" feedback="true" 
-                                          promptLabel="Entrez un mot de passe"
-                                          weakLabel="Faible" goodLabel="Moyen" strongLabel="Fort" />
-                                <p:message for="password" display="text" styleClass="error-message" />
-                            </div>
-
-                            <div class="form-group">
-                                <p:outputLabel for="email" value="Email *" />
-                                <p:inputText id="email" value="#{adminUsersBean.email}" 
-                                           required="true" requiredMessage="L'email est obligatoire"
-                                           validatorMessage="Format d'email invalide"
-                                           styleClass="form-control">
-                                    <f:validateRegex pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" />
-                                </p:inputText>
-                                <p:message for="email" display="text" styleClass="error-message" />
-                            </div>
-
-                            <div class="form-group">
-                                <p:outputLabel for="telephone" value="Téléphone" />
-                                <p:inputText id="telephone" value="#{adminUsersBean.telephone}" 
-                                           styleClass="form-control" />
-                                <p:message for="telephone" display="text" styleClass="error-message" />
-                            </div>
-                            
-                            <div class="form-group">
-                                <p:outputLabel for="codePostal" value="Code Postal" />
-                                <p:inputText id="codePostal" value="#{adminUsersBean.codePostal}" 
-                                           styleClass="form-control" />
-                                <p:message for="codePostal" display="text" styleClass="error-message" />
-                            </div>
-                            
-                            <div class="form-group">
-                                <p:outputLabel for="adresse" value="Adresse" />
-                                <p:inputText id="adresse" value="#{adminUsersBean.adresse}" 
-                                           styleClass="form-control" />
-                                <p:message for="adresse" display="text" styleClass="error-message" />
-                            </div>
-                        </div>
-
-                        <div class="dialog-footer">
-                            <p:commandButton value="Annuler" 
-                                           onclick="PF('createUserDialog').hide()"
-                                           styleClass="btn btn-secondary"
-                                           immediate="true"
-                                           process="@this"
-                                           update="@none" />
-                            
-                            <p:commandButton value="Créer l'utilisateur" 
-                                           action="#{adminUsersBean.create()}" 
-                                           update="createGrowl listForm:usersTable @form"
-                                           styleClass="btn btn-primary"
-                                           process="@form"
-                                           oncomplete="if(!args.validationFailed) { PF('createUserDialog').hide(); }" />
-                        </div>
-                    </h:form>
-                </p:dialog>
-
-                <!-- Users List Card -->
-                <div class="users-list-card">
-                    <div class="card-header">
-                        <div class="card-title-section">
-                            <i class="pi pi-list card-icon"></i>
-                            <h3 class="card-title">Liste des Utilisateurs</h3>
-                        </div>
-                        <p class="card-description">Gérez les comptes existants et leurs permissions</p>
-                    </div>
-
-                    <h:form id="listForm">
-                        <p:growl id="listGrowl" showDetail="true" life="3000" sticky="false"
-                                styleClass="custom-growl" />
-
-                        <div class="table-container">
-                            <p:dataTable id="usersTable" value="#{adminUsersBean.users}" var="u"
-                                       paginator="true" rows="25" rowKey="#{u.login}"
-                                       selectionMode="single" selection="#{adminUsersBean.selectedUser}"
-                                       emptyMessage="Aucun utilisateur trouvé"
-                                       styleClass="modern-table"
-                                       paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                       rowsPerPageTemplate="10,15,20,25">
-
-                                <!-- Login -->
-                                <p:column headerText="Login" sortBy="#{u.login}" filterBy="#{u.login}" filterMatchMode="contains" style="width: 20%;">
-                                <div class="d-flex align-items-center">
-                                    <div class="user-avatar">
-                                        <i class="pi pi-user" style="font-size: 1.25rem; color: #5f6368;"></i>
-                                    </div>
-                                    <div class="ms-3">
-                                        <div class="fw-semibold">#{u.login}</div>
-                                        <div class="text-muted small">#{u.name != null ? u.name : 'Non renseigné'}</div>
-                                    </div>
-                                </div>
-                            </p:column>
-                            <p:column headerText="Email" sortBy="#{u.email}" filterBy="#{u.email}" filterMatchMode="contains" style="width: 25%;">
-                                <div class="d-flex align-items-center">
-                                    <i class="pi pi-envelope me-2" style="color: #5f6368;"></i>
-                                    <span>#{u.email}</span>
-                                </div>
-                            </p:column>
-                            <p:column headerText="Rôles" sortBy="#{u.login}" style="width: 20%;">
-                                <span class="role-badge">
-                                    <i class="pi pi-tag me-2"></i>
-                                    #{adminUsersBean.getUserRolesAsString(u.login)}
-                                </span>
-                            </p:column>
-                            <p:column headerText="Statut" sortBy="#{u.actif}" filterBy="#{u.actif}" filterMatchMode="exact" style="width: 15%;">
-                                <span class="status-badge #{u.actif ? 'status-active' : 'status-inactive'}">
-                                    <i class="pi #{u.actif ? 'pi-check' : 'pi-times'} me-1"></i>
-                                    #{u.actif ? 'Actif' : 'Inactif'}
-                                </span>
-                            </p:column>
-                            <p:column headerText="Contact" sortBy="#{u.email}" filterBy="#{u.email}">
-                                <div class="contact-info">
-                                    <ui:fragment rendered="#{not empty u.email}">
-                                        <i class="pi pi-envelope contact-icon"></i>
-                                        <span class="user-email">#{u.email}</span>
-                                    </ui:fragment>
-                                    <ui:fragment rendered="#{empty u.email}">
-                                        <span class="no-email">Aucun email</span>
-                                    </ui:fragment>
-                                </div>
-                            </p:column>
-                            <p:column headerText="Téléphone" sortBy="#{u.telephone}" filterBy="#{u.telephone}">
-                                <span>#{u.telephone}</span>
-                            </p:column>
-                            <p:column headerText="Adresse">
-                                <div>
-                                    <div>#{u.adresse}</div>
-                                    <small>#{u.codePostal}</small>
-                                </div>
-                            </p:column>
-
-                            <!-- Statut -->
-                            <p:column headerText="Statut" sortBy="#{u.actif}" style="width: 120px;">
-                                <div class="status-toggle">
-                                    <p:selectBooleanButton value="#{u.actif}"
-                                                         onLabel="ACTIF" offLabel="INACTIF"
-                                                         onIcon="pi pi-check" offIcon="pi pi-times"
-                                                         styleClass="status-button"
-                                                         update="usersTable listForm:listGrowl"
-                                                         process="@this">
-                                        <p:ajax listener="#{adminUsersBean.setEnabled(u, not u.actif)}"
-                                              update="listForm:usersTable listForm:listGrowl"/>
-                                    </p:selectBooleanButton>
-                                </div>
-                            </p:column>
-
-                            <!-- Actions -->
-                            <p:column headerText="Actions" style="width: 100px;">
-                                <div class="action-buttons">
-                                    <p:commandButton icon="pi pi-users" 
-                                                   title="Gérer les rôles"
-                                                   process="@this"
-                                                   onclick="PF('rolesDialog').show()"
-                                                   update=":rolesForm:rolesPanel"
-                                                   action="#{adminUsersBean.openEdit(u)}"
-                                                   styleClass="action-button role-button"/>
-                                </div>
-                            </p:column>
-                        </p:dataTable>
-                    </div>
-                </h:form>
             </div>
         </div>
-    </div>
 
-    <!-- Roles Management Dialog -->
+        <!-- Roles Management Dialog -->
         <h:form id="rolesForm">
             <p:dialog header="Gestion des Rôles" widgetVar="rolesDialog" modal="true"
                     responsive="true" draggable="false" closable="true"
@@ -259,7 +315,7 @@
                                     <p class="user-dialog-login">@#{adminUsersBean.selectedUser.login}</p>
                                     <div class="user-status">
                                         <i class="pi pi-circle-fill status-dot #{adminUsersBean.selectedUser.actif ? 'active' : 'inactive'}"></i>
-                                        <span>#{adminUsersBean.selectedUser.actif ? 'Compte actif' : 'Compte inactif'}</span>
+                                        <span class="status-text">#{adminUsersBean.selectedUser.actif ? 'Compte actif' : 'Compte inactif'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -280,12 +336,11 @@
                                 <div class="dialog-hint">Cochez les rôles à attribuer à cet utilisateur</div>
 
                                 <div class="current-roles" rendered="#{not empty adminUsersBean.selectedUser.roles}">
-                                    <h5>Rôles actuels :</h5>
+                                    <h5 class="current-roles-title">Rôles actuels :</h5>
                                     <div class="roles-list">
-                                        <div class="role-tag" rendered="#{adminUsersBean.selectedUser.roles.size() > 0}">
-                                            <span class="role-count">#{adminUsersBean.selectedUser.roles.size()} rôle(s)</span>
-                                            <small>attribué(s)</small>
-                                        </div>
+                                        <ui:repeat value="#{adminUsersBean.selectedUser.roles}" var="role">
+                                            <span class="role-badge">#{role.code}</span>
+                                        </ui:repeat>
                                     </div>
                                 </div>
                             </div>
@@ -295,7 +350,7 @@
                                                onclick="PF('rolesDialog').hide()"
                                                styleClass="dialog-button secondary"
                                                immediate="true"/>
-                                <p:commandButton value="Enregistrer les modifications"
+                                <p:commandButton value="Enregistrer"
                                                icon="pi pi-check"
                                                action="#{adminUsersBean.saveRoles}"
                                                update="listForm:usersTable listForm:listGrowl"
@@ -309,318 +364,622 @@
         </h:form>
 
         <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap');
-            
-            /* CSS Variables */
+            /* CSS Variables - Palette moderne */
             :root {
-                --primary: #ff6b00;        /* Orange plus vif */
-                --primary-dark: #e65c00;   /* Orange plus foncé */
-                --primary-light: #ffd8b8;  /* Orange très clair */
-                --primary-ultra-light: #ffeddd;
+                --primary: #6366f1;
+                --primary-dark: #4f46e5;
+                --primary-light: #a5b4fc;
                 --success: #10b981;
+                --success-dark: #059669;
                 --warning: #f59e0b;
                 --danger: #ef4444;
-                --dark: #1a1a1a;
-                --light: #ffffff;
-                --border: #e0e0e0;
-                --text: #1a1a1a;
-                --text-light: #666666;
-                --radius: 0.75rem;
-                --card-bg: #ffffff;
-                --header-bg: #ffffff;
-                --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-                --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
-                --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                --dark: #1f2937;
+                --darker: #111827;
+                --light: #f8fafc;
+                --lighter: #f1f5f9;
+                --border: #e2e8f0;
+                --border-light: #f1f5f9;
+                --text: #374151;
+                --text-light: #6b7280;
+                --text-lighter: #9ca3af;
+                --radius: 12px;
+                --radius-lg: 16px;
+                --radius-sm: 8px;
+                --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
                 --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
                 --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
                 --transition: all 0.2s ease-in-out;
-                --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            }
-            
-            body {
-                font-family: var(--font-sans);
-                background: #f8f9fa;
-                color: var(--text);
-                line-height: 1.6;
-                margin: 0;
-                padding: 0;
-                min-height: 100vh;
-            }
-            
-            @keyframes gradientBG {
-                0% { background-position: 0% 50%; }
-                50% { background-position: 100% 50%; }
-                100% { background-position: 0% 50%; }
             }
 
             /* Main Container */
             .admin-users-container {
-                max-width: 1600px;
+                max-width: 100%;
                 margin: 0 auto;
-                padding: 0 2rem 4rem;
+                padding: 0;
+                background: var(--lighter);
+                min-height: 100vh;
             }
-
-            .admin-users-container .ui-datatable tbody td {
-                padding: 1rem 1.25rem;
-                border-bottom: 1px solid var(--border);
-                vertical-align: middle;
-                background: #ffffff;
-                transition: background-color 0.2s ease;
-            }
-            
-            @keyframes fadeIn {
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-            
-            /* Délai d'animation pour chaque ligne */
-            .admin-users-container .ui-datatable tbody tr:nth-child(1) td { animation-delay: 0.1s; }
-            .admin-users-container .ui-datatable tbody tr:nth-child(2) td { animation-delay: 0.15s; }
-            .admin-users-container .ui-datatable tbody tr:nth-child(3) td { animation-delay: 0.2s; }
-            .admin-users-container .ui-datatable tbody tr:nth-child(4) td { animation-delay: 0.25s; }
-            .admin-users-container .ui-datatable tbody tr:nth-child(5) td { animation-delay: 0.3s; }
 
             /* Page Header */
             .page-header {
-                background: var(--header-bg);
-                padding: 1rem 1.5rem;
-                border-radius: var(--radius);
-                margin-bottom: 1.5rem;
-                box-shadow: var(--shadow);
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                color: white;
+                margin-bottom: 2rem;
+                box-shadow: var(--shadow-lg);
             }
-            
+
             .header-content {
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
+                justify-content: space-between;
+                padding: 2rem 2.5rem;
                 max-width: 1400px;
                 margin: 0 auto;
-                flex-wrap: wrap;
-                gap: 1rem;
-            }
-            
-            .header-icon {
-                font-size: 2rem;
-                color: var(--primary);
-                background: rgba(255, 152, 0, 0.1);
-                padding: 0.6rem;
-                border-radius: 50%;
-            }
-
-            .card-title {
-                font-size: 1.25rem;
-                font-weight: 700;
-                margin: 0;
-                color: white;
-                letter-spacing: 0.5px;
-            }
-
-            .page-title {
-                color: var(--text);
-                margin: 0;
-                font-size: 1.5rem;
-                font-weight: 600;
-            }
-
-            .form-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                gap: 1.25rem;
-                margin-top: 0.75rem;
             }
 
             .header-title {
                 display: flex;
                 align-items: center;
-                gap: 0.75rem;
+                gap: 1.25rem;
             }
 
-            .status-dot {
-                font-size: 0.5rem;
-            }
-
-            .users-list-card {
-                background: var(--card-bg);
+            .header-icon-container {
+                background: rgba(255, 255, 255, 0.15);
+                padding: 1rem;
                 border-radius: var(--radius);
-                border: 1px solid var(--border);
-                box-shadow: var(--shadow);
-                overflow: hidden;
-                transition: all 0.3s ease;
-                width: 100%;
-                margin: 0;
-                position: relative;
-            }
-            
-            .users-list-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-            }
-            
-            .users-list-card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 4px;
-                background: linear-gradient(90deg, 
-                    var(--primary) 0%, 
-                    #ff8c42 25%, 
-                    #ff9e5e 50%, 
-                    #ff8c42 75%, 
-                    var(--primary) 100%);
-                background-size: 200% 100%;
-                animation: gradientX 3s ease infinite;
-            }
-            
-            @keyframes gradientX {
-                0% { background-position: 0% 50%; }
-                50% { background-position: 100% 50%; }
-                100% { background-position: 0% 50%; }
+                backdrop-filter: blur(10px);
             }
 
-            .action-button {
-                background: #ffffff;
-                border: 1px solid var(--border);
-                color: var(--text-light);
-                cursor: pointer;
-                padding: 0.5rem;
-                border-radius: 8px;
-                transition: all 0.2s ease;
-                font-size: 1rem;
-                width: 36px;
-                height: 36px;
-                display: inline-flex;
+            .header-icon {
+                font-size: 2.25rem;
+                color: white;
+            }
+
+            .header-text {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+                font-weight: 700;
+                margin: 0;
+                color: white;
+                letter-spacing: -0.025em;
+            }
+
+            .page-subtitle {
+                opacity: 0.9;
+                margin: 0;
+                font-size: 1.1rem;
+                font-weight: 400;
+            }
+
+            .header-stats {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .stat-card {
+                display: flex;
                 align-items: center;
-                justify-content: center;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                gap: 1rem;
+                padding: 1.25rem 1.5rem;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: var(--radius);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                transition: var(--transition);
             }
-            
-            .action-button::after {
-                content: '';
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                width: 0;
-                height: 0;
+
+            .stat-card:hover {
+                background: rgba(255, 255, 255, 0.15);
+                transform: translateY(-2px);
+            }
+
+            .stat-icon-container {
                 background: rgba(255, 255, 255, 0.2);
-                border-radius: 50%;
-                transform: translate(-50%, -50%);
-                transition: width 0.4s ease, height 0.4s ease;
-                opacity: 0;
+                padding: 0.75rem;
+                border-radius: 10px;
             }
-            
-            .action-button:active::after {
-                width: 100%;
-                height: 100%;
-                opacity: 1;
-                transition: 0s;
+
+            .stat-icon {
+                font-size: 1.5rem;
+                color: white;
             }
-            
-            .action-button:hover {
-                background: var(--primary-light);
-                color: var(--primary-dark);
-                border-color: var(--primary);
+
+            .stat-info {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .stat-number {
+                font-size: 1.75rem;
+                font-weight: 700;
+                display: block;
+                line-height: 1;
+            }
+
+            .stat-label {
+                font-size: 0.875rem;
+                opacity: 0.9;
+                font-weight: 500;
+            }
+
+            /* Content Layout */
+            .users-content {
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 0 2rem;
+            }
+
+            .content-grid {
+                display: grid;
+                grid-template-columns: 400px 1fr;
+                gap: 2rem;
+                align-items: start;
+            }
+
+            /* Cards */
+            .creation-card, .users-list-card {
+                background: white;
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-md);
+                overflow: hidden;
+                border: 1px solid var(--border-light);
+                transition: var(--transition);
+            }
+
+            .creation-card:hover, .users-list-card:hover {
+                box-shadow: var(--shadow-lg);
                 transform: translateY(-1px);
             }
 
-            .btn {
-                display: inline-flex;
+            .card-header {
+                padding: 1.75rem 2rem;
+                border-bottom: 1px solid var(--border-light);
+            }
+
+            .creation-header {
+                background: linear-gradient(135deg, var(--lighter), white);
+            }
+
+            .list-header {
+                background: linear-gradient(135deg, var(--lighter), white);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .card-title-section {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .card-icon-container {
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                padding: 0.75rem;
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+            }
+
+            .card-icon {
+                font-size: 1.25rem;
+                color: white;
+            }
+
+            .card-text {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .card-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: var(--dark);
+                margin: 0;
+            }
+
+            .card-description {
+                color: var(--text-light);
+                margin: 0;
+                font-size: 0.9rem;
+            }
+
+            .header-actions {
+                display: flex;
+                align-items: center;
+            }
+
+            .search-container {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+
+            .search-icon {
+                position: absolute;
+                left: 1rem;
+                color: var(--text-lighter);
+                z-index: 2;
+            }
+
+            .search-input {
+                padding-left: 2.5rem !important;
+                border: 1px solid var(--border) !important;
+                border-radius: var(--radius) !important;
+                background: var(--light) !important;
+            }
+
+            /* Forms */
+            .form-content {
+                padding: 2rem;
+            }
+
+            .form-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .additional-fields {
+                grid-template-columns: 1fr 1fr;
+                margin-top: 1rem;
+            }
+
+            .additional-fields .full-width {
+                grid-column: 1 / -1;
+            }
+
+            .form-field {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .full-width {
+                grid-column: 1 / -1;
+            }
+
+            .field-label {
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
+                font-weight: 600;
+                color: var(--dark);
+                font-size: 0.9rem;
+            }
+
+            .label-text {
+                font-weight: 500;
+            }
+
+            .required-asterisk {
+                color: var(--danger);
+                font-weight: 700;
+            }
+
+            .form-input-container {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+
+            .input-icon {
+                position: absolute;
+                left: 1rem;
+                color: var(--text-lighter);
+                z-index: 2;
+            }
+
+            .modern-input {
+                width: 100%;
+                padding: 0.875rem 1rem 0.875rem 2.75rem;
+                border: 1.5px solid var(--border);
+                border-radius: var(--radius-sm);
+                font-size: 0.95rem;
+                transition: var(--transition);
+                background: var(--light);
+                color: var(--text);
+            }
+
+            .modern-input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+                outline: none;
+                background: white;
+            }
+
+            .modern-input.textarea {
+                padding: 0.875rem 1rem;
+                min-height: 80px;
+                resize: vertical;
+            }
+
+            .field-hint {
+                font-size: 0.8rem;
+                color: var(--text-light);
+                margin-top: 0.25rem;
+                line-height: 1.4;
+            }
+
+            .error-message {
+                color: var(--danger);
+                font-size: 0.8rem;
+                margin-top: 0.25rem;
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
+                font-weight: 500;
+            }
+
+            /* Roles Selector */
+            .roles-field {
+                margin-top: 1rem;
+                padding-top: 1.5rem;
+                border-top: 1px solid var(--border-light);
+            }
+
+            .roles-selector {
+                margin-bottom: 0.5rem;
+            }
+
+            .modern-select {
+                width: 100%;
+            }
+
+            /* Buttons */
+            .form-actions {
+                display: flex;
+                justify-content: flex-end;
+                padding-top: 1.5rem;
+                border-top: 1px solid var(--border-light);
+                margin-top: 1rem;
+            }
+
+            .create-button {
+                background: linear-gradient(135deg, var(--success), var(--success-dark));
+                border: none;
+                padding: 0.875rem 2rem;
+                border-radius: var(--radius-sm);
+                color: white;
+                font-weight: 600;
+                font-size: 0.95rem;
+                transition: var(--transition);
+                box-shadow: var(--shadow);
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .create-button:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-lg);
+                background: linear-gradient(135deg, var(--success-dark), var(--success));
+            }
+
+            /* Table */
+            .table-container {
+                padding: 0;
+            }
+
+            .modern-table {
+                border: none;
+                background: transparent;
+            }
+
+            .modern-table .ui-datatable-header {
+                background: transparent;
+                border: none;
+                padding: 0;
+            }
+
+            .modern-table .ui-datatable-thead > tr > th {
+                background: var(--lighter);
+                border-bottom: 2px solid var(--border);
+                padding: 1rem 1.25rem;
+                font-weight: 600;
+                color: var(--dark);
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            .modern-table .ui-datatable-data > tr > td {
+                padding: 1.25rem;
+                border-bottom: 1px solid var(--border-light);
+                vertical-align: middle;
+                background: white;
+            }
+
+            .modern-table .ui-datatable-data > tr:hover > td {
+                background: var(--lighter);
+            }
+
+            /* User Info in Table */
+            .user-info {
+                display: flex;
+                align-items: center;
+                gap: 0.875rem;
+            }
+
+            .user-avatar {
+                width: 42px;
+                height: 42px;
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                color: white;
+                border-radius: 50%;
+                display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 1rem 2.25rem;
-                border-radius: 50px;
+                font-size: 1rem;
+                flex-shrink: 0;
+            }
+
+            .user-details {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .user-login {
                 font-weight: 600;
+                color: var(--dark);
+                font-size: 0.95rem;
+            }
+
+            .user-name {
+                color: var(--text-light);
+                font-size: 0.8rem;
+            }
+
+            /* Contact Info */
+            .contact-info, .phone-info {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .contact-icon {
+                color: var(--text-lighter);
                 font-size: 0.9rem;
-                line-height: 1.25rem;
-                cursor: pointer;
-                transition: all 0.4s var(--ease-out-quart);
+                flex-shrink: 0;
+            }
+
+            .user-email {
+                color: var(--text);
+                font-size: 0.9rem;
+            }
+
+            .no-email {
+                color: var(--text-light);
+                font-style: italic;
+                font-size: 0.85rem;
+            }
+
+            /* Status Toggle */
+            .status-toggle {
+                display: flex;
+                justify-content: center;
+            }
+
+            .status-button {
+                width: 100px;
                 border: none;
-                text-decoration: none;
-                gap: 0.75rem;
-                text-transform: uppercase;
-                letter-spacing: 0.1em;
-                position: relative;
-                overflow: hidden;
-                z-index: 1;
-                transform: translateY(0);
-                will-change: transform, box-shadow;
-            }
-            
-            .btn:active {
-                transform: translateY(2px);
-            }
-            
-            .btn::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-                z-index: -1;
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                opacity: 1;
-            }
-            
-            .btn:hover::before {
-                transform: scale(1.05);
-                box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 600;
             }
 
-            .btn-primary {
+            .status-button.ui-button.ui-togglebutton.ui-state-active {
+                background: var(--success);
+                border-color: var(--success);
+            }
+
+            /* Action Buttons */
+            .action-buttons {
+                display: flex;
+                gap: 0.5rem;
+                justify-content: center;
+            }
+
+            .action-button {
+                width: 38px;
+                height: 38px;
+                border: none;
+                border-radius: var(--radius-sm);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: var(--transition);
+                box-shadow: var(--shadow);
+            }
+
+            .role-button {
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
                 color: white;
-                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-                box-shadow: 0 4px 20px rgba(255, 107, 0, 0.25);
-                position: relative;
-                overflow: hidden;
-            }
-            
-            .btn-primary::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(
-                    90deg,
-                    transparent,
-                    rgba(255, 255, 255, 0.2),
-                    transparent
-                );
-                transition: 0.5s;
-            }
-            
-            .btn-primary:hover::before {
-                left: 100%;
             }
 
-            .btn-primary:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 15px 30px rgba(255, 107, 0, 0.4);
+            .role-button:hover {
+                background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+                transform: scale(1.05);
+                box-shadow: var(--shadow-md);
+            }
+
+            /* Dialog */
+            .modern-dialog {
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-xl);
+                border: none;
             }
 
             .modern-dialog .ui-dialog-titlebar {
-                background: var(--light);
-                border-bottom: 1px solid var(--border);
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                color: white;
+                border: none;
                 padding: 1.5rem 2rem;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            }
+
+            .modern-dialog .ui-dialog-content {
+                padding: 0;
+                background: var(--light);
+            }
+
+            .dialog-content {
+                padding: 2rem;
+            }
+
+            .user-info-section {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .selected-user {
+                display: flex;
+                align-items: center;
+                gap: 1.25rem;
+                padding: 1.5rem;
+                background: white;
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+                border: 1px solid var(--border-light);
+            }
+
+            .user-avatar-large {
+                width: 64px;
+                height: 64px;
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                flex-shrink: 0;
+            }
+
+            .user-dialog-info {
+                flex: 1;
             }
 
             .user-dialog-name {
                 margin: 0;
                 color: var(--dark);
                 font-weight: 600;
-                font-size: 1.25rem;
+                font-size: 1.3rem;
             }
 
             .user-dialog-login {
                 margin: 0.25rem 0;
                 color: var(--text-light);
-                font-size: 0.9rem;
+                font-size: 0.95rem;
             }
 
             .user-status {
@@ -631,7 +990,7 @@
             }
 
             .status-dot {
-                font-size: 0.5rem;
+                font-size: 0.6rem;
             }
 
             .status-dot.active {
@@ -642,11 +1001,17 @@
                 color: var(--danger);
             }
 
+            .status-text {
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+
             .roles-section {
-                border: 1px solid var(--border);
-                border-radius: 8px;
+                border: 1px solid var(--border-light);
+                border-radius: var(--radius);
                 padding: 1.5rem;
-                background: var(--light);
+                background: white;
+                box-shadow: var(--shadow);
             }
 
             .dialog-label {
@@ -654,6 +1019,7 @@
                 color: var(--dark);
                 margin-bottom: 0.75rem;
                 display: block;
+                font-size: 1rem;
             }
 
             .roles-grid {
@@ -661,41 +1027,38 @@
             }
 
             .dialog-hint {
-                font-size: 0.8rem;
+                font-size: 0.85rem;
                 color: var(--text-light);
                 margin-bottom: 1rem;
+                line-height: 1.4;
             }
 
             .current-roles {
                 padding-top: 1rem;
-                border-top: 1px solid var(--border);
+                border-top: 1px solid var(--border-light);
             }
 
-            .current-roles h5 {
+            .current-roles-title {
                 margin: 0 0 0.75rem 0;
                 color: var(--dark);
-                font-size: 0.9rem;
+                font-size: 0.95rem;
+                font-weight: 600;
             }
 
             .roles-list {
                 display: flex;
+                flex-wrap: wrap;
                 gap: 0.5rem;
             }
 
-            .role-tag {
-                background: var(--primary);
+            .role-badge {
+                background: linear-gradient(135deg, var(--primary-light), var(--primary));
                 color: white;
-                padding: 0.5rem 0.75rem;
-                border-radius: 6px;
-                font-size: 0.85rem;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 0.125rem;
-            }
-
-            .role-count {
-                font-weight: 600;
+                padding: 0.5rem 0.875rem;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 500;
+                box-shadow: var(--shadow);
             }
 
             .dialog-actions {
@@ -703,87 +1066,106 @@
                 gap: 1rem;
                 justify-content: flex-end;
                 padding-top: 1.5rem;
-                border-top: 1px solid var(--border);
+                border-top: 1px solid var(--border-light);
             }
 
             .dialog-button {
                 padding: 0.75rem 1.5rem;
                 border: none;
-                border-radius: 8px;
+                border-radius: var(--radius-sm);
                 font-weight: 600;
                 transition: var(--transition);
+                font-size: 0.9rem;
             }
 
             .dialog-button.primary {
-                background: var(--primary);
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
                 color: white;
+                box-shadow: var(--shadow);
             }
 
             .dialog-button.primary:hover {
-                background: var(--primary-dark);
+                background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+                transform: translateY(-1px);
+                box-shadow: var(--shadow-md);
             }
 
             .dialog-button.secondary {
                 background: var(--light);
                 color: var(--text);
-                border: 1px solid var(--border);
+                border: 1.5px solid var(--border);
             }
 
             .dialog-button.secondary:hover {
-                background: #e9ecef;
+                background: var(--lighter);
+                border-color: var(--text-lighter);
             }
 
             /* Growl Notifications */
             .custom-growl {
-                position: relative !important;
-                top: auto !important;
-                right: auto !important;
-                width: 100%;
+                position: fixed !important;
+                top: 20px !important;
+                right: 20px !important;
+                width: auto !important;
+                min-width: 300px;
+                z-index: 10000;
             }
 
             /* Responsive */
-            @media (max-width: 1024px) {
-                .header-content {
-                    flex-direction: column;
-                    align-items: flex-start;
+            @media (max-width: 1200px) {
+                .content-grid {
+                    grid-template-columns: 1fr;
                     gap: 1.5rem;
                 }
                 
-                .header-stats {
-                    width: 100%;
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                    gap: 1rem;
+                .creation-card {
+                    order: 2;
                 }
                 
-                .stat-card {
-                    margin: 0;
+                .users-list-card {
+                    order: 1;
                 }
-                
+            }
+
+            @media (max-width: 768px) {
                 .users-content {
                     padding: 0 1rem;
                 }
                 
-                .ui-datatable thead {
-                    display: none;
+                .header-content {
+                    flex-direction: column;
+                    gap: 1.5rem;
+                    text-align: center;
+                    padding: 1.5rem;
                 }
-                
-                .ui-datatable tbody td {
-                    display: block;
-                    text-align: right;
-                    padding: 0.75rem 1rem;
-                    position: relative;
-                    padding-left: 50%;
+
+                .header-title {
+                    flex-direction: column;
+                    text-align: center;
                 }
-                
-                .ui-datatable tbody td:before {
-                    content: attr(data-label);
-                    position: absolute;
-                    left: 1rem;
-                    width: 45%;
-                    text-align: left;
-                    font-weight: 600;
-                    color: var(--primary-dark);
+
+                .form-content {
+                    padding: 1.5rem;
+                }
+
+                .card-header {
+                    padding: 1.5rem;
+                }
+
+                .list-header {
+                    flex-direction: column;
+                    gap: 1rem;
+                    align-items: stretch;
+                }
+
+                .additional-fields {
+                    grid-template-columns: 1fr;
+                }
+
+                .selected-user {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 1rem;
                 }
 
                 .dialog-actions {
@@ -791,12 +1173,49 @@
                 }
 
                 .action-buttons {
-                    justify-content: flex-start;
+                    justify-content: center;
                 }
+                
+                .modern-table .ui-datatable-data > tr > td {
+                    padding: 1rem;
+                }
+            }
+
+            /* Animation */
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .creation-card, .users-list-card {
+                animation: fadeInUp 0.5s ease-out;
+            }
+
+            .creation-card {
+                animation-delay: 0.1s;
+            }
+
+            .users-list-card {
+                animation-delay: 0.2s;
             }
         </style>
 
-        
-    <h:outputScript library="js" name="admin.js" target="body"/>
+        <h:outputScript>
+            function resetCreateForm() {
+                // Réinitialiser le formulaire de création
+                document.getElementById('createForm').reset();
+                
+                // Réinitialiser les sélecteurs PrimeFaces si nécessaire
+                if (PF('widgets')) {
+                    // Logique supplémentaire pour réinitialiser les widgets
+                }
+            }
+        </h:outputScript>
     </ui:define>
 </ui:composition>

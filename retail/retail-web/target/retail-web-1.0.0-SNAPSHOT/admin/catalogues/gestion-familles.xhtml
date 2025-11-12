@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Gestion des familles par catalogue</ui:define>
+
+    <ui:define name="content">
+        <div class="p-4">
+            <h1 class="text-2xl font-bold mb-4">Gestion des familles par catalogue</h1>
+            
+            <p:panel header="Sélectionnez un catalogue" class="mb-4">
+                <div class="grid">
+                    <div class="col-12 md:col-6">
+                        <p:selectOneMenu id="selectCatalogue" value="#{catalogueBean.selectedCatalogue}"
+                                     style="width: 100%"
+                                     effect="fade"
+                                     filter="true"
+                                     filterMatchMode="contains"
+                                     var="cat"
+                                     converter="omnifaces.SelectItemsIndexConverter">
+                            <f:selectItem itemLabel="Sélectionnez un catalogue..." itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{catalogueBean.catalogues}" var="c" itemLabel="#{c.nom}" itemValue="#{c}" />
+                            <p:ajax update="familles-panel selectFamille" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+            </p:panel>
+
+            <p:panel id="familles-panel" header="Familles du catalogue" class="mb-4" 
+                   rendered="#{catalogueBean.selectedCatalogue != null}">
+                
+                <p:dataList value="#{catalogueBean.famillesSelectionnees}" var="famille" 
+                          type="unordered" styleClass="mb-4" rowIndexVar="index">
+                    <div class="flex justify-content-between align-items-center p-2 border-round">
+                        <div>
+                            <span class="font-medium">#{famille.nom}</span>
+                            <p class="text-sm text-500 mt-1">#{famille.description}</p>
+                        </div>
+                        <div>
+                            <p:commandButton icon="pi pi-trash" styleClass="p-button-danger p-button-sm"
+                                         onclick="PF('confirmDlg').show()"
+                                         update="@form"
+                                         process="@this">
+                                <f:setPropertyActionListener value="#{famille}" target="#{catalogueBean.familleASupprimer}" />
+                            </p:commandButton>
+                        </div>
+                    </div>
+                </p:dataList>
+                
+                <p:commandButton value="Ajouter une famille" 
+                               icon="pi pi-plus"
+                               styleClass="p-button-outlined p-button-sm"
+                               onclick="PF('ajouterFamilleDialog').show()" />
+            </p:panel>
+            
+            <!-- Dialogue pour ajouter une famille -->
+            <p:dialog header="Ajouter une famille au catalogue" 
+                     widgetVar="ajouterFamilleDialog"
+                     modal="true"
+                     style="width: 500px"
+                     resizable="false">
+                
+                <div class="p-fluid">
+                    <div class="field">
+                        <label for="famille">Famille à ajouter</label>
+                        <p:selectOneMenu id="selectFamille" 
+                                      value="#{catalogueBean.familleId}"
+                                      style="width: 100%"
+                                      filter="true"
+                                      filterMatchMode="contains"
+                                      required="true"
+                                      requiredMessage="Veuillez sélectionner une famille">
+                            <f:selectItem itemLabel="Sélectionnez une famille..." itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{catalogueBean.famillesDisponibles}" 
+                                        var="f" 
+                                        itemLabel="#{f.nom}" 
+                                        itemValue="#{f.id}" />
+                        </p:selectOneMenu>
+                    </div>
+                    
+                    <div class="flex justify-content-end mt-4">
+                        <p:commandButton value="Annuler" 
+                                     styleClass="p-button-text"
+                                     onclick="PF('ajouterFamilleDialog').hide()"
+                                     update="@none" />
+                        <p:commandButton value="Ajouter" 
+                                     styleClass="p-button-primary"
+                                     action="#{catalogueBean.ajouterFamille}"
+                                     update="@form"
+                                     oncomplete="handleAjoutFamilleComplete(args)"
+                                     process="@form"
+                                     onerror="PF('ajouterFamilleDialog').hide()" />
+                    </div>
+                </div>
+            </p:dialog>
+            
+            <!-- Message de confirmation -->
+            <p:growl id="growl" showDetail="true" />
+            
+            <p:confirmDialog header="Confirmation" 
+                           message="Êtes-vous sûr de vouloir retirer cette famille du catalogue ?"
+                           widgetVar="confirmDialog"
+                           appendTo="@(body)">
+                <p:commandButton value="Oui" 
+                               oncomplete="PF('confirmDialog').hide()"
+                               styleClass="p-button-text" />
+                <p:commandButton value="Non" 
+                               oncomplete="PF('confirmDialog').hide()"
+                               styleClass="p-button-text" />
+            </p:confirmDialog>
+        </div>
+        
+        <!-- Boîte de dialogue de confirmation -->
+        <p:confirmDialog id="confirmDialog" 
+                        message="Êtes-vous sûr de vouloir retirer cette famille du catalogue ?" 
+                        header="Confirmation" 
+                        severity="alert" 
+                        widgetVar="confirmDlg">
+            <p:commandButton value="Oui" 
+                         action="#{catalogueBean.retirerFamille}"
+                         update="@form"
+                         oncomplete="PF('confirmDlg').hide()"
+                         styleClass="p-button-text"
+                         icon="pi pi-check" />
+            <p:commandButton value="Non" 
+                         onclick="PF('confirmDlg').hide()"
+                         styleClass="p-button-text"
+                         icon="pi pi-times" />
+        </p:confirmDialog>
+        
+        <script type="text/javascript">
+        //<![CDATA[
+            function handleAjoutFamilleComplete(args) {
+                if (args &amp;&amp; !args.validationFailed) {
+                    PF('ajouterFamilleDialog').hide();
+                }
+            }
+        //]]>
+        </script>
+    </ui:define>
+</ui:composition>

@@ -1,14 +1,16 @@
 package com.example.retail.web.bean;
 
+import com.example.retail.domain.Catalogue;
 import com.example.retail.domain.Famille;
 import com.example.retail.service.AdminService;
+import com.example.retail.service.CatalogueService;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -20,7 +22,12 @@ public class AdminFamilleBean implements Serializable {
 
     @EJB
     private AdminService admin;
+    
+    @EJB
+    private CatalogueService catalogueService;
+    
     private Famille current = new Famille();
+    private List<Long> catalogueIds = new ArrayList<>();
     private boolean showNew = false;
     private boolean editMode = false;
 
@@ -30,6 +37,7 @@ public class AdminFamilleBean implements Serializable {
 
     public void nouveau() {
         current = new Famille();
+        catalogueIds = new ArrayList<>();
         showNew = true;
         editMode = false;
         LOG.info("Mode création activé");
@@ -39,6 +47,7 @@ public class AdminFamilleBean implements Serializable {
         showNew = false;
         editMode = false;
         current = new Famille();
+        catalogueIds = new ArrayList<>();
         LOG.info("Création/Édition annulée");
     }
 
@@ -46,6 +55,11 @@ public class AdminFamilleBean implements Serializable {
         try {
             current = admin.findFamilleById(id);
             if (current != null) {
+                // Charger les IDs des catalogues associés
+                catalogueIds = new ArrayList<>();
+                for (Catalogue c : current.getCatalogues()) {
+                    catalogueIds.add(c.getId());
+                }
                 editMode = true;
                 LOG.info("Édition de la famille: " + current.getNom());
             } else {
@@ -64,20 +78,30 @@ public class AdminFamilleBean implements Serializable {
                 addErrorMessage("Le nom de la famille est obligatoire");
                 return;
             }
-
+            
+            // Sauvegarder d'abord la famille
             admin.saveFamille(current);
-
+            
+            // Mettre à jour les associations avec les catalogues
+            if (current.getId() != null) {
+                catalogueService.updateCataloguesForFamille(current.getId(), catalogueIds);
+                
+                // Recharger la famille avec les catalogues mis à jour
+                current = admin.findFamilleById(current.getId());
+            }
+            
             // Réinitialiser après sauvegarde
             current = new Famille();
+            catalogueIds = new ArrayList<>();
             showNew = false;
             editMode = false;
-
+            
             addSuccessMessage("Famille enregistrée avec succès");
-            LOG.info("Famille enregistrée");
-
+            LOG.info("Famille enregistrée avec " + catalogueIds.size() + " catalogues");
         } catch (Exception e) {
-            addErrorMessage("Erreur lors de l'enregistrement: " + e.getMessage());
-            LOG.severe("Erreur enregistrement famille: " + e.getMessage());
+            String errorMsg = "Erreur lors de l'enregistrement de la famille: " + e.getMessage();
+            LOG.severe(errorMsg);
+            addErrorMessage(errorMsg);
         }
     }
 
@@ -101,14 +125,37 @@ public class AdminFamilleBean implements Serializable {
     public boolean isEditMode() { return editMode; }
 
     // Méthodes utilitaires pour les messages
-    private void addErrorMessage(String message) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, message, null));
+    // Méthodes pour la gestion des catalogues
+    public List<Catalogue> getAllCatalogues() {
+        return admin.catalogues();
+    }
+    
+    public List<Catalogue> getSelectedCatalogues() {
+        if (catalogueIds == null || catalogueIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return admin.catalogues().stream()
+                .filter(c -> catalogueIds.contains(c.getId()))
+                .collect(java.util.stream.Collectors.toList());
+    }
+    
+    // Getters et setters
+    public List<Long> getCatalogueIds() {
+        return catalogueIds;
     }
 
+    public void setCatalogueIds(List<Long> catalogueIds) {
+        this.catalogueIds = catalogueIds;
+    }
+    
     private void addSuccessMessage(String message) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, message, null));
+        FacesContext.getCurrentInstance().addMessage(null, 
+            new FacesMessage(FacesMessage.SEVERITY_INFO, "Succès", message));
+    }
+    
+    private void addErrorMessage(String message) {
+        FacesContext.getCurrentInstance().addMessage(null, 
+            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erreur", message));
     }
 
     public void editRemote() {
@@ -119,6 +166,7 @@ public class AdminFamilleBean implements Serializable {
         if (familyId != null && !familyId.trim().isEmpty()) {
             try {
                 Long id = Long.parseLong(familyId);
+                edit(id);
                 edit(id);
             } catch (NumberFormatException e) {
                 addErrorMessage("ID invalide");

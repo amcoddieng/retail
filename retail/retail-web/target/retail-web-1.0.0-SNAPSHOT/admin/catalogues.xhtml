@@ -9,23 +9,25 @@
     <ui:define name="content">
         <f:event type="preRenderView" listener="#{loginBean.checkAccess('ADMIN')}"/>
 
-        <div class="admin-catalogues-container">
+        <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
             <!-- Header Section -->
-            <div class="page-header">
-                <div class="header-content">
-                    <div class="header-title">
-                        <i class="pi pi-sitemap header-icon"></i>
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl shadow-xl mb-8">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between p-8">
+                    <div class="flex items-center mb-6 lg:mb-0">
+                        <div class="bg-white/20 p-4 rounded-2xl mr-6 backdrop-blur-sm">
+                            <i class="pi pi-sitemap text-3xl text-white"></i>
+                        </div>
                         <div>
-                            <h1 class="page-title">Gestion des Catalogues</h1>
-                            <p class="page-subtitle">Organisez vos produits en catalogues thématiques</p>
+                            <h1 class="text-3xl font-bold text-white mb-2">Gestion des Catalogues</h1>
+                            <p class="text-indigo-100 text-lg">Organisez vos produits en catalogues thématiques</p>
                         </div>
                     </div>
-                    <div class="header-stats">
-                        <div class="stat-card">
-                            <i class="pi pi-folder stat-icon"></i>
-                            <div class="stat-info">
-                                <span class="stat-number">#{adminCatalogueBean.catalogues.size()}</span>
-                                <span class="stat-label">Catalogues</span>
+                    <div class="bg-white/10 px-6 py-4 rounded-xl border border-white/20 backdrop-blur-sm">
+                        <div class="flex items-center">
+                            <i class="pi pi-folder text-white text-xl mr-3"></i>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-white">#{adminCatalogueBean.catalogues.size()}</div>
+                                <div class="text-indigo-100 text-sm">Catalogues créés</div>
                             </div>
                         </div>
                     </div>
@@ -33,27 +35,35 @@
             </div>
 
             <!-- Main Content -->
-            <div class="catalogues-content">
+            <div class="space-y-6">
                 <!-- Toolbar Card -->
-                <div class="toolbar-card">
-                    <div class="card-header">
-                        <h3 class="card-title">Actions et Recherche</h3>
-                        <p class="card-description">Créez de nouveaux catalogues ou recherchez dans la liste</p>
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-100">
+                        <h3 class="text-xl font-semibold text-gray-800">Actions et Recherche</h3>
+                        <p class="text-gray-600 mt-1">Créez de nouveaux catalogues ou recherchez dans la liste</p>
                     </div>
 
                     <h:form id="toolbarForm">
                         <p:messages id="msgs" showDetail="true" closable="true" 
                                   styleClass="custom-growl"/>
                         
-                        <div class="toolbar-content">
-                            <div class="toolbar-section">
-                                <p:commandButton value="Nouveau catalogue" icon="pi pi-plus"
-                                               action="#{adminCatalogueBean.nouveau}"
-                                               process="@this"
-                                               update="createForm toolbarForm:msgs"
-                                               styleClass="create-button"/>
+                        <div class="p-6">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                <div class="flex items-center gap-4">
+                                    <p:commandButton value="Nouveau catalogue" icon="pi pi-plus"
+                                                   action="#{adminCatalogueBean.nouveau}"
+                                                   process="@this"
+                                                   update="createForm toolbarForm:msgs"
+                                                   styleClass="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"/>
+                                </div>
                                 
-                              
+                                <div class="flex-1 max-w-md">
+                                    <div class="relative">
+                                        <i class="pi pi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                        <p:inputText placeholder="Rechercher un catalogue..." 
+                                                   styleClass="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"/>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </h:form>
@@ -62,183 +72,254 @@
                 <!-- Creation/Edit Form Card -->
                 <h:form id="createForm">
                 <ui:fragment rendered="#{adminCatalogueBean.showNew or adminCatalogueBean.editMode}">
-                	 <div class="creation-card" >
-                        <div class="card-header">
-                            <div class="card-title-section">
-                                <i class="pi #{adminCatalogueBean.editMode ? 'pi-pencil' : 'pi-plus-circle'} card-icon"></i>
-                                <h3 class="card-title">
-                                    #{adminCatalogueBean.editMode ? 'Modifier le catalogue' : 'Nouveau catalogue'}
-                                </h3>
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transform transition-all duration-300">
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-100">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-indigo-500 p-2 rounded-lg">
+                                        <i class="pi #{adminCatalogueBean.editMode ? 'pi-pencil' : 'pi-plus-circle'} text-white text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-semibold text-gray-800">
+                                            #{adminCatalogueBean.editMode ? 'Modifier le catalogue' : 'Nouveau catalogue'}
+                                        </h3>
+                                        <p class="text-gray-600 text-sm mt-1">
+                                            #{adminCatalogueBean.editMode ? 
+                                              'Modifiez les informations du catalogue' : 
+                                              'Créez un nouveau catalogue pour organiser vos produits'}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
-                            <p class="card-description">
-                                #{adminCatalogueBean.editMode ? 
-                                  'Modifiez les informations du catalogue' : 
-                                  'Créez un nouveau catalogue pour organiser vos produits'}
-                            </p>
                         </div>
 
-                        <div class="form-content">
-                            <div class="form-grid">
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                                 <!-- Nom -->
-                                <div class="form-field">
-                                    <label class="field-label">
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-semibold text-gray-700">
                                         Nom du catalogue
-                                        <span class="required-asterisk">*</span>
+                                        <span class="text-red-500 ml-1">*</span>
                                     </label>
                                     <p:inputText value="#{adminCatalogueBean.current.nom}"
                                                required="true" requiredMessage="Le nom du catalogue est requis"
                                                placeholder="Saisissez le nom du catalogue"
-                                               styleClass="modern-input"/>
+                                               styleClass="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"/>
                                 </div>
 
                                 <!-- Description -->
-                                <div class="form-field full-width">
-                                    <label class="field-label">Description</label>
+                                <div class="lg:col-span-2 space-y-2">
+                                    <label class="block text-sm font-semibold text-gray-700">Description</label>
                                     <p:inputTextarea value="#{adminCatalogueBean.current.description}"
                                                    rows="3" 
                                                    placeholder="Décrivez le contenu ou l'objectif de ce catalogue (optionnel)"
-                                                   styleClass="modern-textarea"/>
-                                    <div class="field-hint">Cette description aidera à identifier l'usage de ce catalogue</div>
+                                                   styleClass="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 resize-vertical"/>
+                                    <p class="text-xs text-gray-500">Cette description aidera à identifier l'usage de ce catalogue</p>
                                 </div>
                             </div>
 
+                            <!-- Sélection des familles -->
+                            <div class="bg-gray-50 rounded-xl p-6 mb-6 border border-gray-200">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2 sm:mb-0">
+                                        Familles associées
+                                        <span class="text-red-500 ml-1">*</span>
+                                    </label>
+                                    <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-semibold">
+                                        #{empty adminCatalogueBean.familleIds ? 'Aucune' : adminCatalogueBean.familleIds.size()} famille(s) sélectionnée(s)
+                                    </span>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <p:selectCheckboxMenu id="familleSelect" 
+                                                        value="#{adminCatalogueBean.familleIds}"
+                                                        label="Sélectionner des familles"
+                                                        filter="true" filterMatchMode="contains"
+                                                        multiple="true"
+                                                        panelStyle="width:400px;max-height:400px;"
+                                                        styleClass="w-full">
+                                        <f:selectItems value="#{adminCatalogueBean.allFamilles}" var="famille"
+                                                     itemLabel="#{famille.nom}" itemValue="#{famille.id}" />
+                                    </p:selectCheckboxMenu>
+                                    <p:message for="familleSelect" styleClass="text-red-500 text-xs mt-1"/>
+                                </div>
+                                
+                                <div class="bg-white rounded-lg p-4 border border-gray-200" rendered="#{not empty adminCatalogueBean.familleIds}">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <span class="text-sm font-semibold text-gray-700">Familles sélectionnées :</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2">
+                                        <ui:repeat value="#{adminCatalogueBean.selectedFamilles}" var="famille">
+                                            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-semibold shadow-sm">
+                                                <span class="text-white">#{famille.nom}</span>
+                                            </div>
+                                        </ui:repeat>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <!-- Produits Selection -->
-                            <div class="products-section">
-                                <div class="section-header">
-                                    <label class="field-label">Produits inclus</label>
-                                    <span class="selected-count">
+                            <div class="bg-gray-50 rounded-xl p-6 mb-6 border border-gray-200">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2 sm:mb-0">
+                                        Produits inclus
+                                    </label>
+                                    <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-semibold">
                                         #{empty adminCatalogueBean.produitIds ? 'Aucun' : adminCatalogueBean.produitIds.size()} produit(s) sélectionné(s)
                                     </span>
                                 </div>
                                 
-                                <div class="products-selector">
+                                <div class="mb-4">
                                     <p:selectCheckboxMenu value="#{adminCatalogueBean.produitIds}"
                                                         label="Sélectionner des produits"
                                                         filter="true" filterMatchMode="contains"
                                                         multiple="true"
                                                         panelStyle="width:400px;max-height:400px;"
-                                                        styleClass="modern-select-checkbox">
-                                        <f:selectItems value="#{adminCatalogueBean.produits}" var="p"
-                                                     itemValue="#{p.id}" 
-                                                     itemLabel="#{p.libelle} (#{p.prix} FCFA)"/>
-                                    </p:selectCheckboxMenu>
+                                                        styleClass="w-full"/>
                                 </div>
                                 
-                                <div class="selected-products-preview" rendered="#{not empty adminCatalogueBean.produitIds}">
-                                    <div class="preview-header">
-                                        <span class="preview-title">Produits sélectionnés :</span>
+                                <div class="bg-white rounded-lg p-4 border border-gray-200" rendered="#{not empty adminCatalogueBean.produitIds}">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <span class="text-sm font-semibold text-gray-700">Produits sélectionnés :</span>
                                     </div>
-                                    <div class="products-list">
-                                        <div class="product-tag" rendered="#{adminCatalogueBean.produitIds.size() > 0}">
-                                            <span class="product-name">#{adminCatalogueBean.produitIds.size()} produit(s)</span>
-                                            <small class="product-count">sélectionné(s)</small>
+                                    <div class="flex flex-wrap gap-2">
+                                        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-3 py-2 rounded-lg text-sm font-semibold shadow-sm">
+                                            <span class="text-white">#{adminCatalogueBean.produitIds.size()} produit(s)</span>
+                                            <small class="text-indigo-100 block text-xs">sélectionné(s)</small>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Actions -->
-                            <div class="form-actions">
+                            <div class="flex flex-col sm:flex-row gap-3 justify-end pt-6 border-t border-gray-100">
                                 <p:commandButton value="Annuler"
                                                action="#{adminCatalogueBean.annuler}"
                                                process="@this"
                                                update="createForm"
                                                immediate="true"
-                                               styleClass="action-button secondary"/>
+                                               styleClass="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors duration-200"/>
                                 <p:commandButton value="#{adminCatalogueBean.editMode ? 'Mettre à jour' : 'Créer le catalogue'}"
                                                icon="pi pi-check"
                                                action="#{adminCatalogueBean.save}"
                                                process="@form"
                                                update="toolbarForm:msgs tableForm:cataloguesTable createForm"
-                                               styleClass="action-button primary"/>
+                                               styleClass="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"/>
                             </div>
                         </div>
                     </div>
                 </ui:fragment>
-                   
                 </h:form>
 
                 <!-- Catalogues Table Card -->
-                <div class="table-card">
-                    <div class="card-header">
-                        <div class="card-title-section">
-                            <i class="pi pi-list card-icon"></i>
-                            <h3 class="card-title">Liste des Catalogues</h3>
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-100">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                            <div class="flex items-center gap-3 mb-4 sm:mb-0">
+                                <div class="bg-indigo-500 p-2 rounded-lg">
+                                    <i class="pi pi-list text-white text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-800">Liste des Catalogues</h3>
+                                    <p class="text-gray-600 text-sm mt-1">
+                                        Tous vos catalogues organisés
+                                        <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full text-xs font-semibold ml-2">
+                                            #{adminCatalogueBean.getCatalogues().size()}
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                        <p class="card-description">
-                            Tous vos catalogues organisés
-                            #{not empty adminCatalogueBean.getCatalogues() ? 
-                              ' (filtrés: ' += adminCatalogueBean.getCatalogues().size() += ')' : 
-                              ' (' += adminCatalogueBean.getCatalogues().size() += ')'}
-                        </p>
                     </div>
 
                     <h:form id="tableForm">
-                        <div class="table-container">
+                        <div class="overflow-x-auto">
                             <p:dataTable id="cataloguesTable" value="#{adminCatalogueBean.catalogues}" var="c"
-                                       widgetVar="cataloguesTable" paginator="true" rows="15"
+                                       widgetVar="cataloguesTable" paginator="true" rows="10"
                                        emptyMessage="Aucun catalogue trouvé"
-                                       styleClass="modern-table"
+                                       styleClass="min-w-full divide-y divide-gray-200"
                                        globalFilter="globalFilter"
                                        filteredValue="#{adminCatalogueBean.catalogues}"
                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                       rowsPerPageTemplate="10,15,20,25">
+                                       rowsPerPageTemplate="5,10,15,20"
+                                       style="border: none;">
 
- 
-
-                                <!-- Nom -->
+                                <!-- Catalogue -->
                                 <p:column headerText="Catalogue" sortBy="#{c.nom}" filterBy="#{c.nom}"
-                                        filterMatchMode="contains" style="min-width: 250px;">
-                                    <div class="catalogue-info">
-                                        <div class="catalogue-icon">
-                                            <i class="pi pi-folder"></i>
+                                        filterMatchMode="contains" 
+                                        styleClass="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                            <i class="pi pi-folder text-white text-sm"></i>
                                         </div>
-                                        <div class="catalogue-details">
-                                            <span class="catalogue-name">#{c.nom}</span>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="text-sm font-semibold text-gray-900 truncate">#{c.nom}</p>
                                             <ui:fragment rendered="#{not empty c.description}">
-                                                <small class="catalogue-description">#{c.description}</small>
+                                                <p class="text-sm text-gray-500 truncate">#{c.description}</p>
                                             </ui:fragment>
                                         </div>
                                     </div>
                                 </p:column>
 
                                 <!-- Produits -->
-                                <p:column headerText="Produits" style="width: 120px;">
-                                    <div class="products-count">
-                                        <i class="pi pi-box products-icon"></i>
-                                        <span class="count-number">#{c.produits != null ? c.produits.size() : 0}</span>
-                                        <span class="count-label">produit(s)</span>
+                                <p:column headerText="Produits" style="width: 140px;"
+                                        styleClass="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <div class="flex items-center gap-2 bg-green-50 px-3 py-2 rounded-lg border border-green-200">
+                                        <i class="pi pi-box text-green-600 text-sm"></i>
+                                        <span class="text-green-800 font-semibold">#{c.produits != null ? c.produits.size() : 0}</span>
+                                        <span class="text-green-600 text-xs">produit(s)</span>
                                     </div>
                                 </p:column>
 
                                 <!-- Statut -->
-                                <p:column headerText="Statut" style="width: 100px;">
-                                    <div class="status-indicator status-active">
-                                        <i class="pi pi-check-circle"></i>
-                                        <span>Actif</span>
-                                    </div>
+                                <p:column headerText="Statut" style="width: 100px;"
+                                        styleClass="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                        <i class="pi pi-check-circle mr-1.5"></i>
+                                        Actif
+                                    </span>
                                 </p:column>
 
                                 <!-- Actions -->
-                                <p:column headerText="Actions" style="width: 120px;">
-                                    <div class="action-buttons">
+                                <p:column headerText="Actions" style="width: 120px;"
+                                        styleClass="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <div class="flex items-center space-x-2">
                                         <p:commandButton icon="pi pi-pencil" 
                                                        title="Modifier"
                                                        action="#{adminCatalogueBean.edit(c.id)}"
                                                        process="@this"
                                                        update="createForm toolbarForm:msgs"
                                                        oncomplete="if(!args.validationFailed){ scrollToCreateForm(); }"
-                                                       styleClass=" edit-button"/>
+                                                       styleClass="w-9 h-9 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center justify-center transition-colors duration-200 shadow-sm hover:shadow-md"/>
                                         <p:commandButton icon="pi pi-trash" 
                                                        title="Supprimer"
                                                        action="#{adminCatalogueBean.delete(c.id)}"
                                                        process="@this"
                                                        update="toolbarForm:msgs cataloguesTable"
                                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer le catalogue \\'#{c.nom}\\' ?')"
-                                                       styleClass=" delete-button"/>
+                                                       styleClass="w-9 h-9 bg-red-500 hover:bg-red-600 text-white rounded-lg flex items-center justify-center transition-colors duration-200 shadow-sm hover:shadow-md"/>
                                     </div>
                                 </p:column>
                             </p:dataTable>
+                        </div>
+
+                        <!-- Table Summary -->
+                        <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+                            <div class="flex flex-wrap items-center justify-between gap-4">
+                                <div class="flex items-center space-x-6">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                                        <span class="text-sm text-gray-600">Catalogue actif</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full"></div>
+                                        <span class="text-sm text-gray-600">Collection produits</span>
+                                    </div>
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    Total: <span class="font-semibold text-gray-700">#{adminCatalogueBean.catalogues.size()}</span> catalogues
+                                </div>
+                            </div>
                         </div>
                     </h:form>
                 </div>
@@ -246,556 +327,103 @@
         </div>
 
         <style>
-            /* CSS Variables */
-            :root {
-                --primary: #4361ee;
-                --primary-dark: #3a56d4;
-                --success: #28a745;
-                --warning: #ffc107;
-                --danger: #dc3545;
-                --dark: #2c3e50;
-                --light: #f8f9fa;
-                --border: #e9ecef;
-                --text: #495057;
-                --text-light: #6c757d;
-                --radius: 12px;
-                --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-                --transition: all 0.3s ease;
-            }
-
-            /* Main Container */
-            .admin-catalogues-container {
-                max-width: 1400px;
-                margin: 0 auto;
-                padding: 0 1rem;
-            }
-
-            /* Page Header */
-            .page-header {
-                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-                color: white;
-                border-radius: var(--radius);
-                margin-bottom: 2rem;
-                overflow: hidden;
-            }
-
-            .header-content {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 2rem;
-            }
-
-            .header-title {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-            }
-
-            .header-icon {
-                font-size: 2.5rem;
-                opacity: 0.9;
-            }
-
-            .page-title {
-                font-size: 2rem;
-                font-weight: 700;
-                margin: 0;
-                color: white;
-            }
-
-            .page-subtitle {
-                opacity: 0.9;
-                margin: 0.5rem 0 0 0;
-                font-size: 1.1rem;
-            }
-
-            .header-stats {
-                display: flex;
-                gap: 1rem;
-            }
-
-            .stat-card {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                padding: 1rem 1.5rem;
-                background: rgba(255, 255, 255, 0.1);
-                border-radius: var(--radius);
-                backdrop-filter: blur(10px);
-            }
-
-            .stat-icon {
-                font-size: 1.5rem;
-                opacity: 0.9;
-            }
-
-            .stat-number {
-                font-size: 1.5rem;
-                font-weight: 700;
-                display: block;
-            }
-
-            .stat-label {
-                font-size: 0.875rem;
-                opacity: 0.8;
-            }
-
-            /* Content Layout */
-            .catalogues-content {
-                display: flex;
-                flex-direction: column;
-                gap: 1.5rem;
-            }
-
-            /* Cards */
-            .toolbar-card, .creation-card, .table-card {
-                background: white;
-                border-radius: var(--radius);
-                box-shadow: var(--shadow);
-                overflow: hidden;
-            }
-
-            .card-header {
-                padding: 1.5rem 2rem;
-                border-bottom: 1px solid var(--border);
-                background: var(--light);
-            }
-
-            .card-title-section {
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .card-icon {
-                color: var(--primary);
-                font-size: 1.25rem;
-            }
-
-            .card-title {
-                font-size: 1.25rem;
-                font-weight: 600;
-                color: var(--dark);
-                margin: 0;
-            }
-
-            .card-description {
-                color: var(--text-light);
-                margin: 0;
-                font-size: 0.9rem;
-            }
-
-            /* Toolbar */
-            .toolbar-content {
-                padding: 1.5rem 2rem;
-            }
-
-            .toolbar-section {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 1rem;
-            }
-
-            .create-button {
-                background: linear-gradient(135deg, var(--success), #218838);
-                border: none;
-                color: white;
-                padding: 0.75rem 1.5rem;
-                border-radius: 8px;
-                font-weight: 600;
-                transition: var(--transition);
-            }
-
-            .create-button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-            }
-
-            .search-section {
-                flex: 1;
-                max-width: 400px;
-            }
-
-            .search-input {
-                position: relative;
-            }
-
-            .search-icon {
-                position: absolute;
-                left: 1rem;
-                top: 50%;
-                transform: translateY(-50%);
-                color: var(--text-light);
-                z-index: 1;
-            }
-
-            .modern-search {
-                width: 100%;
-                padding: 0.75rem 1rem 0.75rem 2.5rem;
-                border: 2px solid var(--border);
-                border-radius: 8px;
-                font-size: 0.95rem;
-                transition: var(--transition);
-            }
-
-            .modern-search:focus {
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-                outline: none;
-            }
-
-            /* Creation Form */
-            .form-content {
-                padding: 2rem;
-            }
-
-            .form-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 1.5rem;
-                margin-bottom: 2rem;
-            }
-
-            .form-field {
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .full-width {
-                grid-column: 1 / -1;
-            }
-
-            .field-label {
-                font-weight: 600;
-                color: var(--dark);
-                font-size: 0.9rem;
-            }
-
-            .required-asterisk {
-                color: var(--danger);
-            }
-
-            .modern-input, .modern-select, .modern-textarea {
-                width: 100%;
-                padding: 0.75rem 1rem;
-                border: 2px solid var(--border);
-                border-radius: 8px;
-                font-size: 0.95rem;
-                transition: var(--transition);
-            }
-
-            .modern-input:focus, .modern-select:focus, .modern-textarea:focus {
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-                outline: none;
-            }
-
-            .modern-textarea {
-                resize: vertical;
-                min-height: 80px;
-            }
-
-            .field-hint {
-                font-size: 0.8rem;
-                color: var(--text-light);
-                margin-top: 0.25rem;
-            }
-
-            /* Products Section */
-            .products-section {
-                border: 1px solid var(--border);
-                border-radius: 8px;
-                padding: 1.5rem;
-                background: var(--light);
-                margin-bottom: 2rem;
-            }
-
-            .section-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1rem;
-            }
-
-            .selected-count {
-                font-size: 0.85rem;
-                color: var(--primary);
-                font-weight: 600;
-                background: rgba(67, 97, 238, 0.1);
-                padding: 0.25rem 0.75rem;
-                border-radius: 12px;
-            }
-
-            .modern-select-checkbox {
-                width: 100%;
-            }
-
-            .selected-products-preview {
-                margin-top: 1rem;
-                padding-top: 1rem;
-                border-top: 1px solid var(--border);
-            }
-
-            .preview-header {
-                margin-bottom: 0.75rem;
-            }
-
-            .preview-title {
-                font-weight: 600;
-                color: var(--dark);
-                font-size: 0.9rem;
-            }
-
-            .products-list {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 0.5rem;
-            }
-
-            .product-tag {
-                background: var(--primary);
-                color: white;
-                padding: 0.5rem 0.75rem;
-                border-radius: 6px;
-                font-size: 0.85rem;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 0.125rem;
-            }
-
-            .product-name {
-                font-weight: 600;
-            }
-
-            .product-count {
-                opacity: 0.9;
-                font-size: 0.75rem;
-            }
-
-            /* Form Actions */
-            .form-actions {
-                display: flex;
-                gap: 1rem;
-                justify-content: flex-end;
-                padding-top: 1.5rem;
-                border-top: 1px solid var(--border);
-            }
-
-            .action-button {
-                padding: 0.75rem 1.5rem;
-                border: none;
-                border-radius: 8px;
-                font-weight: 600;
-                transition: var(--transition);
-                cursor: pointer;
-            }
-
-            .action-button.primary {
-                background: var(--primary);
-                color: white;
-            }
-
-            .action-button.primary:hover {
-                background: var(--primary-dark);
-            }
-
-            .action-button.secondary {
-                background: var(--light);
-                color: var(--text);
-                border: 1px solid var(--border);
-            }
-
-            .action-button.secondary:hover {
-                background: #e9ecef;
-            }
-
-            /* Table */
-            .table-container {
-                padding: 0;
-            }
-
-            .modern-table {
-                border: none;
-            }
-
-            .modern-table .ui-datatable-header {
-                background: transparent;
-                border: none;
-                padding: 0 2rem;
-            }
-
-            /* Catalogue Info in Table */
-            .catalogue-info {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-            }
-
-            .catalogue-icon {
-                width: 40px;
-                height: 40px;
-                background: var(--primary);
-                color: white;
-                border-radius: 8px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.25rem;
-            }
-
-            .catalogue-details {
-                display: flex;
-                flex-direction: column;
-                gap: 0.25rem;
-            }
-
-            .catalogue-name {
-                font-weight: 600;
-                color: var(--dark);
-            }
-
-            .catalogue-description {
-                color: var(--text-light);
-                font-size: 0.8rem;
-                max-width: 300px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-
-            .catalogue-id {
-                color: var(--text-light);
-                font-weight: 600;
-                font-size: 0.85rem;
-            }
-
-            /* Products Count */
-            .products-count {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                padding: 0.5rem;
-                background: #e8f5e8;
-                border-radius: 6px;
-                color: #137333;
-            }
-
-            .products-icon {
-                font-size: 1rem;
-            }
-
-            .count-number {
-                font-weight: 700;
-                font-size: 1rem;
-            }
-
-            .count-label {
-                font-size: 0.75rem;
-                opacity: 0.8;
-            }
-
-            /* Status Indicator */
-            .status-indicator {
-                display: inline-flex;
-                align-items: center;
-                gap: 0.5rem;
-                padding: 0.375rem 0.75rem;
-                border-radius: 20px;
-                font-size: 0.8rem;
-                font-weight: 600;
-            }
-
-            .status-active {
-                background: #d4edda;
-                color: #155724;
-            }
-
-            /* Action Buttons */
-            .action-buttons {
-                display: flex;
-                gap: 0.5rem;
-            }
-
-            .action-button {
-                width: 32px;
-                height: 32px;
-                border: none;
-                border-radius: 6px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: var(--transition);
-            }
-
-            .edit-button {
-                background: var(--primary);
-                color: white;
-            }
-
-            .edit-button:hover {
-                background: var(--primary-dark);
-            }
-
-            .delete-button {
-                background: var(--danger);
-                color: white;
-            }
-
-            .delete-button:hover {
-                background: #c82333;
-            }
-
-            /* Growl Notifications */
+            /* Styles personnalisés pour compléter Tailwind */
             .custom-growl {
                 position: relative !important;
                 top: auto !important;
                 right: auto !important;
                 width: 100%;
+                margin-bottom: 1rem;
             }
 
-            /* Responsive */
-            @media (max-width: 768px) {
-                .header-content {
-                    flex-direction: column;
-                    gap: 1rem;
-                    text-align: center;
-                }
+            /* Personnalisation de la pagination PrimeFaces */
+            .ui-paginator {
+                background: #f9fafb !important;
+                border: none !important;
+                border-top: 1px solid #e5e7eb !important;
+                padding: 1rem 1.5rem !important;
+            }
 
-                .header-title {
-                    flex-direction: column;
-                }
+            .ui-paginator .ui-paginator-page,
+            .ui-paginator .ui-paginator-first,
+            .ui-paginator .ui-paginator-prev,
+            .ui-paginator .ui-paginator-next,
+            .ui-paginator .ui-paginator-last {
+                border: 1px solid #d1d5db !important;
+                background: white !important;
+                color: #374151 !important;
+                border-radius: 8px !important;
+                margin: 0 2px !important;
+                transition: all 0.2s ease;
+            }
 
-                .toolbar-section {
-                    flex-direction: column;
-                    align-items: stretch;
-                }
+            .ui-paginator .ui-state-active {
+                background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+                color: white !important;
+                border-color: #6366f1 !important;
+            }
 
-                .search-section {
-                    max-width: none;
-                }
+            .ui-paginator .ui-paginator-page:hover,
+            .ui-paginator .ui-paginator-first:hover,
+            .ui-paginator .ui-paginator-prev:hover,
+            .ui-paginator .ui-paginator-next:hover,
+            .ui-paginator .ui-paginator-last:hover {
+                background: #e0e7ff !important;
+                color: #3730a3 !important;
+            }
 
-                .form-grid {
-                    grid-template-columns: 1fr;
-                }
+            /* Style pour la table */
+            .ui-datatable .ui-datatable-thead > tr > th {
+                background: #f8fafc !important;
+                border-bottom: 2px solid #e2e8f0 !important;
+                font-weight: 600 !important;
+                color: #374151 !important;
+            }
 
-                .section-header {
-                    flex-direction: column;
-                    align-items: flex-start;
-                    gap: 0.5rem;
-                }
+            .ui-datatable .ui-datatable-data > tr {
+                transition: background-color 0.2s ease;
+            }
 
-                .form-content, .toolbar-content {
-                    padding: 1rem;
-                }
+            .ui-datatable .ui-datatable-data > tr:hover {
+                background-color: #f8fafc !important;
+            }
 
-                .card-header {
-                    padding: 1rem 1.5rem;
+            .ui-datatable .ui-datatable-data > tr > td {
+                border-color: #f1f5f9 !important;
+                vertical-align: middle !important;
+            }
+
+            /* Style pour le selectCheckboxMenu */
+            .ui-selectcheckboxmenu {
+                width: 100% !important;
+            }
+
+            .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger {
+                background: #6366f1 !important;
+                border-color: #6366f1 !important;
+                color: white !important;
+            }
+
+            .ui-selectcheckboxmenu-panel {
+                border-radius: 12px !important;
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
+                border: 1px solid #e5e7eb !important;
+            }
+
+            /* Animation pour le formulaire de création */
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
                 }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .creation-card {
+                animation: slideDown 0.3s ease-out;
             }
         </style>
 
@@ -809,6 +437,20 @@
                     });
                 }
             }
+
+            // Animation pour les cartes au chargement
+            document.addEventListener('DOMContentLoaded', function() {
+                const cards = document.querySelectorAll('.bg-white.rounded-2xl');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.5s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            });
         </script>
     </ui:define>
 </ui:composition>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Gestion des boutiques</ui:define>
+
+    <ui:define name="content">
+        <style>
+            .ui-button {
+                padding: 0.3em 0.5em;
+                margin: 0 2px;
+            }
+            .ui-button i {
+                font-size: 1em;
+            }
+        </style>
+    <h:form id="form">
+        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+        
+        <p:toolbar>
+            <f:facet name="left">
+                <h:button value="Nouvelle boutique" outcome="/admin/boutiques/edition" styleClass="ui-button ui-button-primary">
+                <i class="pi pi-plus" style="margin-right: 5px"></i>
+            </h:button>
+            </f:facet>
+        </p:toolbar>
+        
+        <p:dataTable id="boutiquesTable" value="#{boutiqueBean.boutiques}" var="boutique" 
+                    paginator="true" rows="10" paginatorPosition="bottom" 
+                    emptyMessage="Aucune boutique trouvée" style="margin-top: 20px">
+            
+            <p:column headerText="Nom" sortBy="#{boutique.nom}" filterBy="#{boutique.nom}" filterMatchMode="contains">
+                <h:outputText value="#{boutique.nom}" />
+            </p:column>
+            
+            <p:column headerText="Adresse" sortBy="#{boutique.adresse}" filterBy="#{boutique.adresse}" filterMatchMode="contains">
+                <h:outputText value="#{boutique.adresse}" />
+            </p:column>
+            
+            <p:column headerText="Téléphone" sortBy="#{boutique.telephone}" filterBy="#{boutique.telephone}" filterMatchMode="contains">
+                <h:outputText value="#{boutique.telephone}" />
+            </p:column>
+            
+            <p:column headerText="Gérant" sortBy="#{boutique.gerant.name}" filterBy="#{boutique.gerant.name}" filterMatchMode="contains">
+                <h:outputText value="#{boutique.gerant.name}" />
+            </p:column>
+            
+            <p:column headerText="Actions" style="width: 250px; text-align: center">
+                <h:button value=" " title="Modifier" styleClass="ui-button ui-button-success" style="width: 30px; height: 30px;">
+                    <f:param name="id" value="#{boutique.id}" />
+                    <i class="pi pi-pencil"></i>
+                    <f:attribute name="outcome" value="/admin/boutiques/edition" />
+                </h:button>
+                
+                <h:button value=" " title="Gérer les caissiers" styleClass="ui-button ui-button-info" style="width: 30px; height: 30px; margin-left: 5px">
+                    <f:param name="id" value="#{boutique.id}" />
+                    <i class="pi pi-users"></i>
+                    <f:attribute name="outcome" value="/admin/boutiques/caissiers" />
+                </h:button>
+                
+                <h:button value=" " title="Gérer les produits" styleClass="ui-button ui-button-warning" style="width: 30px; height: 30px; margin-left: 5px">
+                    <f:param name="id" value="#{boutique.id}" />
+                    <i class="pi pi-box"></i>
+                    <f:attribute name="outcome" value="/admin/boutiques/produits" />
+                </h:button>
+            </p:column>
+        </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

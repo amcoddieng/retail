@@ -1,8 +1,9 @@
 package com.example.retail.domain;
 
 import javax.persistence.*;
-
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Produit {
@@ -21,6 +22,26 @@ public class Produit {
 
     @Column(name = "image_content_type", length = 100)
     private String imageContentType;
+    
+    @ManyToMany(mappedBy = "produits")
+    private List<Boutique> boutiques = new ArrayList<>();
+    
+    @ManyToMany(mappedBy = "produits")
+    private List<Catalogue> catalogues = new ArrayList<>();
+    
+    // Méthodes utilitaires pour gérer la relation bidirectionnelle
+    public void addBoutique(Boutique boutique) {
+        if (!boutiques.contains(boutique)) {
+            boutiques.add(boutique);
+            boutique.getProduits().add(this);
+        }
+    }
+    
+    public void removeBoutique(Boutique boutique) {
+        if (boutiques.remove(boutique)) {
+            boutique.getProduits().remove(this);
+        }
+    }
 
 
     public Long getId() {
@@ -77,6 +98,38 @@ public class Produit {
 
     @ManyToOne
     private Utilisateur fournisseur;
+
+    public List<Boutique> getBoutiques() {
+        return boutiques;
+    }
+
+    public void setBoutiques(List<Boutique> boutiques) {
+        this.boutiques = boutiques;
+    }
+    
+    public List<Catalogue> getCatalogues() {
+        return catalogues;
+    }
+    
+    public void setCatalogues(List<Catalogue> catalogues) {
+        this.catalogues = catalogues;
+    }
+    
+    // Méthodes utilitaires pour gérer la relation avec les catalogues
+    public void addCatalogue(Catalogue catalogue) {
+        if (!catalogues.contains(catalogue)) {
+            catalogues.add(catalogue);
+            if (!catalogue.getProduits().contains(this)) {
+                catalogue.getProduits().add(this);
+            }
+        }
+    }
+    
+    public void removeCatalogue(Catalogue catalogue) {
+        if (catalogues.remove(catalogue)) {
+            catalogue.getProduits().remove(this);
+        }
+    }
 
     public Utilisateur getFournisseur() {
         return fournisseur;

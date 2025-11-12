@@ -1,6 +1,8 @@
 package com.example.retail.domain;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Utilisateur {
@@ -21,6 +23,20 @@ public class Utilisateur {
 
     @Column(length = 512)
     private String adresse;
+    
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "utilisateur_role",
+        joinColumns = @JoinColumn(name = "utilisateur_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+    
+    @OneToMany(mappedBy = "gerant")
+    private Set<Boutique> boutiquesGerees = new HashSet<>();
+    
+    @ManyToMany(mappedBy = "caissiers")
+    private Set<Boutique> boutiquesEnTantQueCaissier = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -90,5 +106,39 @@ public class Utilisateur {
 		this.adresse = adresse;
 	}
     
+    public Set<Role> getRoles() {
+        return roles;
+    }
     
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+    
+    public void addRole(Role role) {
+        this.roles.add(role);
+    }
+    
+    public void removeRole(Role role) {
+        this.roles.remove(role);
+    }
+    
+    public boolean hasRole(String roleCode) {
+        return roles.stream().anyMatch(r -> r.getCode().equals(roleCode));
+    }
+    
+    public Set<Boutique> getBoutiquesGerees() {
+        return boutiquesGerees;
+    }
+    
+    public void setBoutiquesGerees(Set<Boutique> boutiquesGerees) {
+        this.boutiquesGerees = boutiquesGerees;
+    }
+    
+    public Set<Boutique> getBoutiquesEnTantQueCaissier() {
+        return boutiquesEnTantQueCaissier;
+    }
+    
+    public void setBoutiquesEnTantQueCaissier(Set<Boutique> boutiquesEnTantQueCaissier) {
+        this.boutiquesEnTantQueCaissier = boutiquesEnTantQueCaissier;
+    }
 }

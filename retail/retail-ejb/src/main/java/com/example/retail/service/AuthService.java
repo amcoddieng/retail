@@ -83,7 +83,14 @@ public class AuthService {
 
 
     public java.util.List<Utilisateur> listUsers() {
-        return em.createQuery("select u from Utilisateur u order by u.login", Utilisateur.class).getResultList();
+        return em.createQuery("select u from Utilisateur u order by u.name", Utilisateur.class).getResultList();
+    }
+    
+    public Utilisateur trouverUtilisateurParId(Long id) {
+        if (id == null) {
+            return null;
+        }
+        return em.find(Utilisateur.class, id);
     }
     
     public java.util.List<Utilisateur> listUsersEmployes() {
